@@ -10,8 +10,12 @@
     "test": "node test-api.js"
   },
   "dependencies": {
+    "@google/genai": "^2.21.0",
+    "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
-    "express": "^4.22.2"
+    "dotenv": "^17.4.2",
+    "express": "^4.22.2",
+    "openai": "^7.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

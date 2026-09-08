@@ -44,11 +44,27 @@ export async function requestAdvance(farmerId = 'F1') {
   return res.json();
 }
 
-export async function askSathi(message, screenContext = 'home', farmerId = 'F1') {
+export async function askSathi({
+  message,
+  screenContext = 'home',
+  farmerId = 'F1',
+  conversation = [],
+  customApiKey = '',
+  customProvider = '',
+  customBaseUrl = ''
+}) {
   const res = await fetch(`${API_BASE}/sathi/query`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, screenContext, farmerId })
+    body: JSON.stringify({
+      message,
+      screenContext,
+      farmerId,
+      conversation,
+      customApiKey,
+      customProvider,
+      customBaseUrl
+    })
   });
   if (!res.ok) throw new Error('Failed to query Sathi assistant');
   return res.json();
