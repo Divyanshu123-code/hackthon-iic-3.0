@@ -90,6 +90,7 @@ function AppContent() {
           onOpenMarket={() => setIsMarketOpen(true)}
           onOpenQr={() => setIsQrOpen(true)}
           onOpenAdvance={() => setIsAdvanceOpen(true)}
+          onRefresh={fetchAllData}
         />
 
         {/* Global Sathi Floating Widget */}

@@ -46,7 +46,11 @@ router.get('/:farmerId/home', (req, res) => {
     stage: farmer.stage,
     stageIndex: farmer.stageIndex,
     aheadCount: farmer.aheadCount,
-    estWaitMins: farmer.estWaitMins
+    estWaitMins: farmer.estWaitMins,
+    atGateNumber: farmer.atGateNumber,
+    weighbridgeNo: farmer.weighbridgeNo,
+    stages: farmer.stages,
+    payment: farmer.payment
   });
 });
 

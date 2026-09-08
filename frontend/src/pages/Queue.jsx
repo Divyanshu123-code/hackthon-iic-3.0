@@ -9,7 +9,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
   const speakQueueStatus = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const msg = `टोकन क्रमांक ${queueData?.token || 42}, वाहन ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}। आपके आगे 4 ट्रैक्टर हैं। अनुमानित प्रतीक्षा समय लगभग 25 मिनट है।`;
+      const msg = `टोकन क्रमांक ${queueData?.token || 42}, वाहन ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}। आपके आगे ${queueData?.aheadCount !== undefined ? queueData.aheadCount : 4} ट्रैक्टर हैं। अनुमानित प्रतीक्षा समय लगभग ${queueData?.estWaitMins || 25} मिनट है।`;
       const utter = new SpeechSynthesisUtterance(msg);
       utter.lang = 'hi-IN';
       window.speechSynthesis.speak(utter);
@@ -104,7 +104,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
           <div className="inline-flex items-center gap-1.5 bg-[#F3ECE0] px-3 py-1 rounded-md border border-[#E2D9C5] text-xs font-mono text-[#374151]">
             <span className="font-bold">{queueData?.vehicleNumber || 'RJ-20-EA-4412'}</span>
             <span>•</span>
-            <span className="font-bold text-[#B45309]">सोयाबीन (50 क्विंटल)</span>
+            <span className="font-bold text-[#B45309]">{queueData?.commodity || 'सोयाबीन'} ({queueData?.commodityQty || '50 क्विंटल'})</span>
           </div>
 
           {/* Perforation Cut Line */}

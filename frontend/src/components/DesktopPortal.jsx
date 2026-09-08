@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { bookSlot, requestAdvance, advanceFarmerStage, advanceFarmerPayment, sendAnnouncement, resetDemoDb } from '../api';
+import { bookSlot, requestAdvance, advanceFarmerStage, advanceFarmerPayment, sendAnnouncement, resetDemoDb, updateStaffSchedule } from '../api';
 
 export default function DesktopPortal({
   farmerData,
@@ -11,16 +11,45 @@ export default function DesktopPortal({
   onOpenAid,
   onOpenMarket,
   onOpenQr,
-  onOpenAdvance
+  onOpenAdvance,
+  onRefresh
 }) {
   const { currentLangObj, setIsLangModalOpen, t, currentLang, changeLanguage, LANGUAGES } = useLanguage();
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'queue', 'schedule', 'payment', 'marketplace', 'financial_aid', 'staff'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('morning');
-  const [slotCounts, setSlotCounts] = useState({ morning: 8, afternoon: 15 });
   const [bookingState, setBookingState] = useState('idle');
   const [toastMsg, setToastMsg] = useState('');
   const [currentTime, setCurrentTime] = useState('');
+
+  // Live Backend Data Variables
+  const totalInflow = scheduleData?.totalProcuredTodayQtl || 185;
+  const isGateOpen = scheduleData?.gateOpen ?? scheduleData?.open ?? true;
+  const currentToken = queueData?.token || farmerData?.token || 42;
+  const weighbridgeNo = queueData?.weighbridgeNo || farmerData?.weighbridgeNo || 3;
+  const aheadCount = queueData?.aheadCount !== undefined ? queueData.aheadCount : 4;
+  const estWaitMins = queueData?.estWaitMins !== undefined ? queueData.estWaitMins : 25;
+  const atGateNumber = queueData?.atGateNumber !== undefined ? queueData.atGateNumber : 38;
+  const currentMsp = scheduleData?.msp || 2275;
+  const todayCrop = scheduleData?.todayCrop || farmerData?.commodity || 'गेहूं (Wheat)';
+  const cropGrade = scheduleData?.cropGrade || 'Grade A Verified';
+  const totalApproved = paymentData?.totalApproved || farmerData?.payment?.totalApproved || 113750;
+  const advanceAmount = paymentData?.advance?.amount || farmerData?.payment?.advance?.amount || Math.round(totalApproved * 0.8);
+  const isAdvanceTaken = paymentData?.advance?.taken || farmerData?.payment?.advance?.taken || false;
+  const bankName = paymentData?.bank?.name || farmerData?.payment?.bank?.name || 'SBI Bank';
+  const bankLast4 = paymentData?.bank?.last4 || farmerData?.payment?.bank?.last4 || '4912';
+  const bankIfsc = paymentData?.bank?.ifsc || farmerData?.payment?.bank?.ifsc || 'SBIN000210';
+  const vehicleNumber = queueData?.vehicleNumber || farmerData?.vehicleNumber || 'RJ-20-EA-4412';
+  const commodityQty = queueData?.commodityQty || farmerData?.commodityQty || '50 क्विंटल';
+
+  // Slot Availability from Backend
+  const morningSlots = scheduleData?.slots?.find(s => s.id === 'morning')?.tokensLeft ?? 8;
+  const afternoonSlots = scheduleData?.slots?.find(s => s.id === 'afternoon')?.tokensLeft ?? 15;
+
+  // 4-Stage Procurement Pipeline State
+  const STAGE_STEPS = ['arrived', 'weighing', 'grade', 'pass'];
+  const currentFarmerStage = queueData?.stage || farmerData?.stage || 'weighing';
+  const currentStageIdx = STAGE_STEPS.indexOf(currentFarmerStage);
 
   useEffect(() => {
     const updateClock = () => {
@@ -34,18 +63,16 @@ export default function DesktopPortal({
 
   const showToast = (msg) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 4000);
+    setTimeout(() => setToastMsg(''), 4500);
   };
 
   const handleBookSlot = async () => {
     setBookingState('loading');
     try {
-      const res = await bookSlot('C1', 'F1', selectedSlot);
+      const res = await bookSlot('C1', farmerData?.farmerId || 'F1', selectedSlot);
       setBookingState('success');
-      if (res.tokensLeft !== undefined) {
-        setSlotCounts(prev => ({ ...prev, [selectedSlot]: res.tokensLeft }));
-      }
-      showToast('✓ स्लॉट सफलतापूर्वक बुक किया गया! गेट पास तैयार है।');
+      showToast(`✓ ${res.message || 'स्लॉट सफलतापूर्वक आरक्षित किया गया!'}`);
+      if (onRefresh) onRefresh();
       setTimeout(() => setBookingState('idle'), 2000);
     } catch (e) {
       setBookingState('error');
@@ -55,11 +82,60 @@ export default function DesktopPortal({
   };
 
   const handleClaimAdvance = async () => {
+    if (isAdvanceTaken) {
+      showToast('ℹ️ 80% अग्रिम राशि पहले ही आपके बैंक खाते में भेजी जा चुकी है।');
+      return;
+    }
     try {
-      await requestAdvance('F1');
-      showToast('✓ 80% अग्रिम राशि (₹1,95,680) बैंक खाते में स्थानांतरित की गई!');
+      const res = await requestAdvance(farmerData?.farmerId || 'F1');
+      showToast(`✓ ₹${advanceAmount.toLocaleString('en-IN')} (80% अग्रिम) ${bankName} (•••• ${bankLast4}) में स्थानांतरित!`);
+      if (onRefresh) onRefresh();
     } catch (e) {
       showToast('⚠️ अग्रिम दावा विफल: ' + e.message);
+    }
+  };
+
+  const handleToggleGate = async () => {
+    try {
+      await updateStaffSchedule({
+        centerId: 'C1',
+        open: !isGateOpen,
+        gateOpen: !isGateOpen
+      });
+      showToast(`✓ मंडी गेट स्थिति अपडेट: ${!isGateOpen ? 'खुला है (OPEN)' : 'बंद है (CLOSED)'}`);
+      if (onRefresh) onRefresh();
+    } catch (e) {
+      showToast('⚠️ गेट स्थिति अपडेट विफल: ' + e.message);
+    }
+  };
+
+  const handleAdvanceStage = async () => {
+    try {
+      const res = await advanceFarmerStage(farmerData?.farmerId || 'F1');
+      showToast(`✓ किसान ${farmerData?.name || 'राम लाल'} का चरण आगे बढ़ा: ${res.farmer?.stage || 'Next Stage'}`);
+      if (onRefresh) onRefresh();
+    } catch (e) {
+      showToast('⚠️ चरण परिवर्तन विफल: ' + e.message);
+    }
+  };
+
+  const handleBroadcastAnnouncement = async () => {
+    try {
+      const res = await sendAnnouncement(currentToken, weighbridgeNo);
+      showToast(`📢 लाउडस्पीकर प्रसारण: "टोकन #${currentToken} कांटा #${weighbridgeNo} पर पहुंचे"`);
+      if (onRefresh) onRefresh();
+    } catch (e) {
+      showToast('⚠️ प्रसारण विफल: ' + e.message);
+    }
+  };
+
+  const handleResetDemo = async () => {
+    try {
+      await resetDemoDb();
+      showToast('✓ डेमो डेटाबेस को रीसेट कर दिया गया!');
+      if (onRefresh) onRefresh();
+    } catch (e) {
+      showToast('⚠️ रीसेट विफल: ' + e.message);
     }
   };
 
@@ -172,16 +248,20 @@ export default function DesktopPortal({
             </button>
 
             {/* Yard Status Pill */}
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg border border-green-200 text-xs">
-              <span className="w-2 h-2 rounded-full bg-[#166534] animate-pulse"></span>
-              <span className="font-bold text-[#166534] uppercase">{t('gateOpen', 'मंडी गेट: खुला है (OPEN)')}</span>
+            <div className={`hidden lg:flex items-center gap-2 px-3 py-1 rounded-lg border text-xs ${
+              isGateOpen ? 'bg-green-50 border-green-200 text-[#166534]' : 'bg-red-50 border-red-200 text-red-700'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${isGateOpen ? 'bg-[#166534] animate-pulse' : 'bg-red-600'}`}></span>
+              <span className="font-bold uppercase">
+                {isGateOpen ? t('gateOpen', 'मंडी गेट: खुला है (OPEN)') : t('gateClosed', 'मंडी गेट: बंद है (CLOSED)')}
+              </span>
             </div>
 
             {/* Farmer Identity Badge */}
             <div className="flex items-center gap-2.5 border-l border-[#E2E8F0] pl-3">
               <div className="text-right hidden sm:block">
                 <div className="text-xs font-bold text-[#0F172A]">{farmerData?.name || 'राम लाल शर्मा'}</div>
-                <div className="text-[10px] font-mono text-[#64748B]">ID: APMC-KOT-789</div>
+                <div className="text-[10px] font-mono text-[#64748B]">ID: {farmerData?.farmerId || 'APMC-KOT-789'}</div>
               </div>
               <div className="w-9 h-9 rounded-xl bg-[#166534] text-white flex items-center justify-center font-bold shadow-xs">
                 <span className="material-symbols-outlined text-[20px]">person</span>
@@ -261,39 +341,41 @@ export default function DesktopPortal({
             <div className="p-4">
               <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('dailyIntake', 'आज की कुल आवक')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
-                <span className="text-2xl font-black text-[#0F172A] font-mono">1,420.50</span>
+                <span className="text-2xl font-black text-[#0F172A] font-mono">{totalInflow.toLocaleString('en-IN')}</span>
                 <span className="text-xs text-[#64748B] font-semibold">{t('quintalUnit', 'क्विंटल')}</span>
               </div>
-              <div className="text-[11px] text-[#166534] mt-0.5 font-semibold">{t('inflowDesc', '✓ 86 वाहन कोटा यार्ड में दर्ज')}</div>
+              <div className="text-[11px] text-[#166534] mt-0.5 font-semibold">{t('inflowDesc', '✓ लाइव कोटा यार्ड आवक')}</div>
             </div>
 
             <div className="p-4">
               <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('yourTokenStatus', 'आपका टोकन')}</div>
               <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-2xl font-black text-[#166534] font-mono">#{queueData?.token || 42}</span>
+                <span className="text-2xl font-black text-[#166534] font-mono">#{currentToken}</span>
                 <span className="text-[11px] font-bold text-[#166534] bg-green-50 px-2 py-0.5 rounded border border-green-200">
-                  {t('weighbridgeLane3', 'कांटा लेन 3')}
+                  {t('weighbridgeLane3', `कांटा लेन ${weighbridgeNo}`)}
                 </span>
               </div>
-              <div className="text-[11px] text-[#64748B] mt-0.5">{t('tractorsAhead', 'आगे केवल 4 ट्रैक्टर')}</div>
+              <div className="text-[11px] text-[#64748B] mt-0.5">आगे केवल {aheadCount} ट्रैक्टर</div>
             </div>
 
             <div className="p-4">
               <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('govtMsp', 'सरकारी समर्थन मूल्य (MSP)')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
-                <span className="text-2xl font-black text-[#B45309] font-mono">₹4,892</span>
+                <span className="text-2xl font-black text-[#B45309] font-mono">₹{currentMsp.toLocaleString('en-IN')}</span>
                 <span className="text-xs text-[#64748B] font-semibold">/{t('quintalUnit', 'क्विंटल')}</span>
               </div>
-              <div className="text-[11px] text-[#64748B] mt-0.5">{t('soyabeanGrade', 'सोयाबीन JS-335 (Grade A)')}</div>
+              <div className="text-[11px] text-[#64748B] mt-0.5">{todayCrop} ({cropGrade})</div>
             </div>
 
             <div className="p-4">
               <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('approvedDbt', 'स्वीकृत DBT भुगतान')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
-                <span className="text-2xl font-black text-[#166534] font-mono">₹2,44,600</span>
+                <span className="text-2xl font-black text-[#166534] font-mono">₹{totalApproved.toLocaleString('en-IN')}</span>
                 <span className="text-xs text-[#166534] font-bold">{t('verified', 'स्वीकृत')}</span>
               </div>
-              <div className="text-[11px] text-[#0284C7] mt-0.5 font-semibold">{t('advanceInstantAvail', '80% अग्रिम: ₹1,95,680 तुरंत उपलब्ध')}</div>
+              <div className="text-[11px] text-[#0284C7] mt-0.5 font-semibold">
+                80% अग्रिम: ₹{advanceAmount.toLocaleString('en-IN')} {isAdvanceTaken ? 'हस्तांतरित ✓' : 'तुरंत उपलब्ध'}
+              </div>
             </div>
           </section>
 
@@ -319,28 +401,28 @@ export default function DesktopPortal({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div className="bg-[#FAF6EE] p-4 rounded-xl border border-[#E5DEC9] flex flex-col items-center justify-center text-center">
                       <span className="text-xs font-bold text-[#78716C] uppercase">{t('yourToken', 'आपका टोकन')}</span>
-                      <span className="text-5xl font-black text-[#166534] my-1 font-mono">#{queueData?.token || 42}</span>
+                      <span className="text-5xl font-black text-[#166534] my-1 font-mono">#{currentToken}</span>
                       <span className="text-xs font-semibold text-[#166534] bg-green-100 px-2 py-0.5 rounded">{t('active', 'सक्रिय / Active')}</span>
                     </div>
 
                     <div className="bg-white p-4 rounded-xl border border-[#E2E8F0] flex flex-col justify-between">
                       <div>
                         <span className="text-[11px] font-bold text-[#64748B] uppercase">{t('registeredVehicleCrop', 'दर्ज वाहन व फसल')}</span>
-                        <div className="text-sm font-bold text-[#0F172A] mt-1 font-mono">{queueData?.vehicleNumber || 'RJ-20-EA-4412'}</div>
-                        <div className="text-xs text-[#64748B]">{t('cropNameSoybean', 'सोयाबीन')} ({farmerData?.quintal || 50} {t('quintalUnit', 'क्विंटल')})</div>
+                        <div className="text-sm font-bold text-[#0F172A] mt-1 font-mono">{vehicleNumber}</div>
+                        <div className="text-xs text-[#64748B]">{todayCrop} ({commodityQty})</div>
                       </div>
                       <div className="pt-2 border-t border-[#E2E8F0] text-xs text-[#B45309] font-semibold">
-                        {t('goToWeighbridge', 'धर्मकांटा गेट क्र. 3 पर जाएं')}
+                        धर्मकांटा गेट क्र. {weighbridgeNo} पर जाएं
                       </div>
                     </div>
 
                     <div className="bg-white p-4 rounded-xl border border-[#E2E8F0] flex flex-col justify-between">
                       <div>
                         <span className="text-[11px] font-bold text-[#64748B] uppercase">{t('estWaitTime', 'अनुमानित प्रतीक्षा समय')}</span>
-                        <div className="text-3xl font-black text-[#B45309] mt-1 font-mono">~25 <span className="text-sm font-sans font-semibold">{t('minutes', 'मिनट')}</span></div>
+                        <div className="text-3xl font-black text-[#B45309] mt-1 font-mono">~{estWaitMins} <span className="text-sm font-sans font-semibold">{t('minutes', 'मिनट')}</span></div>
                       </div>
                       <div className="text-xs text-[#64748B]">
-                        {t('atGateNow', 'गेट पर अभी')}: <strong className="text-[#166534]">#38</strong> ({t('running', 'चालू')})
+                        {t('atGateNow', 'गेट पर अभी')}: <strong className="text-[#166534]">#{atGateNumber}</strong> ({t('running', 'चालू')})
                       </div>
                     </div>
                   </div>
@@ -351,17 +433,39 @@ export default function DesktopPortal({
                       {t('procurementPipeline', 'प्रोक्योरमेंट चरण ट्रैकिंग (4-Stage Pipeline)')}
                     </span>
                     <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                      <div className="p-2.5 rounded-lg bg-green-50 border border-green-300 text-[#166534] font-bold">
-                        {t('step1Done', '1. प्रवेश व तौल (Done)')}
+                      <div className={`p-2.5 rounded-lg font-bold ${
+                        currentStageIdx > 0
+                          ? 'bg-green-50 border border-green-300 text-[#166534]'
+                          : currentStageIdx === 0
+                          ? 'bg-amber-50 border border-amber-300 text-[#B45309] animate-pulse'
+                          : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]'
+                      }`}>
+                        1. प्रवेश व तौल ({currentStageIdx > 0 ? 'Done' : currentStageIdx === 0 ? 'Active' : 'Pending'})
                       </div>
-                      <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-[#B45309] font-bold animate-pulse">
-                        {t('step2Progress', '2. गुणवत्ता जांच (In Progress)')}
+                      <div className={`p-2.5 rounded-lg font-bold ${
+                        currentStageIdx > 1
+                          ? 'bg-green-50 border border-green-300 text-[#166534]'
+                          : currentStageIdx === 1
+                          ? 'bg-amber-50 border border-amber-300 text-[#B45309] animate-pulse'
+                          : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]'
+                      }`}>
+                        2. गुणवत्ता जांच ({currentStageIdx > 1 ? 'Done' : currentStageIdx === 1 ? 'Active' : 'Pending'})
                       </div>
-                      <div className="p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]">
-                        {t('step3Auction', '3. नीलामी आवंटन')}
+                      <div className={`p-2.5 rounded-lg font-bold ${
+                        currentStageIdx > 2
+                          ? 'bg-green-50 border border-green-300 text-[#166534]'
+                          : currentStageIdx === 2
+                          ? 'bg-amber-50 border border-amber-300 text-[#B45309] animate-pulse'
+                          : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]'
+                      }`}>
+                        3. नीलामी आवंटन ({currentStageIdx > 2 ? 'Done' : currentStageIdx === 2 ? 'Active' : 'Pending'})
                       </div>
-                      <div className="p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]">
-                        {t('step4Dbt', '4. DBT बैंक खाता')}
+                      <div className={`p-2.5 rounded-lg font-bold ${
+                        currentStageIdx >= 3
+                          ? 'bg-green-50 border border-green-300 text-[#166534]'
+                          : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]'
+                      }`}>
+                        4. DBT बैंक खाता ({currentStageIdx >= 3 ? 'Done' : 'Pending'})
                       </div>
                     </div>
                   </div>
@@ -375,7 +479,7 @@ export default function DesktopPortal({
                       <h2 className="font-bold text-base text-[#0F172A]">{t('advanceSlotTitle', 'अग्रिम गेट स्लॉट बुकिंग (Advance Slot Reservation)')}</h2>
                     </div>
                     <span className="text-xs text-[#166534] font-bold bg-green-50 px-2.5 py-0.5 rounded border border-green-200">
-                      {t('openStatus', 'खुला है • Open')}
+                      {isGateOpen ? t('openStatus', 'खुला है • Open') : t('closedStatus', 'बंद है • Closed')}
                     </span>
                   </div>
 
@@ -394,7 +498,7 @@ export default function DesktopPortal({
                           {selectedSlot === 'morning' ? 'radio_button_checked' : 'radio_button_unchecked'}
                         </span>
                       </div>
-                      <span className="text-xs text-[#166534] font-semibold mt-1 block">{t('morningSlotsAvail', '8 स्लॉट उपलब्ध (Morning Window)')}</span>
+                      <span className="text-xs text-[#166534] font-semibold mt-1 block">{morningSlots} स्लॉट उपलब्ध (Morning Window)</span>
                     </div>
 
                     <div
@@ -411,7 +515,7 @@ export default function DesktopPortal({
                           {selectedSlot === 'afternoon' ? 'radio_button_checked' : 'radio_button_unchecked'}
                         </span>
                       </div>
-                      <span className="text-xs text-[#B45309] font-semibold mt-1 block">{t('afternoonSlotsAvail', '15 स्लॉट उपलब्ध (Afternoon Window)')}</span>
+                      <span className="text-xs text-[#B45309] font-semibold mt-1 block">{afternoonSlots} स्लॉट उपलब्ध (Afternoon Window)</span>
                     </div>
                   </div>
 
@@ -438,18 +542,18 @@ export default function DesktopPortal({
 
                     <div className="bg-[#FAF6EE] border-2 border-dashed border-[#B45309] rounded-xl p-4 mt-4 text-center">
                       <span className="text-[11px] font-bold text-[#78716C] uppercase">{t('approvedAdvanceAmount', 'स्वीकृत अग्रिम ऋण राशि')}</span>
-                      <div className="text-3xl font-black text-[#166534] my-1 font-mono">₹1,95,680</div>
+                      <div className="text-3xl font-black text-[#166534] my-1 font-mono">₹{advanceAmount.toLocaleString('en-IN')}</div>
                       <p className="text-xs text-[#57534E]">{t('advanceSubDesc', 'तौल सत्यापन के तुरंत 15 मिनट के भीतर बैंक खाते में हस्तांतरण')}</p>
                     </div>
 
                     <div className="space-y-2 mt-4 text-xs text-[#64748B]">
                       <div className="flex justify-between">
                         <span>{t('grossCropVal', 'सकल फसल मूल्य:')}</span>
-                        <strong className="text-[#0F172A]">₹2,44,600</strong>
+                        <strong className="text-[#0F172A]">₹{totalApproved.toLocaleString('en-IN')}</strong>
                       </div>
                       <div className="flex justify-between">
                         <span>{t('advanceEligibility', 'अग्रिम पात्रता (80%):')}</span>
-                        <strong className="text-[#166534]">₹1,95,680</strong>
+                        <strong className="text-[#166534]">₹{advanceAmount.toLocaleString('en-IN')}</strong>
                       </div>
                       <div className="flex justify-between">
                         <span>{t('interestRate', 'ब्याज दर (Subsidized):')}</span>
@@ -457,17 +561,24 @@ export default function DesktopPortal({
                       </div>
                       <div className="flex justify-between">
                         <span>{t('beneficiaryAcc', 'लाभार्थी खाता:')}</span>
-                        <strong className="font-mono text-[#0F172A]">SBI •••• 8821</strong>
+                        <strong className="font-mono text-[#0F172A]">{bankName} •••• {bankLast4}</strong>
                       </div>
                     </div>
                   </div>
 
                   <button
                     onClick={handleClaimAdvance}
-                    className="mt-5 w-full py-2.5 rounded-lg bg-[#B45309] hover:bg-[#92400E] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition"
+                    disabled={isAdvanceTaken}
+                    className={`mt-5 w-full py-2.5 rounded-lg font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition ${
+                      isAdvanceTaken
+                        ? 'bg-green-700 text-white cursor-default'
+                        : 'bg-[#B45309] hover:bg-[#92400E] text-white cursor-pointer'
+                    }`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">account_balance</span>
-                    {t('disburseNow', '80% अग्रिम दावा करें (Disburse Now)')}
+                    <span className="material-symbols-outlined text-[18px]">
+                      {isAdvanceTaken ? 'verified' : 'account_balance'}
+                    </span>
+                    {isAdvanceTaken ? '✓ 80% अग्रिम राशि अंतरित (Credited)' : t('disburseNow', '80% अग्रिम दावा करें (Disburse Now)')}
                   </button>
                 </div>
 
@@ -493,8 +604,8 @@ export default function DesktopPortal({
                         <span className="font-mono font-bold text-[#166534] text-sm">₹4,940/{t('quintalUnit', 'Qtl')}</span>
                       </div>
                       <div className="flex justify-between text-[#64748B] mt-1">
-                        <span>{t('cropNameSoybean', 'सोयाबीन')} (लॉट #24A)</span>
-                        <span className="text-[#B45309] font-semibold">+₹48 {t('aboveMsp', 'above MSP')}</span>
+                        <span>{todayCrop} (लॉट #24A)</span>
+                        <span className="text-[#B45309] font-semibold">+₹48 above MSP</span>
                       </div>
                     </div>
 
@@ -504,8 +615,8 @@ export default function DesktopPortal({
                         <span className="font-mono font-bold text-[#166534] text-sm">₹4,915/{t('quintalUnit', 'Qtl')}</span>
                       </div>
                       <div className="flex justify-between text-[#64748B] mt-1">
-                        <span>{t('cropNameSoybean', 'सोयाबीन')} (लॉट #24A)</span>
-                        <span className="text-[#B45309] font-semibold">+₹23 {t('aboveMsp', 'above MSP')}</span>
+                        <span>{todayCrop} (लॉट #24A)</span>
+                        <span className="text-[#B45309] font-semibold">+₹23 above MSP</span>
                       </div>
                     </div>
                   </div>
@@ -559,27 +670,27 @@ export default function DesktopPortal({
                 <div className="my-6 text-center">
                   <span className="text-xs font-bold text-[#78716C] uppercase">{t('yourToken', 'टोकन क्रमांक')}</span>
                   <div className="text-7xl font-black text-[#166534] font-mono leading-none my-1">
-                    #{queueData?.token || 42}
+                    #{currentToken}
                   </div>
                   <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-[#E2D9C5] text-xs font-mono mt-2">
-                    <span className="font-bold">{queueData?.vehicleNumber || 'RJ-20-EA-4412'}</span>
+                    <span className="font-bold">{vehicleNumber}</span>
                     <span>•</span>
-                    <span className="font-bold text-[#B45309]">{t('cropNameSoybean', 'सोयाबीन')} (50 {t('quintalUnit', 'क्विंटल')})</span>
+                    <span className="font-bold text-[#B45309]">{todayCrop} ({commodityQty})</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 text-center border-t border-[#CFC5B0] pt-4 text-xs">
                   <div className="bg-white p-3 rounded-lg border border-[#E2D9C5]">
                     <span className="text-[#64748B] block">{t('queueStatus', 'कतार स्थिति')}</span>
-                    <span className="text-lg font-bold text-[#0F172A]">{queueData?.aheadCount || 4} {t('tractorsAhead', 'ट्रैक्टर')}</span>
+                    <span className="text-lg font-bold text-[#0F172A]">{aheadCount} {t('tractorsAhead', 'ट्रैक्टर')}</span>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-[#E2D9C5]">
                     <span className="text-[#64748B] block">{t('atGateNow', 'गेट पर अभी')}</span>
-                    <span className="text-lg font-bold font-mono text-[#166534]">#{queueData?.atGateNumber || 38}</span>
+                    <span className="text-lg font-bold font-mono text-[#166534]">#{atGateNumber}</span>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-[#E2D9C5]">
                     <span className="text-[#64748B] block">{t('estTime', 'अनुमानित समय')}</span>
-                    <span className="text-lg font-bold text-[#B45309]">~{queueData?.estWaitMins || 25} {t('minutes', 'मिनट')}</span>
+                    <span className="text-lg font-bold text-[#B45309]">~{estWaitMins} {t('minutes', 'मिनट')}</span>
                   </div>
                 </div>
               </div>
@@ -595,25 +706,31 @@ export default function DesktopPortal({
                   <h2 className="text-base font-bold text-[#0F172A]">{t('dailyMandiStatus', 'दैनिक मंडी संचालन स्थिति')}</h2>
                 </div>
                 
-                <div className="p-4 rounded-xl bg-green-50 border border-green-200 flex items-center justify-between">
+                <div className={`p-4 rounded-xl border flex items-center justify-between ${
+                  isGateOpen ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
                   <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-4xl text-[#166534]">check_circle</span>
+                    <span className={`material-symbols-outlined text-4xl ${isGateOpen ? 'text-[#166534]' : 'text-red-600'}`}>
+                      {isGateOpen ? 'check_circle' : 'cancel'}
+                    </span>
                     <div>
-                      <h3 className="text-lg font-bold text-[#166534]">{t('mandiOpenToday', 'आज मंडी खुली है (Open Today)')}</h3>
+                      <h3 className={`text-lg font-bold ${isGateOpen ? 'text-[#166534]' : 'text-red-700'}`}>
+                        {isGateOpen ? t('mandiOpenToday', 'आज मंडी खुली है (Open Today)') : t('mandiClosedToday', 'आज मंडी बंद है (Closed Today)')}
+                      </h3>
                       <p className="text-xs text-[#64748B]">{t('operatingHours', 'प्रचालन समय')}: {scheduleData?.timing || '06:00 AM - 05:00 PM'}</p>
                     </div>
                   </div>
-                  <span className="px-3 py-1 bg-[#166534] text-white rounded-lg text-xs font-bold">{t('gateNo3', 'गेट क्र. 3')}</span>
+                  <span className="px-3 py-1 bg-[#166534] text-white rounded-lg text-xs font-bold">गेट क्र. {weighbridgeNo}</span>
                 </div>
 
                 <div className="mt-5 space-y-3 text-xs">
                   <div className="flex justify-between p-3 rounded-lg bg-slate-50 border border-slate-200">
                     <span className="text-[#64748B]">{t('mainCrop', 'मुख्य अधिसूचित फसल:')}</span>
-                    <span className="font-bold text-[#0F172A]">{scheduleData?.todayCrop || 'सोयाबीन (JS-335)'}</span>
+                    <span className="font-bold text-[#0F172A]">{todayCrop} ({cropGrade})</span>
                   </div>
                   <div className="flex justify-between p-3 rounded-lg bg-slate-50 border border-slate-200">
                     <span className="text-[#64748B]">{t('govtMsp', 'सरकारी समर्थन मूल्य (MSP):')}</span>
-                    <span className="font-bold text-[#166534]">₹{scheduleData?.msp || 4892} / {t('quintalUnit', 'क्विंटल')}</span>
+                    <span className="font-bold text-[#166534]">₹{currentMsp.toLocaleString('en-IN')} / {t('quintalUnit', 'क्विंटल')}</span>
                   </div>
                 </div>
               </div>
@@ -625,21 +742,23 @@ export default function DesktopPortal({
                 </div>
 
                 <div className="space-y-3 text-xs">
-                  <div className="p-3.5 rounded-xl bg-[#FAF6EE] border border-[#E5DEC9] flex justify-between items-center">
-                    <div>
-                      <div className="font-bold text-[#0F172A]">{t('tomorrowSat', 'कल • शनिवार (15 अप्रैल)')}</div>
-                      <div className="text-[#64748B] mt-0.5">{t('mustardMsp', 'सरसों (Mustard 42% Oil) • MSP ₹5,650')}</div>
+                  {scheduleData?.upcomingDays?.map((day, idx) => (
+                    <div key={idx} className="p-3.5 rounded-xl bg-[#FAF6EE] border border-[#E5DEC9] flex justify-between items-center">
+                      <div>
+                        <div className="font-bold text-[#0F172A]">{day.date} • {day.day}</div>
+                        <div className="text-[#64748B] mt-0.5">{day.crop} {day.msp ? `• MSP ₹${day.msp}` : ''}</div>
+                      </div>
+                      <span className={`px-2.5 py-1 rounded-full font-bold ${
+                        day.open ? 'bg-green-100 text-[#166534]' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {day.open ? t('openToday', 'खुला है') : t('holidayClosed', 'अवकाश • Closed')}
+                      </span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-green-100 text-[#166534] font-bold">{t('openToday', 'खुला है')}</span>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
-                    <div>
-                      <div className="font-bold text-[#0F172A]">{t('dayAfterSun', 'परसों • रविवार (16 अप्रैल)')}</div>
-                      <div className="text-[#64748B] mt-0.5">{t('mandiMaintenance', 'साप्ताहिक मंडी सफाई व रखरखाव')}</div>
+                  )) || (
+                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center text-[#64748B]">
+                      आगामी तिथियां लोड हो रही हैं...
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-700 font-bold">{t('holidayClosed', 'अवकाश • Closed')}</span>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -651,13 +770,16 @@ export default function DesktopPortal({
               <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] mb-5">
                 <div>
                   <h2 className="text-lg font-bold text-[#0F172A]">{t('pfmsDbtTitle', 'PFMS / DBT प्रत्यक्ष बैंक हस्तांतरण स्थिति')}</h2>
-                  <p className="text-xs text-[#64748B]">{t('accountDetails', 'खाता सं.: SBI •••• 8821 • IFSC: SBIN0001234')}</p>
+                  <p className="text-xs text-[#64748B]">खाता सं.: {bankName} •••• {bankLast4} • IFSC: {bankIfsc}</p>
                 </div>
                 <button
                   onClick={handleClaimAdvance}
-                  className="px-4 py-2 bg-[#B45309] hover:bg-[#92400E] text-white text-xs font-bold rounded-lg shadow-sm"
+                  disabled={isAdvanceTaken}
+                  className={`px-4 py-2 text-white text-xs font-bold rounded-lg shadow-sm ${
+                    isAdvanceTaken ? 'bg-green-700 cursor-default' : 'bg-[#B45309] hover:bg-[#92400E]'
+                  }`}
                 >
-                  {t('claimAdvanceBtn', '80% अग्रिम दावा (₹1,95,680)')}
+                  {isAdvanceTaken ? '✓ 80% अग्रिम राशि अंतरित' : `80% अग्रिम दावा (₹${advanceAmount.toLocaleString('en-IN')})`}
                 </button>
               </div>
 
@@ -710,7 +832,7 @@ export default function DesktopPortal({
                       <div>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-[#166534]">{t('verifiedBuyer', 'सत्यापित खरीदार')}</span>
                         <h3 className="font-bold text-base text-[#0F172A] mt-1">राजस्थान स्टेट एग्रो इंडस्ट्रीज</h3>
-                        <p className="text-xs text-[#64748B]">{t('lotDetails', 'लॉट: #APMC-24A • 50 क्विंटल सोयाबीन')}</p>
+                        <p className="text-xs text-[#64748B]">लॉट: #{farmerData?.farmerId || 'APMC-24A'} • {commodityQty} {todayCrop}</p>
                       </div>
                       <div className="text-right">
                         <span className="text-xl font-black text-[#166534] font-mono">₹4,940</span>
@@ -732,7 +854,7 @@ export default function DesktopPortal({
                       <div>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-[#166534]">{t('verifiedBuyer', 'सत्यापित खरीदार')}</span>
                         <h3 className="font-bold text-base text-[#0F172A] mt-1">ITC e-Choupal Procurement</h3>
-                        <p className="text-xs text-[#64748B]">{t('lotDetails', 'लॉट: #APMC-24A • 50 क्विंटल सोयाबीन')}</p>
+                        <p className="text-xs text-[#64748B]">लॉट: #{farmerData?.farmerId || 'APMC-24A'} • {commodityQty} {todayCrop}</p>
                       </div>
                       <div className="text-right">
                         <span className="text-xl font-black text-[#166534] font-mono">₹4,915</span>
@@ -797,42 +919,51 @@ export default function DesktopPortal({
                   <h2 className="text-lg font-bold text-[#0F172A]">{t('staffControlTitle', 'APMC मंडी कंट्रोल व ऑपरेटर डेस्क')}</h2>
                   <p className="text-xs text-[#64748B]">{t('staffControlSub', 'मंडी गेट स्थिति, लाइव कांटा कतार, और लाउडस्पीकर प्रसारण')}</p>
                 </div>
+                <button
+                  onClick={handleResetDemo}
+                  className="px-3 py-1.5 rounded-lg border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[16px]">restart_alt</span>
+                  <span>डेमो रीसेट (Reset Database)</span>
+                </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="font-bold text-sm text-[#0F172A] block mb-2">{t('staffAction1Title', '1. गेट स्थिति टॉगल')}</span>
-                  <p className="text-[#64748B] mb-3">{t('staffAction1Sub', 'मंडी यार्ड गेट की स्थिति को लाइव ओपन/क्लोज करें।')}</p>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-sm text-[#0F172A] block mb-1">{t('staffAction1Title', '1. गेट स्थिति टॉगल')}</span>
+                    <p className="text-[#64748B] mb-3">वर्तमान स्थिति: <strong>{isGateOpen ? 'खुला है (OPEN)' : 'बंद है (CLOSED)'}</strong></p>
+                  </div>
                   <button
-                    onClick={() => showToast('✓ मंडी गेट स्थिति अपडेट की गई!')}
-                    className="w-full py-2 bg-[#166534] text-white rounded-lg font-bold"
+                    onClick={handleToggleGate}
+                    className={`w-full py-2.5 text-white rounded-lg font-bold shadow-xs transition ${
+                      isGateOpen ? 'bg-red-700 hover:bg-red-800' : 'bg-[#166534] hover:bg-[#14532d]'
+                    }`}
                   >
-                    {t('staffAction1Btn', 'गेट स्थिति बदलें (Open/Close)')}
+                    {isGateOpen ? 'गेट बंद करें (Close Gate)' : 'गेट खोलें (Open Gate)'}
                   </button>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="font-bold text-sm text-[#0F172A] block mb-2">{t('staffAction2Title', '2. किसान चरण आगे बढ़ाएं')}</span>
-                  <p className="text-[#64748B] mb-3">{t('staffAction2Sub', 'किसान राम लाल (टोकन #42) को अगले चरण पर भेजें।')}</p>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-sm text-[#0F172A] block mb-1">{t('staffAction2Title', '2. किसान चरण आगे बढ़ाएं')}</span>
+                    <p className="text-[#64748B] mb-3">किसान {farmerData?.name || 'राम लाल'} (टोकन #{currentToken}) वर्तमान चरण: <strong className="text-[#166534] uppercase">{currentFarmerStage}</strong></p>
+                  </div>
                   <button
-                    onClick={() => {
-                      advanceFarmerStage('F1');
-                      showToast('✓ किसान राम लाल अगले चरण (Quality Check) पर बढ़ा!');
-                    }}
-                    className="w-full py-2 bg-[#166534] text-white rounded-lg font-bold"
+                    onClick={handleAdvanceStage}
+                    className="w-full py-2.5 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg font-bold shadow-xs transition"
                   >
                     {t('staffAction2Btn', 'अगला चरण (Advance Stage)')}
                   </button>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="font-bold text-sm text-[#0F172A] block mb-2">{t('staffAction3Title', '3. लाउडस्पीकर घोषणा (PA)')}</span>
-                  <p className="text-[#64748B] mb-3">{t('staffAction3Sub', 'टोकन #42 को कांटा नंबर 3 पर आने की घोषणा करें।')}</p>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-sm text-[#0F172A] block mb-1">{t('staffAction3Title', '3. लाउडस्पीकर घोषणा (PA)')}</span>
+                    <p className="text-[#64748B] mb-3">टोकन #{currentToken} को कांटा नंबर #{weighbridgeNo} पर आने की घोषणा प्रसारित करें।</p>
+                  </div>
                   <button
-                    onClick={() => {
-                      sendAnnouncement(42, 3);
-                      showToast('📢 लाउडस्पीकर प्रसारण: टोकन #42 को कांटा #3 पर बुलाया गया!');
-                    }}
-                    className="w-full py-2 bg-[#B45309] text-white rounded-lg font-bold"
+                    onClick={handleBroadcastAnnouncement}
+                    className="w-full py-2.5 bg-[#B45309] hover:bg-[#92400E] text-white rounded-lg font-bold shadow-xs transition"
                   >
                     {t('staffAction3Btn', 'लाउडस्पीकर प्रसारण करें')}
                   </button>
@@ -866,3 +997,4 @@ export default function DesktopPortal({
     </div>
   );
 }
+

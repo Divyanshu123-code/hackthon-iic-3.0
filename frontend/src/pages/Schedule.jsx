@@ -157,38 +157,43 @@ export default function Schedule({ scheduleData, onNavigate }) {
       {/* Upcoming Days */}
       <div className="flex flex-col gap-pad-xs">
         <h4 className="font-headline-sm text-headline-sm text-on-surface px-pad-xs">आगामी तारीखें / Upcoming Days</h4>
-        <div className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-pad-sm">
-            <div className="w-12 h-12 rounded-xl bg-surface-container-highest flex flex-col items-center justify-center text-on-surface">
-              <span className="font-label-sm text-label-sm uppercase leading-none font-bold">कल</span>
-              <span className="font-label-md text-label-md leading-none font-bold">Sat</span>
+        {scheduleData?.upcomingDays?.map((day, idx) => (
+          <div key={idx} className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-pad-sm">
+              <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center text-on-surface ${
+                day.open ? 'bg-surface-container-highest' : 'bg-error-container/40'
+              }`}>
+                <span className="font-label-sm text-label-sm uppercase leading-none font-bold">{day.day}</span>
+                <span className="font-label-md text-label-md leading-none font-bold">{day.date}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-label-lg text-label-lg text-on-surface font-bold">{day.crop}</span>
+                <span className="font-body-sm text-body-sm text-on-surface-variant">
+                  {day.open ? `Gate 1 & Gate 3 • MSP ₹${day.msp || 'N/A'}` : 'साप्ताहिक रखरखाव • Weekly Cleaning'}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="font-label-lg text-label-lg text-on-surface font-bold">सरसों / Mustard</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant">Gate 1 & Gate 3 • 8:00 AM – 4:30 PM</span>
+            <div className={`px-pad-sm py-pad-xs rounded-full flex items-center gap-1 ${
+              day.open ? 'bg-secondary-fixed text-on-secondary-fixed' : 'bg-error-container text-on-error-container'
+            }`}>
+              {day.open ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                  <span className="font-label-sm text-label-sm font-bold uppercase">खुला • OPEN</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[16px]">block</span>
+                  <span className="font-label-sm text-label-sm font-bold uppercase">बंद • CLOSED</span>
+                </>
+              )}
             </div>
           </div>
-          <div className="bg-secondary-fixed text-on-secondary-fixed px-pad-sm py-pad-xs rounded-full flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-secondary"></span>
-            <span className="font-label-sm text-label-sm font-bold uppercase">खुला • OPEN</span>
+        )) || (
+          <div className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
+            <span className="text-xs text-on-surface-variant">आगामी तिथियां लोड हो रही हैं...</span>
           </div>
-        </div>
-        <div className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between opacity-80 shadow-sm">
-          <div className="flex items-center gap-pad-sm">
-            <div className="w-12 h-12 rounded-xl bg-error-container/40 flex flex-col items-center justify-center text-on-surface">
-              <span className="font-label-sm text-label-sm uppercase leading-none font-bold">परसों</span>
-              <span className="font-label-md text-label-md leading-none font-bold">Sun</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-lg text-label-lg text-on-surface font-bold">साप्ताहिक अवकाश</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant">Weekly APMC Cleaning</span>
-            </div>
-          </div>
-          <div className="bg-error-container text-on-error-container px-pad-sm py-pad-xs rounded-full flex items-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">block</span>
-            <span className="font-label-sm text-label-sm font-bold uppercase">बंद • CLOSED</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Book Slot CTA */}
