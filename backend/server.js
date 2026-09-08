@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -18,8 +19,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static frontend files (Stitch UI & Staff Portal)
-app.use(express.static(path.join(__dirname, 'public')));
+const fs = require('fs');
+
+// Static assets directory (prefer React frontend build, fallback to public folder)
+const frontendDist = path.join(__dirname, '../frontend/dist');
+const publicDir = path.join(__dirname, 'public');
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+} else {
+  app.use(express.static(publicDir));
+}
 
 // Server-Sent Events (SSE) live push stream
 app.get('/api/stream', (req, res) => {
@@ -62,12 +72,20 @@ app.get('/api/health', (req, res) => {
 
 // Staff portal shortcut route
 app.get('/staff', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'staff.html'));
+  if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  } else {
+    res.sendFile(path.join(publicDir, 'staff.html'));
+  }
 });
 
 // Fallback to index.html for SPA navigation
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  } else {
+    res.sendFile(path.join(publicDir, 'index.html'));
+  }
 });
 
 // Start Server
