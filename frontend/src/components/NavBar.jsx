@@ -1,11 +1,14 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function NavBar({ activeTab, onNavigate }) {
+  const { t } = useLanguage();
+
   const navItems = [
-    { id: 'home', label: 'घर', icon: 'agriculture' },
-    { id: 'schedule', label: 'तारीख', icon: 'calendar_month' },
-    { id: 'queue', label: 'नंबर', icon: 'confirmation_number' },
-    { id: 'payment', label: 'रुपये', icon: 'payments' }
+    { id: 'home', label: t('home', 'घर'), icon: 'agriculture' },
+    { id: 'schedule', label: t('schedule', 'तारीख'), icon: 'calendar_month' },
+    { id: 'queue', label: t('queue', 'नंबर'), icon: 'confirmation_number' },
+    { id: 'payment', label: t('payment', 'रुपये'), icon: 'payments' }
   ];
 
   return (

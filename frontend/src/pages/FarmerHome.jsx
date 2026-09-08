@@ -1,13 +1,16 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMarket }) {
+  const { currentLang, changeLanguage, LANGUAGES, speechCode, t } = useLanguage();
+
   const speakGreeting = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(
         `नमस्ते ${farmerData?.name || 'राम लाल जी'}! आपका टोकन नंबर ${farmerData?.token || 42} है। आज मंडी में गेहूं का भाव 2275 रुपये है।`
       );
-      utter.lang = 'hi-IN';
+      utter.lang = speechCode || 'hi-IN';
       window.speechSynthesis.speak(utter);
     }
   };
@@ -15,21 +18,26 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
   return (
     <div className="flex flex-col w-full px-pad-md gap-pad-md animate-in fade-in duration-200">
       
-      {/* LANGUAGE SELECTOR BAR */}
+      {/* INTERACTIVE LANGUAGE SELECTOR BAR */}
       <section aria-label="Select Language" className="w-full overflow-x-auto py-pad-xs no-scrollbar flex items-center gap-pad-xs">
-        <button className="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-primary text-on-primary shadow-sm flex-shrink-0 transition-transform active:scale-95">
-          <span className="font-label-md text-label-md">हिंदी</span>
-          <span className="material-symbols-outlined text-[18px]">check_circle</span>
-        </button>
-        <button className="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
-          <span className="font-label-md text-label-md">मराठी</span>
-        </button>
-        <button className="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
-          <span className="font-label-md text-label-md">ਪੰਜਾਬੀ</span>
-        </button>
-        <button className="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
-          <span className="font-label-md text-label-md">English</span>
-        </button>
+        {LANGUAGES.map((lang) => {
+          const isSelected = currentLang === lang.code;
+          return (
+            <button
+              key={lang.code}
+              onClick={() => changeLanguage(lang.code)}
+              className={`flex items-center gap-1.5 px-pad-md py-1.5 rounded-full font-label-md text-xs font-bold flex-shrink-0 transition-all active:scale-95 shadow-xs ${
+                isSelected
+                  ? 'bg-secondary text-on-secondary shadow-sm scale-105'
+                  : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'
+              }`}
+            >
+              <span>{lang.flag}</span>
+              <span>{lang.label}</span>
+              {isSelected && <span className="material-symbols-outlined text-[16px]">check_circle</span>}
+            </button>
+          );
+        })}
       </section>
 
       {/* CHEERFUL WELCOME BANNER */}
@@ -78,7 +86,7 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
               <span className="material-symbols-outlined text-[40px]">calendar_clock</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-md text-headline-md text-on-surface">समय</span>
+              <span className="font-headline-md text-headline-md text-on-surface">{t('schedule', 'समय')}</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Schedule</span>
             </div>
           </div>
@@ -98,7 +106,7 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
               <span className="material-symbols-outlined text-[40px]">confirmation_number</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-md text-headline-md text-on-secondary-container">कतार</span>
+              <span className="font-headline-md text-headline-md text-on-secondary-container">{t('queue', 'कतार')}</span>
               <span className="font-label-sm text-label-sm text-on-secondary-container">Queue Live</span>
             </div>
           </div>
@@ -115,7 +123,7 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
               <span className="material-symbols-outlined text-[40px]">payments</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-md text-headline-md text-on-surface">पैसे</span>
+              <span className="font-headline-md text-headline-md text-on-surface">{t('payment', 'पैसे')}</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Payments</span>
             </div>
           </div>

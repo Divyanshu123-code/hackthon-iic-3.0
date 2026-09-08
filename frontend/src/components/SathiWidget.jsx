@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { askSathi } from '../api';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
+  const { currentLang, currentLangObj, changeLanguage, LANGUAGES, speechCode, t } = useLanguage();
+
   const [isOpen, setIsOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
@@ -23,11 +26,27 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     {
       id: 1,
       sender: 'sathi',
-      text: `राम लाल जी, नमस्ते! 🙏 मैं आपका साथी AI सहायक हूँ। आज कोटा मंडी में गेहूं की खरीद ₹2,275/Qtl पर चालू है। आपका टोकन #42 है। आप बोलकर या लिखकर कुछ भी पूछ सकते हैं।`,
+      text: t('greeting'),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       model: '🌾 Kisan Sathi AI'
     }
   ]);
+
+  // Update greeting when language changes
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === 1) {
+        return [{
+          id: 1,
+          sender: 'sathi',
+          text: t('greeting'),
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          model: '🌾 Kisan Sathi AI'
+        }];
+      }
+      return prev;
+    });
+  }, [currentLang, t]);
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -61,7 +80,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     }, 1200);
   };
 
-  // Robust Text-To-Speech with Dynamic Language & Voice Matching (Hindi & English)
+  // Robust Text-To-Speech with Dynamic Language & Voice Matching
   const speakText = useCallback((text) => {
     if (!ttsEnabled || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
@@ -75,28 +94,29 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
         .replace(/Qtl/gi, ' Quintal ')
         .trim();
 
-      const isHindi = /[\u0900-\u097F]/.test(cleanText);
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.rate = isHindi ? 0.95 : 1.0;
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
-      utterance.lang = isHindi ? 'hi-IN' : 'en-IN';
+      utterance.lang = speechCode || 'hi-IN';
 
       const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
       let selectedVoice = null;
 
-      if (isHindi) {
-        selectedVoice = voices.find(
-          (v) =>
-            v.lang.toLowerCase().includes('hi') ||
-            v.name.toLowerCase().includes('hindi') ||
-            v.name.toLowerCase().includes('lekha')
-        ) || voices.find((v) => v.lang.toLowerCase().includes('in')) || voices[0];
+      // Match voice based on current language
+      if (currentLang === 'hi') {
+        selectedVoice = voices.find(v => v.lang.includes('hi') || v.name.toLowerCase().includes('hindi') || v.name.toLowerCase().includes('lekha'));
+      } else if (currentLang === 'pa') {
+        selectedVoice = voices.find(v => v.lang.includes('pa') || v.name.toLowerCase().includes('punjabi'));
+      } else if (currentLang === 'mr') {
+        selectedVoice = voices.find(v => v.lang.includes('mr') || v.name.toLowerCase().includes('marathi'));
+      } else if (currentLang === 'gu') {
+        selectedVoice = voices.find(v => v.lang.includes('gu') || v.name.toLowerCase().includes('gujarati'));
       } else {
-        selectedVoice = voices.find(
-          (v) =>
-            (v.lang.toLowerCase().includes('en-in') || v.lang.toLowerCase().includes('en-us') || v.lang.toLowerCase().includes('en-gb')) &&
-            !v.name.toLowerCase().includes('hindi')
-        ) || voices.find((v) => v.lang.toLowerCase().includes('en')) || voices[0];
+        selectedVoice = voices.find(v => (v.lang.includes('en-IN') || v.lang.includes('en-US')) && !v.name.toLowerCase().includes('hindi'));
+      }
+
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.includes(currentLang)) || voices.find(v => v.lang.includes('IN')) || voices[0];
       }
 
       if (selectedVoice) {
@@ -112,7 +132,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     } catch (e) {
       setIsSpeaking(false);
     }
-  }, [ttsEnabled]);
+  }, [ttsEnabled, speechCode, currentLang]);
 
   const stopSpeaking = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -155,10 +175,11 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
         farmerId: farmerData?.farmerId || 'F1',
         conversation: history,
         customApiKey: apiKey,
-        customProvider: provider === 'auto' ? '' : provider
+        customProvider: provider === 'auto' ? '' : provider,
+        language: currentLang
       });
 
-      const botReply = res.reply || 'राम लाल जी, मैं आपकी बात समझ नहीं पाया। कृपया पुनः पूछें।';
+      const botReply = res.reply || 'मैं आपकी बात समझ नहीं पाया। कृपया पुनः पूछें।';
       if (res.modelUsed) setActiveModel(res.modelUsed);
 
       const botMsg = {
@@ -176,7 +197,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
       const errorMsg = {
         id: Date.now() + 1,
         sender: 'sathi',
-        text: 'क्षमा करें, नेटवर्क में समस्या आ रही है। कृपया पुनः प्रयास करें।',
+        text: 'Network issue. Please try again.',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         model: 'Offline Mode'
       };
@@ -197,14 +218,12 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     setIsListening(false);
   };
 
-  // Start active voice recognition with real-time feedback
+  // Start active voice recognition in the selected language
   const startVoiceInput = () => {
     if (typeof window === 'undefined') return;
 
-    // Stop speaking if assistant is speaking
     stopSpeaking();
 
-    // Toggle off if already listening
     if (isListening) {
       stopVoiceInput();
       return;
@@ -213,7 +232,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setMicStatusText('⚠️ इस ब्राउज़र में माइक सपोर्ट नहीं है। कृपया लिखकर पूछें।');
+      setMicStatusText('⚠️ Microphone not supported in this browser.');
       setTimeout(() => setMicStatusText(''), 4000);
       return;
     }
@@ -224,14 +243,14 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
       const recognition = new SpeechRecognition();
       recognitionRef.current = recognition;
 
-      recognition.lang = 'hi-IN';
+      recognition.lang = speechCode || 'hi-IN';
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setIsListening(true);
-        setMicStatusText('🎙️ सुन रहा हूँ... कृपया बोलिए (Listening in Hindi)');
+        setMicStatusText(`🎙️ ${t('listening', 'सुन रहा हूँ...')} (${currentLangObj.label})`);
         setInterimTranscript('');
       };
 
@@ -255,7 +274,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
 
         if (finalTranscript.trim()) {
           setInterimTranscript('');
-          setMicStatusText(`✅ प्राप्त हुआ: "${finalTranscript.trim()}"`);
+          setMicStatusText(`✅ "${finalTranscript.trim()}"`);
           setIsListening(false);
           handleSendMessage(finalTranscript.trim());
         }
@@ -264,13 +283,11 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
       recognition.onerror = (event) => {
         setIsListening(false);
         if (event.error === 'not-allowed') {
-          setMicStatusText('❌ माइक्रोफ़ोन की अनुमति (Permission) दें');
+          setMicStatusText('❌ Microphone permission needed');
         } else if (event.error === 'no-speech') {
-          setMicStatusText('⚠️ कोई आवाज़ नहीं सुनी गई। पुनः माइक दबाएं।');
-        } else if (event.error === 'network') {
-          setMicStatusText('⚠️ नेटवर्क समस्या। कृपया इंटरनेट जांचें।');
+          setMicStatusText('⚠️ No speech detected. Tap mic again.');
         } else {
-          setMicStatusText(`त्रुटि: ${event.error}`);
+          setMicStatusText(`Error: ${event.error}`);
         }
         setTimeout(() => setMicStatusText(''), 4000);
       };
@@ -282,12 +299,11 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
       recognition.start();
     } catch (e) {
       setIsListening(false);
-      setMicStatusText('माइक शुरू नहीं हो सका');
+      setMicStatusText('Could not start mic');
       setTimeout(() => setMicStatusText(''), 3000);
     }
   };
 
-  // Open modal and optionally auto-start listening
   const handleOpenAssistant = (autoListen = false) => {
     setIsOpen(true);
     if (autoListen) {
@@ -297,14 +313,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     }
   };
 
-  const contextChips = {
-    home: ['मेरी फसल कब बिकेगी?', 'आज गेहूं का भाव क्या है?', 'मेरा टोकन नंबर क्या है?', '80% एडवांस कैसे मिलेगा?'],
-    schedule: ['सुबह का स्लॉट बुक करो', 'कल किस फसल की खरीद होगी?', 'मंडी खुलने का समय क्या है?'],
-    queue: ['मेरे आगे कितने ट्रैक्टर हैं?', 'कांटा #3 पर कितना समय लगेगा?', 'गेट पास कब मिलेगा?'],
-    payment: ['80% एडवांस तुरंत भेजो', 'मेरा कुल अनुमोदित भुगतान कितना है?', 'किस बैंक खाते में पैसे आएंगे?']
-  };
-
-  const currentChips = contextChips[activeTab] || contextChips.home;
+  const currentChips = t('chips') || [];
 
   return (
     <>
@@ -314,15 +323,17 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
           <div className="absolute inset-0 rounded-full bg-secondary opacity-60 animate-ping pointer-events-none"></div>
           <button
             onClick={() => handleOpenAssistant(true)}
-            aria-label="साथी AI सहायक"
+            aria-label={t('sathiAssistant', 'साथी AI सहायक')}
             className="relative flex items-center gap-2.5 bg-gradient-to-r from-secondary to-primary hover:opacity-95 text-white shadow-2xl rounded-full px-5 h-14 min-w-[56px] transition-transform active:scale-95 border border-white/20"
           >
             <span className="material-symbols-outlined text-[28px] animate-pulse">mic</span>
             <div className="flex flex-col text-left leading-tight pr-1">
               <span className="font-label-md text-sm font-extrabold tracking-wide whitespace-nowrap">
-                साथी AI • बोलिए
+                {t('talkToSathi', 'साथी AI • बोलिए')}
               </span>
-              <span className="text-[10px] text-secondary-fixed opacity-90">Tap to Talk (Hindi)</span>
+              <span className="text-[10px] text-secondary-fixed opacity-90">
+                {currentLangObj.flag} {currentLangObj.label} Voice
+              </span>
             </div>
           </button>
         </div>
@@ -334,8 +345,8 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
           <div className="w-full max-w-lg bg-[#181a1d] text-white rounded-t-3xl sm:rounded-3xl flex flex-col h-[92vh] sm:h-[680px] shadow-2xl border border-white/10 overflow-hidden animate-in slide-in-from-bottom duration-200">
             
             {/* Top Bar Header */}
-            <div className="bg-[#202328] px-4 py-3.5 flex items-center justify-between border-b border-white/10 flex-shrink-0">
-              <div className="flex items-center gap-3">
+            <div className="bg-[#202328] px-4 py-3 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+              <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-secondary to-primary flex items-center justify-center shadow-md">
                     <span className="material-symbols-outlined text-white text-[22px]">psychology</span>
@@ -349,13 +360,13 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-title-md text-base font-bold text-white">साथी AI • Voice Assistant</h3>
+                    <h3 className="font-title-md text-base font-bold text-white">{t('sathiAssistant', 'साथी AI सहायक')}</h3>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[11px] text-emerald-300">
                     <span>{activeModel}</span>
                     <span>•</span>
-                    <span className="text-white/60">Live Mandi Data</span>
+                    <span className="text-white/60">{t('liveMandiData', 'Live Mandi')}</span>
                   </div>
                 </div>
               </div>
@@ -368,7 +379,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                     className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold flex items-center gap-1 animate-pulse"
                   >
                     <span className="material-symbols-outlined text-[16px]">stop_circle</span>
-                    रोकें
+                    {t('stop', 'रोकें')}
                   </button>
                 ) : (
                   <button
@@ -405,6 +416,29 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                 >
                   <span className="material-symbols-outlined text-[18px]">close</span>
                 </button>
+              </div>
+            </div>
+
+            {/* Quick Language Switcher Bar inside Sathi Modal */}
+            <div className="bg-[#1b1e23] px-3 py-1.5 border-b border-white/10 flex items-center justify-between gap-1 overflow-x-auto no-scrollbar flex-shrink-0">
+              <span className="text-[10px] text-white/50 uppercase font-bold flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">translate</span>
+                भाषा:
+              </span>
+              <div className="flex items-center gap-1">
+                {LANGUAGES.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => changeLanguage(l.code)}
+                    className={`px-2 py-0.5 rounded-full text-[11px] font-bold transition-all ${
+                      currentLang === l.code
+                        ? 'bg-secondary text-on-secondary shadow-xs scale-105'
+                        : 'bg-white/5 text-white/60 hover:text-white'
+                    }`}
+                  >
+                    {l.flag} {l.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -485,7 +519,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                 </div>
                 <div className="text-xs font-bold text-rose-200 text-center flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span>
-                  <span>{micStatusText || 'माइक चालू है • कृपया हिन्दी या अंग्रेज़ी में बोलें...'}</span>
+                  <span>{micStatusText || `${t('listening', 'सुन रहा हूँ...')} (${currentLangObj.label})`}</span>
                 </div>
                 {interimTranscript && (
                   <p className="text-sm font-semibold text-amber-200 italic bg-black/40 px-3 py-1 rounded-lg border border-white/10">
@@ -495,7 +529,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
               </div>
             )}
 
-            {/* Mic Status Hint if not listening but status exists */}
+            {/* Mic Status Hint */}
             {!isListening && micStatusText && (
               <div className="bg-amber-900/40 px-3 py-1.5 text-xs text-amber-200 text-center border-b border-amber-500/30">
                 {micStatusText}
@@ -545,7 +579,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                       className="mt-1 px-2 py-0.5 text-[11px] text-white/60 hover:text-secondary-fixed flex items-center gap-1 active:scale-95 transition-colors"
                     >
                       <span className="material-symbols-outlined text-[14px]">volume_up</span>
-                      बोलकर सुनें
+                      {t('listen', 'बोलकर सुनें')}
                     </button>
                   )}
                 </div>
@@ -595,7 +629,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                 <button
                   type="button"
                   onClick={startVoiceInput}
-                  title={isListening ? 'सुनना बंद करें' : 'बोलकर पूछें (Hindi Voice)'}
+                  title={`${t('speak', 'बोलिए')} (${currentLangObj.label})`}
                   className={`h-12 px-3.5 rounded-xl flex items-center gap-1.5 transition-all active:scale-95 ${
                     isListening
                       ? 'bg-rose-600 text-white animate-pulse ring-4 ring-rose-400/40 font-bold'
@@ -606,7 +640,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                     {isListening ? 'graphic_eq' : 'mic'}
                   </span>
                   <span className="text-xs font-bold hidden sm:inline">
-                    {isListening ? 'सुन रहा हूँ' : 'बोलिए'}
+                    {isListening ? t('listening', 'सुन रहा हूँ') : t('speak', 'बोलिए')}
                   </span>
                 </button>
 
@@ -615,7 +649,7 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder={isListening ? 'माइक चालू है... बोलिए' : 'सवाल लिखें या बोलें...'}
+                  placeholder={isListening ? t('listening', 'सुन रहा हूँ...') : t('askOrType', 'सवाल लिखें या बोलें...')}
                   className="flex-1 bg-white/5 border border-white/15 rounded-xl px-3.5 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-secondary transition-colors"
                 />
 

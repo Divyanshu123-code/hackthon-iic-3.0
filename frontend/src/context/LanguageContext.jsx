@@ -1,0 +1,337 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+export const LANGUAGES = [
+  { code: 'hi', label: 'हिन्दी', sublabel: 'Hindi', flag: '🇮🇳', speechCode: 'hi-IN' },
+  { code: 'en', label: 'English', sublabel: 'English', flag: '🇬🇧', speechCode: 'en-IN' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ', sublabel: 'Punjabi', flag: '🌾', speechCode: 'pa-IN' },
+  { code: 'mr', label: 'मराठी', sublabel: 'Marathi', flag: '🚩', speechCode: 'mr-IN' },
+  { code: 'gu', label: 'ગુજરાતી', sublabel: 'Gujarati', flag: '🌿', speechCode: 'gu-IN' }
+];
+
+export const TRANSLATIONS = {
+  hi: {
+    appTitle: 'किसान मंडी',
+    home: 'घर',
+    schedule: 'तारीख',
+    queue: 'नंबर',
+    payment: 'रुपये',
+    staffDesk: 'स्टाफ डेस्क',
+    speak: 'बोलिए',
+    talkToSathi: 'साथी AI • बोलिए',
+    sathiAssistant: 'साथी AI सहायक',
+    liveMandiData: 'लाइव मंडी डेटा',
+    greeting: 'राम लाल जी, नमस्ते! 🙏 मैं आपका साथी AI सहायक हूँ। आज कोटा मंडी में गेहूं की खरीद ₹2,275/Qtl पर चालू है। आपका टोकन #42 है। आप बोलकर या लिखकर कुछ भी पूछ सकते हैं।',
+    listening: 'सुन रहा हूँ... कृपया बोलिए',
+    askOrType: 'सवाल लिखें या बोलें...',
+    send: 'पूछें',
+    stop: 'रोकें',
+    listen: 'बोलकर सुनें',
+    selectLanguage: 'भाषा चुनें • Select Language',
+    todayOpen: 'आज खुला है',
+    openToday: 'OPEN TODAY',
+    gateOpen: 'गेट खुला है • Gate Open',
+    gateClosed: 'गेट बंद है • Closed',
+    wheatProcurement: 'गेहूं (Wheat) खरीद चालू',
+    govtMsp: 'सरकारी समर्थन मूल्य (MSP)',
+    bookSlot: 'स्लॉट बुक करें',
+    bookSlotSubtitle: 'लाइन से बचें, समय पर पहुंचें',
+    loadSize: 'वाहन व उपज भार',
+    blockTokenNow: '🔒 टोकन अभी ब्लॉक करें',
+    blockTokenSub: '15 मिनट के लिए आरक्षित • Free Slot Reserve',
+    showQrPass: 'सुरक्षा गार्ड को पास दिखाएं',
+    mandiSteps: 'मंडी प्रक्रिया • Mandi Steps',
+    stepArrived: 'पहुंचे',
+    stepWeighing: 'तौल',
+    stepGrade: 'गुणवत्ता',
+    stepPass: 'पास',
+    stepCount: 'कदम 2 / 4 चालू',
+    weighbridgeNo: 'निर्धारित कांटा',
+    commodity: 'फसल • Commodity',
+    vehicleDetails: 'ट्रैक्टर विवरण • Vehicle',
+    totalApproved: 'कुल स्वीकृत राशि • Total Approved',
+    needCashUrgently: 'पैसे तुरंत चाहिए? (Need Cash?)',
+    getAdvanceNow: '⚡ तुरंत 80% पैसे लें • Get Money Now',
+    advanceSubtext: 'बिना इंतजार 2 मिनट में अपने खाते में पाएं। शेष 20% सामान्य प्रक्रिया से मिलेगा।',
+    linkedBank: 'जुड़ा हुआ बैंक खाता',
+    verified: 'सत्यापित',
+    mandiTaxFree: 'सरकारी मंडी शुल्क: ₹0 (किसान छूट)',
+    zeroInterest: 'एडवांस शुल्क: 0% शून्य ब्याज (सरकारी योजना)',
+    helpline: 'सहायता केंद्र: 1800-180-1551 (टोल फ्री)',
+    chips: [
+      'मेरी फसल कब बिकेगी?',
+      'आज गेहूं का भाव क्या है?',
+      'गाड़ी RJ-20-EA-4412 स्थिति',
+      '80% एडवांस कैसे मिलेगा?'
+    ]
+  },
+  en: {
+    appTitle: 'Kisan Mandi',
+    home: 'Home',
+    schedule: 'Schedule',
+    queue: 'Token / Queue',
+    payment: 'Payment',
+    staffDesk: 'Staff Desk',
+    speak: 'Speak',
+    talkToSathi: 'Sathi AI • Talk',
+    sathiAssistant: 'Sathi AI Assistant',
+    liveMandiData: 'Live Mandi Data',
+    greeting: 'Hello Ram Lal Ji! 🙏 I am your Sathi AI Assistant for Kota Mandi. Today Wheat MSP is ₹2,275/Qtl. Your Token is #42. How may I assist you today?',
+    listening: 'Listening... Please speak now',
+    askOrType: 'Type or speak your question...',
+    send: 'Ask',
+    stop: 'Stop',
+    listen: 'Listen Aloud',
+    selectLanguage: 'Select Language • भाषा चुनें',
+    todayOpen: 'Open Today',
+    openToday: 'OPEN TODAY',
+    gateOpen: 'Gate Open',
+    gateClosed: 'Gate Closed',
+    wheatProcurement: 'Wheat Procurement Live',
+    govtMsp: 'Govt. MSP Benchmark',
+    bookSlot: "Book Today's Slot",
+    bookSlotSubtitle: 'Skip the line, arrive on schedule',
+    loadSize: 'Vehicle & Load Size',
+    blockTokenNow: '🔒 Block Token Slot Now',
+    blockTokenSub: 'Reserved for 15 mins • Priority Gate Pass',
+    showQrPass: 'Show Entry QR Pass to Guard',
+    mandiSteps: 'Mandi Steps Progress',
+    stepArrived: 'Arrived',
+    stepWeighing: 'Weighing',
+    stepGrade: 'Grade',
+    stepPass: 'Pass',
+    stepCount: 'Step 2 / 4 Active',
+    weighbridgeNo: 'Assigned Weighbridge',
+    commodity: 'Commodity',
+    vehicleDetails: 'Tractor Details',
+    totalApproved: 'Total Approved Amount',
+    needCashUrgently: 'Need Cash Urgently?',
+    getAdvanceNow: '⚡ Get 80% Money Now',
+    advanceSubtext: 'Get 80% within 120 seconds into your bank account. Remaining 20% processed normally.',
+    linkedBank: 'Linked Bank Account',
+    verified: 'Verified',
+    mandiTaxFree: 'Mandi Fee: ₹0 (Farmer Exemption)',
+    zeroInterest: 'Advance Fee: 0% Zero Interest (Govt. Scheme)',
+    helpline: 'Helpdesk: 1800-180-1551 (Toll Free)',
+    chips: [
+      'When will my crop be weighed?',
+      "What is today's MSP rate?",
+      'Check RJ-20-EA-4412 status',
+      'How to get 80% advance?'
+    ]
+  },
+  pa: {
+    appTitle: 'ਕਿਸਾਨ ਮੰਡੀ',
+    home: 'ਘਰ',
+    schedule: 'ਤਾਰੀਖ਼',
+    queue: 'ਟੋਕਨ / ਕਤਾਰ',
+    payment: 'ਭੁਗਤਾਨ',
+    staffDesk: 'ਸਟਾਫ਼ ਡੈਸਕ',
+    speak: 'ਬੋਲੋ',
+    talkToSathi: 'ਸਾਥੀ AI • ਬੋਲੋ',
+    sathiAssistant: 'ਸਾਥੀ AI ਸਹਾਇਕ',
+    liveMandiData: 'ਲਾਈਵ ਮੰਡੀ ਡਾਟਾ',
+    greeting: 'ਰਾਮ ਲਾਲ ਜੀ, ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ! 🙏 ਮੈਂ ਤੁਹਾਡਾ ਸਾਥੀ AI ਸਹਾਇਕ ਹਾਂ। ਅੱਜ ਕਣਕ ਦਾ ਐਮ.ਐਸ.ਪੀ ₹2,275/ਕੁਇੰਟਲ ਹੈ। ਤੁਹਾਡਾ ਟੋਕਨ #42 ਹੈ। ਤੁਸੀਂ ਕੁਝ ਵੀ ਪੁੱਛ ਸਕਦੇ ਹੋ।',
+    listening: 'ਸੁਣ ਰਿਹਾ ਹਾਂ... ਕਿਰਪਾ ਕਰਕੇ ਬੋਲੋ',
+    askOrType: 'ਸਵਾਲ ਲਿਖੋ ਜਾਂ ਬੋਲੋ...',
+    send: 'ਪੁੱਛੋ',
+    stop: 'ਰੋਕੋ',
+    listen: 'ਸੁਣੋ',
+    selectLanguage: 'ਭਾਸ਼ਾ ਚੁਣੋ • Select Language',
+    todayOpen: 'ਅੱਜ ਖੁੱਲ੍ਹਾ ਹੈ',
+    openToday: 'OPEN TODAY',
+    gateOpen: 'ਗੇਟ ਖੁੱਲ੍ਹਾ ਹੈ',
+    gateClosed: 'ਗੇਟ ਬੰਦ ਹੈ',
+    wheatProcurement: 'ਕਣਕ ਦੀ ਖ਼ਰੀਦ ਚਾਲੂ',
+    govtMsp: 'ਸਰਕਾਰੀ ਸਮਰਥਨ ਮੁੱਲ (MSP)',
+    bookSlot: 'ਸਲਾਟ ਬੁੱਕ ਕਰੋ',
+    bookSlotSubtitle: 'ਲਾਈਨ ਤੋਂ ਬਚੋ, ਸਮੇਂ ਸਿਰ ਪਹੁੰਚੋ',
+    loadSize: 'ਵਾਹਨ ਅਤੇ ਫ਼ਸਲ ਭਾਰ',
+    blockTokenNow: '🔒 ਟੋਕਨ ਹੁਣੇ ਬੁੱਕ ਕਰੋ',
+    blockTokenSub: '15 ਮਿੰਟ ਲਈ ਰਾਖਵਾਂ • ਗੇਟ ਪਾਸ',
+    showQrPass: 'ਗਾਰਡ ਨੂੰ QR ਪਾਸ ਦਿਖਾਓ',
+    mandiSteps: 'ਮੰਡੀ ਕਦਮ • Mandi Steps',
+    stepArrived: 'ਪਹੁੰਚੇ',
+    stepWeighing: 'ਤੋਲ',
+    stepGrade: 'ਕੁਆਲਿਟੀ',
+    stepPass: 'ਪਾਸ',
+    stepCount: 'ਕਦਮ 2 / 4 ਚਾਲੂ',
+    weighbridgeNo: 'ਨਿਰਧਾਰਿਤ ਕੰਡਾ',
+    commodity: 'ਫ਼ਸਲ • Commodity',
+    vehicleDetails: 'ਟਰੈਕਟਰ ਵੇਰਵਾ',
+    totalApproved: 'ਕੁੱਲ ਮਨਜ਼ੂਰਸ਼ੁਦਾ ਰਕਮ',
+    needCashUrgently: 'ਪੈਸੇ ਦੀ ਤੁਰੰਤ ਲੋੜ ਹੈ?',
+    getAdvanceNow: '⚡ 80% ਪੈਸੇ ਤੁਰੰਤ ਲਵੋ',
+    advanceSubtext: '2 ਮਿੰਟਾਂ ਵਿੱਚ ਖਾਤੇ ਵਿੱਚ ਪ੍ਰਾਪਤ ਕਰੋ। ਬਾਕੀ 20% ਬਾਅਦ ਵਿੱਚ ਮਿਲੇਗਾ।',
+    linkedBank: 'ਲਿੰਕ ਕੀਤਾ ਬੈਂਕ ਖਾਤਾ',
+    verified: 'ਤਸਦੀਕਸ਼ੁਦਾ',
+    mandiTaxFree: 'ਸਰਕਾਰੀ ਮੰਡੀ ਫੀਸ: ₹0 (ਛੋਟ)',
+    zeroInterest: 'ਐਡਵਾਂਸ ਫੀਸ: 0% ਵਿਆਜ ਮੁਕਤ',
+    helpline: 'ਹੈਲਪਲਾਈਨ: 1800-180-1551 (ਟੋਲ ਫ੍ਰੀ)',
+    chips: [
+      'ਮੇਰੀ ਫ਼ਸਲ ਕਦੋਂ ਤੁਲੇਗੀ?',
+      'ਅੱਜ ਕਣਕ ਦਾ ਕੀ ਭਾਅ ਹੈ?',
+      'ਗੱਡੀ RJ-20-EA-4412 ਸਥਿਤੀ',
+      '80% ਐਡਵਾਂਸ ਕਿਵੇਂ ਮਿਲੇਗਾ?'
+    ]
+  },
+  mr: {
+    appTitle: 'किसान मंडी',
+    home: 'मुख्य',
+    schedule: 'वेळापत्रक',
+    queue: 'टोकन / रांग',
+    payment: 'पेमेंट',
+    staffDesk: 'स्टाफ डेस्क',
+    speak: 'बोला',
+    talkToSathi: 'साथी AI • बोला',
+    sathiAssistant: 'साथी AI सहाय्यक',
+    liveMandiData: 'थेट बाजार माहिती',
+    greeting: 'राम लाल जी, नमस्कार! 🙏 मी तुमचा साथी AI सहाय्यक आहे. आज कोटा बाजारात गव्हाचा दर ₹2,275/क्विंटल आहे. तुमचा टोकन #42 आहे. आपण काहीही विचारू शकता.',
+    listening: 'ऐकत आहे... कृपया बोला',
+    askOrType: 'प्रश्न लिहा किंवा बोला...',
+    send: 'विचारा',
+    stop: 'थांबवा',
+    listen: 'ऐका',
+    selectLanguage: 'भाषा निवडा • Select Language',
+    todayOpen: 'आज सुरू आहे',
+    openToday: 'OPEN TODAY',
+    gateOpen: 'गेट उघडे आहे',
+    gateClosed: 'गेट बंद आहे',
+    wheatProcurement: 'गहू खरेदी सुरू',
+    govtMsp: 'शासकीय हमीभाव (MSP)',
+    bookSlot: 'स्लॉट बुक करा',
+    bookSlotSubtitle: 'रांगेत उभे राहू नका, वेळेवर पोहोचा',
+    loadSize: 'वाहन व वजन',
+    blockTokenNow: '🔒 टोकन त्वरित आरक्षित करा',
+    blockTokenSub: '15 मिनिटांसाठी राखीव • गेट पास',
+    showQrPass: 'सुरक्षा रक्षकाला QR पास दाखवा',
+    mandiSteps: 'बाजार प्रक्रिया टप्पे',
+    stepArrived: 'आले',
+    stepWeighing: 'वजन',
+    stepGrade: 'गुणवत्ता',
+    stepPass: 'पास',
+    stepCount: 'टप्पा 2 / 4 सुरू',
+    weighbridgeNo: 'काटा क्रमांक',
+    commodity: 'पीक • Commodity',
+    vehicleDetails: 'ट्रॅक्टर तपशील',
+    totalApproved: 'एकूण मंजूर रक्कम',
+    needCashUrgently: 'त्वरित पैशांची गरज आहे?',
+    getAdvanceNow: '⚡ त्वरित 80% पैसे मिळवा',
+    advanceSubtext: '2 मिनिटांत बँक खात्यात मिळवा. उर्वरित 20% नियमित प्रक्रियेने मिळेल.',
+    linkedBank: 'जोडलेले बँक खाते',
+    verified: 'सत्यापित',
+    mandiTaxFree: 'शासकीय बाजार शुल्क: ₹0 (सूट)',
+    zeroInterest: 'अ‍ॅडव्हान्स शुल्क: 0% व्याज (सरकारी योजना)',
+    helpline: 'हेल्पलाइन: 1800-180-1551 (टोल फ्री)',
+    chips: [
+      'माझे पीक कधी मोजले जाईल?',
+      'आज गव्हाचा भाव काय आहे?',
+      'गाडी RJ-20-EA-4412 स्थिती',
+      '80% अ‍ॅडव्हान्स कसा मिळेल?'
+    ]
+  },
+  gu: {
+    appTitle: 'કિસાન મંડી',
+    home: 'મુખ્ય',
+    schedule: 'તારીખ',
+    queue: 'ટોકન / લાઈન',
+    payment: 'ચુકવણી',
+    staffDesk: 'સ્ટાફ ડેસ્ક',
+    speak: 'બોલો',
+    talkToSathi: 'સાથી AI • બોલો',
+    sathiAssistant: 'સાથી AI સહાયક',
+    liveMandiData: 'લાઈવ મંડી ડેટા',
+    greeting: 'રામ લાલ જી, નમસ્તે! 🙏 હું તમારો સાથી AI સહાયક છું. આજે કોટા મંડીમાં ઘઉંનો ભાવ ₹2,275/ક્વિન્ટલ છે. તમારો ટોકન #42 છે. તમે બોલીને અથવા લખીને પૂછી શકો છો.',
+    listening: 'સાંભળી રહ્યો છું... કૃપા કરીને બોલો',
+    askOrType: 'પ્રશ્ન લખો અથવા બોલો...',
+    send: 'પૂછો',
+    stop: 'રોકો',
+    listen: 'સાંભળો',
+    selectLanguage: 'ભાષા પસંદ કરો • Select Language',
+    todayOpen: 'આજે ખુલ્લું છે',
+    openToday: 'OPEN TODAY',
+    gateOpen: 'ગેટ ખુલ્લો છે',
+    gateClosed: 'ગેટ બંધ છે',
+    wheatProcurement: 'ઘઉંની ખરીદી ચાલુ',
+    govtMsp: 'સરકારી ટેકાના ભાવ (MSP)',
+    bookSlot: 'સ્લોટ બુક કરો',
+    bookSlotSubtitle: 'લાઈન ટાળો, સમયસર પહોંચો',
+    loadSize: 'વાહન અને જથ્થો',
+    blockTokenNow: '🔒 ટોકન હમણાં જ બ્લોક કરો',
+    blockTokenSub: '15 મિનિટ માટે અનામત • ગેટ પાસ',
+    showQrPass: 'સુરક્ષા ગાર્ડને QR પાસ બતાવો',
+    mandiSteps: 'મંડી પ્રક્રિયા પગલાં',
+    stepArrived: 'પહોંચ્યા',
+    stepWeighing: 'તોલ',
+    stepGrade: 'ગુણવત્તા',
+    stepPass: 'પાસ',
+    stepCount: 'પગલું 2 / 4 ચાલુ',
+    weighbridgeNo: 'નિયુક્ત કાંટો',
+    commodity: 'પાક • Commodity',
+    vehicleDetails: 'ટ્રેક્ટર વિગતો',
+    totalApproved: 'કુલ મંજૂર રકમ',
+    needCashUrgently: 'ત્વરિત પૈસાની જરૂર છે?',
+    getAdvanceNow: '⚡ 80% પૈસા તરત મેળવો',
+    advanceSubtext: '2 મિનિટમાં તમારા ખાતામાં મેળવો. બાકીના 20% સામાન્ય રીતે મળશે.',
+    linkedBank: 'જોડાયેલ બેંક ખાતું',
+    verified: 'ચકાસાયેલ',
+    mandiTaxFree: 'સરકારી મંડી ફી: ₹0 (ખેડૂત છૂટ)',
+    zeroInterest: 'એડવાન્સ ફી: 0% વ્યાજ (સરકારી યોજના)',
+    helpline: 'હેલ્પલાઇન: 1800-180-1551 (ટોલ ફ્રી)',
+    chips: [
+      'મારો પાક ક્યારે તોલાશે?',
+      'આજે ઘઉંનો ભાવ શું છે?',
+      'વાહન RJ-20-EA-4412 સ્થિતિ',
+      '80% એડવાન્સ કેવી રીતે મળશે?'
+    ]
+  }
+};
+
+const LanguageContext = createContext();
+
+export function LanguageProvider({ children }) {
+  const [currentLang, setCurrentLang] = useState(() => {
+    return localStorage.getItem('kisan_mandi_language') || 'hi';
+  });
+
+  const [isLangModalOpen, setIsLangModalOpen] = useState(false);
+
+  const changeLanguage = (langCode) => {
+    if (TRANSLATIONS[langCode]) {
+      setCurrentLang(langCode);
+      localStorage.setItem('kisan_mandi_language', langCode);
+      setIsLangModalOpen(false);
+    }
+  };
+
+  const currentLangObj = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
+
+  const t = (key, fallback = '') => {
+    const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.hi;
+    return dict[key] !== undefined ? dict[key] : fallback || key;
+  };
+
+  return (
+    <LanguageContext.Provider
+      value={{
+        currentLang,
+        currentLangObj,
+        changeLanguage,
+        isLangModalOpen,
+        setIsLangModalOpen,
+        t,
+        LANGUAGES,
+        speechCode: currentLangObj.speechCode
+      }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const ctx = useContext(LanguageContext);
+  if (!ctx) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return ctx;
+}

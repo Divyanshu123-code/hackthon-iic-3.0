@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { LanguageProvider } from './context/LanguageContext';
 import Header from './components/Header';
 import NavBar from './components/NavBar';
 import SathiWidget from './components/SathiWidget';
+import LanguageModal from './components/LanguageModal';
 import QrModal from './components/QrModal';
 import AdvanceModal from './components/AdvanceModal';
 
@@ -14,7 +16,7 @@ import Marketplace from './pages/Marketplace';
 
 import { getFarmerHome, getSchedule, getQueue, getPayment, subscribeToStream } from './api';
 
-export default function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
   const [farmerData, setFarmerData] = useState(null);
   const [scheduleData, setScheduleData] = useState(null);
@@ -101,7 +103,9 @@ export default function App() {
       <SathiWidget activeTab={activeTab} farmerData={farmerData} />
       <NavBar activeTab={activeTab} onNavigate={setActiveTab} />
 
-      {/* Modals */}
+      {/* Global Modals */}
+      <LanguageModal />
+
       <QrModal
         isOpen={isQrOpen}
         onClose={() => setIsQrOpen(false)}
@@ -126,5 +130,13 @@ export default function App() {
         onClose={() => setIsMarketOpen(false)}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

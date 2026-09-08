@@ -51,7 +51,8 @@ export async function askSathi({
   conversation = [],
   customApiKey = '',
   customProvider = '',
-  customBaseUrl = ''
+  customBaseUrl = '',
+  language = 'hi'
 }) {
   const res = await fetch(`${API_BASE}/sathi/query`, {
     method: 'POST',
@@ -63,7 +64,8 @@ export async function askSathi({
       conversation,
       customApiKey,
       customProvider,
-      customBaseUrl
+      customBaseUrl,
+      language
     })
   });
   if (!res.ok) throw new Error('Failed to query Sathi assistant');
