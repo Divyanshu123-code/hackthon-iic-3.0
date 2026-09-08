@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getStaffData, updateStaffSchedule, advanceFarmerStage, advanceFarmerPayment, sendAnnouncement, resetDemoDb } from '../api';
 
 export default function StaffPortal({ onBackToFarmer }) {
-  const { t, language } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const [staffData, setStaffData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('center'); // 'center', 'queue', 'announcements', 'payments'
