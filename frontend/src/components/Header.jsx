@@ -24,10 +24,10 @@ export default function Header({ activeTab, onNavigate, onSwitchToDesktop }) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider leading-none">
-              {t('appTitle', 'किसान मंडी')}
+              {t('appTitle', 'सहायक (Sahayak)')}
             </span>
             <h1 className="font-headline-sm text-headline-sm text-on-surface truncate leading-tight">
-              {titleMap[activeTab] || 'Kisan Mandi'}
+              {titleMap[activeTab] || 'Sahayak'}
             </h1>
           </div>
         </div>

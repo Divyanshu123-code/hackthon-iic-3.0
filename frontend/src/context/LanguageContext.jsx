@@ -10,7 +10,7 @@ export const LANGUAGES = [
 
 export const TRANSLATIONS = {
   hi: {
-    appTitle: 'किसान मंडी',
+    appTitle: 'सहायक (Sahayak)',
     home: 'घर',
     schedule: 'तारीख',
     queue: 'नंबर',
@@ -188,7 +188,7 @@ export const TRANSLATIONS = {
     ]
   },
   en: {
-    appTitle: 'Kisan Mandi',
+    appTitle: 'Sahayak (सहायक)',
     home: 'Home',
     schedule: 'Schedule',
     queue: 'Token / Queue',
@@ -366,7 +366,7 @@ export const TRANSLATIONS = {
     ]
   },
   pa: {
-    appTitle: 'ਕਿਸਾਨ ਮੰਡੀ',
+    appTitle: 'ਸਹਾਇਕ (Sahayak)',
     home: 'ਘਰ',
     schedule: 'ਤਾਰੀਖ਼',
     queue: 'ਟੋਕਨ / ਕਤਾਰ',
@@ -544,7 +544,7 @@ export const TRANSLATIONS = {
     ]
   },
   mr: {
-    appTitle: 'किसान मंडी',
+    appTitle: 'सहाय्यक (Sahayak)',
     home: 'मुख्य',
     schedule: 'वेळापत्रक',
     queue: 'टोकन / रांग',
@@ -722,7 +722,7 @@ export const TRANSLATIONS = {
     ]
   },
   gu: {
-    appTitle: 'કિસાન મંડી',
+    appTitle: 'સહાયક (Sahayak)',
     home: 'મુખ્ય',
     schedule: 'તારીખ',
     queue: 'ટોકન / લાઈન',
