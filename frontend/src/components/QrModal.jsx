@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function QrModal({ isOpen, onClose, farmerData }) {
+  const { currentLang, t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -14,10 +16,10 @@ export default function QrModal({ isOpen, onClose, farmerData }) {
           <span className="material-symbols-outlined">close</span>
         </button>
         <span className="font-label-md text-label-md text-secondary uppercase tracking-widest mt-1 font-bold">
-          प्रवेश द्वार गेट पास
+          {t('gateQrPassTitle', 'Gate Entry QR Pass')}
         </span>
         <span className="font-display-lg-mobile text-display-lg-mobile text-on-surface mt-1 font-extrabold">
-          टोकन #{farmerData?.token || 42}
+          {t('yourToken', 'Token')} #{farmerData?.token || 42}
         </span>
 
         {/* High Contrast Simulated Mandi QR Code Box */}
@@ -62,11 +64,11 @@ export default function QrModal({ isOpen, onClose, farmerData }) {
             {farmerData?.vehicleNumber || 'RJ-20-EA-4412'}
           </span>
           <span className="font-label-sm text-label-sm text-secondary font-bold">
-            कांटा #{farmerData?.weighbridgeNo || 3} मान्य
+            {currentLang === 'en' ? `Lane #${farmerData?.weighbridgeNo || 3} Valid` : `कांटा #${farmerData?.weighbridgeNo || 3} मान्य`}
           </span>
         </div>
         <p className="font-body-sm text-[12px] text-on-surface-variant mt-pad-sm">
-          कांटे पर पहुंचने पर इस कोड को स्कैनर के सामने रखें।
+          {t('scanAtWeighbridgeNote', 'Present this QR pass before the scanner when arriving at the weighbridge.')}
         </p>
       </div>
     </div>

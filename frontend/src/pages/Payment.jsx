@@ -1,21 +1,26 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
+  const { currentLang, t, speechCode } = useLanguage();
+
   const speakPaymentSummary = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const msg = `आपकी कुल राशि 1 लाख 13 हजार 750 रुपये स्वीकृत है। आप 80 प्रतिशत अग्रिम ले सकते हैं।`;
+      const msg = currentLang === 'en'
+        ? `Your total approved amount is ₹1,13,750. You are eligible for an instant 80% advance payment directly to your bank account.`
+        : `आपकी कुल राशि 1 लाख 13 हजार 750 रुपये स्वीकृत है। आप 80 प्रतिशत अग्रिम ले सकते हैं।`;
       const utter = new SpeechSynthesisUtterance(msg);
-      utter.lang = 'hi-IN';
+      utter.lang = speechCode || 'hi-IN';
       window.speechSynthesis.speak(utter);
     }
   };
 
   const totalApproved = paymentData?.totalApproved || 113750;
   const quintal = paymentData?.quintal || 50;
-  const crop = paymentData?.crop || 'गेहूं Grade-A';
+  const crop = currentLang === 'en' ? 'Wheat Grade-A' : (paymentData?.crop || 'गेहूं Grade-A');
   const lotNumber = paymentData?.lotNumber || 'LOT-2026-8849';
-  const quality = paymentData?.quality || { moisture: '10.8%', purity: '99.4%', shed: 'मंडी शेड 4' };
+  const quality = paymentData?.quality || { moisture: '10.8%', purity: '99.4%', shed: currentLang === 'en' ? 'Mandi Shed 4' : 'मंडी शेड 4' };
   const advance = paymentData?.advance || { amount: 91000, taken: false };
   const bank = paymentData?.bank || { name: 'SBI Bank', last4: '4912', ifsc: 'SBIN000210' };
   const timeline = paymentData?.timeline || [];
@@ -27,18 +32,22 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
       <div className="flex items-center justify-between pt-pad-xs">
         <button
           onClick={() => onNavigate('home')}
-          aria-label="Go Back"
+          aria-label={t('back', 'Go Back')}
           className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface shadow-sm active:scale-95 transition-transform"
         >
           <span className="material-symbols-outlined text-[28px]">arrow_back</span>
         </button>
         <div className="flex flex-col items-center text-center">
-          <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-bold">पारदर्शी लेखा-जोखा</span>
-          <h2 className="font-headline-sm text-headline-sm text-on-surface">Payment Status / भुगतान</h2>
+          <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-bold">
+            {t('transparentLedgerTitle', 'Transparent Account Ledger')}
+          </span>
+          <h2 className="font-headline-sm text-headline-sm text-on-surface">
+            {t('paymentStatusHeader', 'Payment Status & Payouts')}
+          </h2>
         </div>
         <button
           onClick={speakPaymentSummary}
-          aria-label="Listen to Audio Summary"
+          aria-label={t('listenGreeting', 'Listen to Audio Summary')}
           className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform shadow-sm"
         >
           <span className="material-symbols-outlined text-[26px]">volume_up</span>
@@ -51,10 +60,12 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-pad-xs">
             <span className="material-symbols-outlined text-secondary text-[22px]">verified</span>
-            <span className="font-label-md text-label-md text-on-surface-variant font-bold">Total Approved Amount / कुल राशि</span>
+            <span className="font-label-md text-label-md text-on-surface-variant font-bold">
+              {t('totalApproved', 'Total Approved Amount')}
+            </span>
           </div>
           <span className="bg-secondary-container text-on-secondary-container px-pad-xs py-0.5 rounded-full font-label-sm text-label-sm flex items-center gap-1 font-bold">
-            <span className="material-symbols-outlined text-[14px]">lock</span> सुरक्षित
+            <span className="material-symbols-outlined text-[14px]">lock</span> {t('securedBadge', 'Secured')}
           </span>
         </div>
         <div className="flex items-baseline gap-1 py-1">
@@ -68,10 +79,10 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="font-label-md text-label-md text-on-surface truncate font-bold">
-              {quintal} क्विंटल (Quintal) {crop}
+              {quintal} {t('quintalUnit', 'Quintals')} • {crop}
             </span>
             <span className="font-body-sm text-body-sm text-on-surface-variant">
-              मंडी लॉट सं.: #{lotNumber}
+              {t('mandiLotNo', 'Mandi Lot No.')}: #{lotNumber}
             </span>
           </div>
         </div>
@@ -85,10 +96,12 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
         <div className="flex flex-col justify-center min-w-0 flex-1">
           <div className="flex items-center gap-1 text-secondary">
             <span className="material-symbols-outlined text-[18px]">fact_check</span>
-            <span className="font-label-sm text-label-sm font-bold">गुणवत्ता प्रमाणित (Grade Approved)</span>
+            <span className="font-label-sm text-label-sm font-bold">
+              {t('gradeApprovedBadge', 'Quality Certified (Grade Approved)')}
+            </span>
           </div>
           <p className="font-body-sm text-body-sm text-on-surface-variant truncate">
-            नमी: {quality.moisture} • शुद्धता: {quality.purity} • {quality.shed}
+            {t('qualitySpecsLabel', 'Moisture')}: {quality.moisture} • {t('purityLabel', 'Purity')}: {quality.purity} • {quality.shed || 'Shed 4'}
           </p>
         </div>
       </div>
@@ -96,7 +109,9 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
       {/* 4-Step Payment Flow Timeline */}
       <div className="rounded-xl bg-surface-container-lowest p-pad-md shadow-sm flex flex-col gap-pad-md border border-slate-100">
         <div className="flex items-center justify-between">
-          <h3 className="font-label-lg text-label-lg text-on-surface font-bold">प्रक्रिया स्थिति / Live Status</h3>
+          <h3 className="font-label-lg text-label-lg text-on-surface font-bold">
+            {t('processLiveStatus', 'Live Stage Tracking')}
+          </h3>
           <span className="font-label-sm text-label-sm text-primary flex items-center gap-1 font-bold">
             <span className="material-symbols-outlined text-[16px] animate-spin">sync</span> Live Synced
           </span>
@@ -129,7 +144,7 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
                     </span>
                     {isInProgress && (
                       <span className="px-2 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-xs rounded-full font-bold animate-pulse">
-                        प्रक्रिया जारी
+                        {t('inProgressBadge', 'In Progress')}
                       </span>
                     )}
                   </div>
@@ -148,10 +163,10 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
         <div className="rounded-xl bg-emerald-50 border border-emerald-300 p-pad-lg shadow-md flex flex-col gap-pad-sm">
           <div className="flex items-center gap-2 text-emerald-800 font-bold">
             <span className="material-symbols-outlined text-[26px] text-emerald-600">check_circle</span>
-            <span>80% अग्रिम प्राप्त (Advance Credited)</span>
+            <span>{t('advanceReceivedBadge', '80% Advance Credited')}</span>
           </div>
           <p className="text-xs text-emerald-700 font-medium">
-            ₹{advance.amount.toLocaleString('en-IN')} आपके {bank.name} खाते में जमा हो चुके हैं। (Ref: {advance.referenceNo || 'IMPS'})
+            ₹{advance.amount.toLocaleString('en-IN')} {t('depositedInAccount', 'has been deposited into your account')} ({bank.name} • Ref: {advance.referenceNo || 'IMPS'}).
           </p>
         </div>
       ) : (
@@ -161,10 +176,12 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
               <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary">
                 <span className="material-symbols-outlined text-[22px]">bolt</span>
               </div>
-              <span className="font-headline-sm text-headline-sm text-on-surface font-bold">Need Cash Urgently?</span>
+              <span className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                {t('needCashTitle', 'Need Cash Urgently?')}
+              </span>
             </div>
             <span className="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-pad-xs py-1 rounded-full font-bold">
-              त्वरित सेवा
+              Instant
             </span>
           </div>
           <div className="flex flex-col gap-1">
@@ -172,7 +189,7 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
               Get <strong className="text-primary">80% Money Now (₹{advance.amount.toLocaleString('en-IN')})</strong> directly to UPI / Bank
             </p>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              बिना इंतजार 2 मिनट में अपने खाते में पाएं। शेष 20% सामान्य प्रक्रिया से मिलेगा।
+              {t('advanceSubtext', 'Get 80% within 120 seconds into your bank account. Remaining 20% processed normally.')}
             </p>
           </div>
           <button
@@ -180,7 +197,9 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
             className="w-full h-14 bg-primary text-on-primary rounded-xl flex items-center justify-center gap-pad-sm shadow-md active:scale-98 transition-all hover:bg-primary-container font-bold"
           >
             <span className="material-symbols-outlined text-[28px]">bolt</span>
-            <span className="font-headline-sm text-headline-sm tracking-wide">⚡ तुरंत पैसे लें / Get Money Now</span>
+            <span className="font-headline-sm text-headline-sm tracking-wide">
+              {t('getAdvance80Btn', '⚡ Get 80% Money Now')}
+            </span>
           </button>
         </div>
       )}
@@ -198,25 +217,27 @@ export default function Payment({ paymentData, onNavigate, onOpenAdvance }) {
               </span>
               <span className="material-symbols-outlined text-secondary text-[18px]">verified</span>
             </div>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">IFSC: {bank.ifsc} • आधार लिंक</span>
+            <span className="font-body-sm text-body-sm text-on-surface-variant">IFSC: {bank.ifsc} • {t('aadharLinked', 'Aadhaar Linked')}</span>
           </div>
         </div>
-        <span className="font-label-sm text-label-sm text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg font-bold">सत्यापित</span>
+        <span className="font-label-sm text-label-sm text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg font-bold">
+          {t('verified', 'Verified')}
+        </span>
       </div>
 
       {/* Fee Support Footer */}
       <div className="rounded-xl bg-surface-container-lowest p-pad-md flex flex-col gap-pad-xs shadow-sm border border-slate-100">
         <div className="flex items-center justify-between text-on-surface-variant">
-          <span className="font-body-sm text-body-sm">सरकारी मंडी शुल्क:</span>
-          <span className="font-label-md text-label-md text-on-surface font-bold">₹ 0 (किसान छूट)</span>
+          <span className="font-body-sm text-body-sm">{t('mandiFeeLabel', 'Govt. Mandi Fee:')}</span>
+          <span className="font-label-md text-label-md text-on-surface font-bold">{t('mandiTaxFree', 'Mandi Fee: ₹0 (Farmer Exemption)')}</span>
         </div>
         <div className="flex items-center justify-between text-on-surface-variant">
-          <span className="font-body-sm text-body-sm">एडवांस सुविधा शुल्क:</span>
-          <span className="font-label-md text-label-md text-secondary font-bold">0% शून्य ब्याज (सरकारी योजना)</span>
+          <span className="font-body-sm text-body-sm">{t('advanceFeeLabel', 'Advance Facility Fee:')}</span>
+          <span className="font-label-md text-label-md text-secondary font-bold">{t('zeroInterest', 'Advance Fee: 0% Zero Interest (Govt. Scheme)')}</span>
         </div>
         <div className="pt-pad-xs flex items-center gap-pad-xs text-on-surface-variant">
           <span className="material-symbols-outlined text-[18px]">support_agent</span>
-          <span className="font-body-sm text-body-sm">सहायता केंद्र: 1800-180-1551 (टोल फ्री)</span>
+          <span className="font-body-sm text-body-sm">{t('helpline', 'Helpdesk: 1800-180-1551 (Toll Free)')}</span>
         </div>
       </div>
 

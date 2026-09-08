@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { requestAdvance } from '../api';
 
 export default function AdvanceModal({ isOpen, onClose, farmerData, paymentData, onAdvanceSuccess }) {
+  const { currentLang, t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -38,7 +40,9 @@ export default function AdvanceModal({ isOpen, onClose, farmerData, paymentData,
             <div className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
               <span className="material-symbols-outlined text-[24px]">payments</span>
             </div>
-            <h3 className="font-headline-sm text-headline-sm text-on-surface">तत्काल भुगतान पुष्टि</h3>
+            <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+              {t('instantPaymentConfirm', 'Instant Payment Confirmation')}
+            </h3>
           </div>
           <button onClick={onClose} className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface">
             <span className="material-symbols-outlined text-[22px]">close</span>
@@ -46,18 +50,22 @@ export default function AdvanceModal({ isOpen, onClose, farmerData, paymentData,
         </div>
 
         <div className="bg-surface-container-low rounded-xl p-pad-md flex flex-col gap-pad-xs">
-          <span className="font-label-sm text-label-sm text-on-surface-variant">स्थानांतरण राशि (Instant 80% Payout)</span>
+          <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">
+            {t('instantPayoutTransfer', 'Transfer Amount (Instant 80% Payout)')}
+          </span>
           <span className="font-display-lg-mobile text-display-lg-mobile text-secondary font-black">
             ₹ {advanceAmount.toLocaleString('en-IN')}
           </span>
           <span className="font-body-sm text-body-sm text-on-surface">
-            सीधे खाते में: {bankName} (•••• {last4})
+            {t('directToAcc', 'Direct to Account')}: {bankName} (•••• {last4})
           </span>
         </div>
 
         <div className="flex items-center gap-pad-xs text-on-surface-variant">
           <span className="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
-          <span className="font-body-sm text-body-sm">UPI / IMPS द्वारा 120 सेकंड में क्रेडिट</span>
+          <span className="font-body-sm text-body-sm">
+            {t('upiCreditTime', 'Credited within 120s via UPI / IMPS')}
+          </span>
         </div>
 
         <button
@@ -70,17 +78,17 @@ export default function AdvanceModal({ isOpen, onClose, farmerData, paymentData,
           {loading ? (
             <>
               <span className="material-symbols-outlined text-[24px] animate-spin">sync</span>
-              <span>प्रसंस्करण जारी है...</span>
+              <span>{t('processingPayment', 'Processing payout...')}</span>
             </>
           ) : success ? (
             <>
               <span className="material-symbols-outlined text-[24px]">check_circle</span>
-              <span>₹{advanceAmount.toLocaleString('en-IN')} भेजा गया!</span>
+              <span>₹{advanceAmount.toLocaleString('en-IN')} {t('amountSentSuccess', 'Successfully Transferred!')}</span>
             </>
           ) : (
             <>
               <span className="material-symbols-outlined text-[28px]">lock_open</span>
-              <span>खाते में भेजें (Confirm Transfer)</span>
+              <span>{currentLang === 'en' ? `Confirm & Disburse ₹${advanceAmount.toLocaleString('en-IN')}` : `खाते में भेजें (Confirm ₹${advanceAmount.toLocaleString('en-IN')})`}</span>
             </>
           )}
         </button>

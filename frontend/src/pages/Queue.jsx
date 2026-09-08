@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { bookSlot } from '../api';
 
 export default function Queue({ queueData, onNavigate, onOpenQr }) {
+  const { currentLang, t, speechCode } = useLanguage();
   const [selectedSlot, setSelectedSlot] = useState('morning');
   const [slotCounts, setSlotCounts] = useState({ morning: 8, afternoon: 15 });
   const [bookingState, setBookingState] = useState('idle');
@@ -9,9 +11,11 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
   const speakQueueStatus = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const msg = `टोकन क्रमांक ${queueData?.token || 42}, वाहन ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}। आपके आगे ${queueData?.aheadCount !== undefined ? queueData.aheadCount : 4} ट्रैक्टर हैं। अनुमानित प्रतीक्षा समय लगभग ${queueData?.estWaitMins || 25} मिनट है।`;
+      const msg = currentLang === 'en'
+        ? `Token number ${queueData?.token || 42}, Vehicle ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}. There are ${queueData?.aheadCount !== undefined ? queueData.aheadCount : 4} tractors ahead. Estimated waiting time is approximately ${queueData?.estWaitMins || 25} minutes.`
+        : `टोकन क्रमांक ${queueData?.token || 42}, वाहन ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}। आपके आगे ${queueData?.aheadCount !== undefined ? queueData.aheadCount : 4} ट्रैक्टर हैं। अनुमानित प्रतीक्षा समय लगभग ${queueData?.estWaitMins || 25} मिनट है।`;
       const utter = new SpeechSynthesisUtterance(msg);
-      utter.lang = 'hi-IN';
+      utter.lang = speechCode || 'hi-IN';
       window.speechSynthesis.speak(utter);
     }
   };
@@ -39,6 +43,16 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
   const currentIndex = stepNames.indexOf(currentStage);
   const fillWidths = ['0%', '36%', '68%', '100%'];
 
+  const getCommodityName = () => {
+    if (currentLang === 'en') return 'Soybean';
+    return queueData?.commodity?.split(' ')[0] || 'सोयाबीन';
+  };
+
+  const getCommodityQuantity = () => {
+    if (currentLang === 'en') return '50 Quintals (68 Bags)';
+    return queueData?.commodityQty || '50 क्विंटल (68 बोरी)';
+  };
+
   return (
     <div className="flex flex-col w-full px-4 gap-3.5 mt-1 animate-in fade-in duration-200">
       
@@ -46,18 +60,18 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
       <div className="flex items-center justify-between pt-1">
         <button
           onClick={() => onNavigate('home')}
-          aria-label="Go Back"
+          aria-label={t('back', 'Go Back')}
           className="w-10 h-10 rounded-xl bg-white border border-[#E5DEC9] flex items-center justify-center text-[#1C1917] active:scale-95 transition-all shadow-xs"
         >
           <span className="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
         <div className="flex items-center gap-1.5 bg-[#F0FDF4] border border-[#BBF7D0] px-3 py-1 rounded-full">
           <span className="w-2 h-2 rounded-full bg-[#166534] animate-ping"></span>
-          <span className="text-xs font-bold text-[#166534]">लाइव मंडी कतार • APMC Live</span>
+          <span className="text-xs font-bold text-[#166534]">{t('mandiLiveQueueBadge', 'Live Mandi Queue • APMC Live')}</span>
         </div>
         <button
           onClick={speakQueueStatus}
-          aria-label="Listen Announcement"
+          aria-label={t('listenGreeting', 'Listen Announcement')}
           className="w-10 h-10 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center text-[#B45309] active:scale-95 transition-all shadow-xs"
         >
           <span className="material-symbols-outlined text-[22px]">volume_up</span>
@@ -72,9 +86,11 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
             <span className="material-symbols-outlined text-[20px] text-[#166534]">receipt_long</span>
             <div>
               <span className="text-[11px] font-bold text-[#166534] uppercase tracking-wider block">
-                कृषि उपज मंडी समिति • कोटा (राज.)
+                {t('apmcGateEntrySlipTitle', 'कृषि उपज मंडी समिति • कोटा (राज.)')}
               </span>
-              <span className="text-[10px] text-[#78716C]">प्रवेश पर्ची • APMC Gate Entry Slip</span>
+              <span className="text-[10px] text-[#78716C]">
+                {t('apmcGateEntrySlipSub', 'प्रवेश पर्ची • APMC Gate Entry Slip')}
+              </span>
             </div>
           </div>
           <span className="text-[10px] font-mono font-bold text-[#1C1917] bg-white border border-[#E2D9C5] px-2 py-0.5 rounded">
@@ -86,11 +102,11 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
         <div className="p-4 flex flex-col items-center text-center relative">
           {/* Authentic Stamp Mark */}
           <div className="absolute right-4 top-3 border-2 border-[#166534]/50 text-[#166534] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider rotate-[-6deg] select-none pointer-events-none bg-green-50/70">
-            ✓ सत्यापित / Verified
+            {t('verifiedBadge', '✓ Verified')}
           </div>
 
           <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
-            आपका टोकन क्रमांक • YOUR TOKEN NO.
+            {t('yourTokenNoTitle', 'YOUR TOKEN NUMBER')}
           </span>
 
           {/* Large Bold Tactile Token Number */}
@@ -104,7 +120,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
           <div className="inline-flex items-center gap-1.5 bg-[#F3ECE0] px-3 py-1 rounded-md border border-[#E2D9C5] text-xs font-mono text-[#374151]">
             <span className="font-bold">{queueData?.vehicleNumber || 'RJ-20-EA-4412'}</span>
             <span>•</span>
-            <span className="font-bold text-[#B45309]">{queueData?.commodity || 'सोयाबीन'} ({queueData?.commodityQty || '50 क्विंटल'})</span>
+            <span className="font-bold text-[#B45309]">{getCommodityName()} ({getCommodityQuantity()})</span>
           </div>
 
           {/* Perforation Cut Line */}
@@ -115,31 +131,43 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
           {/* 3-Column Grounded Mandi Electronic Board */}
           <div className="w-full grid grid-cols-3 gap-2 text-left">
             <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
-              <span className="text-[9px] uppercase font-bold text-[#78716C] block">कतार • Ahead</span>
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">
+                {currentLang === 'en' ? 'Ahead in Queue' : 'कतार • Ahead'}
+              </span>
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-xl font-bold text-[#1C1917]">{queueData?.aheadCount || '04'}</span>
-                <span className="text-[10px] font-medium text-[#57534E]">ट्रैक्टर</span>
+                <span className="text-[10px] font-medium text-[#57534E]">
+                  {currentLang === 'en' ? 'Tractors' : 'ट्रैक्टर'}
+                </span>
               </div>
             </div>
             <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
-              <span className="text-[9px] uppercase font-bold text-[#78716C] block">गेट पर • At Gate</span>
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">
+                {currentLang === 'en' ? 'At Gate' : 'गेट पर • At Gate'}
+              </span>
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-xl font-bold font-mono text-[#166534]">#{queueData?.atGateNumber || 38}</span>
-                <span className="text-[10px] font-bold text-[#166534]">चालू</span>
+                <span className="text-[10px] font-bold text-[#166534]">
+                  {t('activeStatus', 'Active')}
+                </span>
               </div>
             </div>
             <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
-              <span className="text-[9px] uppercase font-bold text-[#78716C] block">अनुमानित • Wait</span>
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">
+                {currentLang === 'en' ? 'Est. Wait' : 'अनुमानित • Wait'}
+              </span>
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-xl font-bold text-[#B45309]">~{queueData?.estWaitMins || 25}</span>
-                <span className="text-[10px] font-medium text-[#57534E]">मिनट</span>
+                <span className="text-[10px] font-medium text-[#57534E]">
+                  {currentLang === 'en' ? 'Mins' : 'मिनट'}
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ADVANCE TOKEN BOOKING SECTION (MATCHING STITCH PROTOTYPE) */}
+      {/* ADVANCE TOKEN BOOKING SECTION */}
       <section className="rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 overflow-hidden flex flex-col">
         <div className="bg-primary-fixed/40 px-pad-md py-pad-sm flex items-center justify-between border-b border-outline-variant/20">
           <div className="flex items-center gap-pad-xs">
@@ -147,13 +175,17 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
               <span className="material-symbols-outlined text-[20px]">book_online</span>
             </div>
             <div>
-              <h2 className="font-label-md text-label-md text-on-surface font-bold leading-tight">टोकन ब्लॉक करें • Advance Booking</h2>
-              <p className="font-body-sm text-[12px] text-on-surface-variant leading-none mt-0.5">लाइन से बचें, समय पर मंडी पहुंचे</p>
+              <h2 className="font-label-md text-label-md text-on-surface font-bold leading-tight">
+                {t('advanceSlotBookingTitle', 'Advance Gate Slot Reservation')}
+              </h2>
+              <p className="font-body-sm text-[12px] text-on-surface-variant leading-none mt-0.5">
+                {t('bookSlotSubtitle', 'Skip the line, arrive on schedule')}
+              </p>
             </div>
           </div>
           <span className="bg-secondary text-on-secondary text-[11px] font-label-sm font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-surface animate-ping"></span>
-            स्लॉट चालू
+            {t('openStatus', 'Open')}
           </span>
         </div>
 
@@ -162,7 +194,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
           <div className="flex flex-col gap-1.5">
             <label className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 font-bold">
               <span className="material-symbols-outlined text-[16px] text-primary">schedule</span>
-              समय स्लॉट चुनें • Select Time Slot
+              {currentLang === 'en' ? 'Select Time Slot' : 'समय स्लॉट चुनें • Select Time Slot'}
             </label>
             <div className="grid grid-cols-2 gap-pad-xs">
               <div
@@ -174,12 +206,16 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-label-sm text-label-sm font-bold text-on-surface">सुबह 09 - 11 AM</span>
+                  <span className="font-label-sm text-label-sm font-bold text-on-surface">
+                    {t('morningWindowLabel', 'Morning 09:00 - 11:00 AM')}
+                  </span>
                   <span className={`material-symbols-outlined text-[18px] ${selectedSlot === 'morning' ? 'text-secondary' : 'text-outline-variant'}`}>
                     {selectedSlot === 'morning' ? 'check_circle' : 'radio_button_unchecked'}
                   </span>
                 </div>
-                <span className="font-body-sm text-[12px] text-secondary font-bold mt-1">{slotCounts.morning} टोकन बाकी</span>
+                <span className="font-body-sm text-[12px] text-secondary font-bold mt-1">
+                  {slotCounts.morning} {currentLang === 'en' ? 'tokens left' : 'टोकन बाकी'}
+                </span>
                 <span className="text-[11px] text-on-surface-variant">Morning Slot</span>
               </div>
 
@@ -192,12 +228,16 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-label-sm text-label-sm font-bold text-on-surface">दोपहर 01 - 03 PM</span>
+                  <span className="font-label-sm text-label-sm font-bold text-on-surface">
+                    {t('afternoonWindowLabel', 'Afternoon 01:00 - 03:00 PM')}
+                  </span>
                   <span className={`material-symbols-outlined text-[18px] ${selectedSlot === 'afternoon' ? 'text-secondary' : 'text-outline-variant'}`}>
                     {selectedSlot === 'afternoon' ? 'check_circle' : 'radio_button_unchecked'}
                   </span>
                 </div>
-                <span className="font-body-sm text-[12px] text-primary font-bold mt-1">{slotCounts.afternoon} टोकन बाकी</span>
+                <span className="font-body-sm text-[12px] text-primary font-bold mt-1">
+                  {slotCounts.afternoon} {currentLang === 'en' ? 'tokens left' : 'टोकन बाकी'}
+                </span>
                 <span className="text-[11px] text-on-surface-variant">Afternoon Slot</span>
               </div>
             </div>
@@ -207,18 +247,18 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
           <div className="flex flex-col gap-1.5">
             <label className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 font-bold">
               <span className="material-symbols-outlined text-[16px] text-primary">local_shipping</span>
-              वाहन व उपज भार • Load Size
+              {t('loadSize', 'Vehicle & Load Size')}
             </label>
             <div className="flex items-center gap-2">
               <div className="flex-1 bg-surface-container-high rounded-lg px-pad-sm py-2 flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="material-symbols-outlined text-primary text-[20px]">agriculture</span>
                   <span className="font-label-md text-label-md text-on-surface truncate font-bold">
-                    ट्रॉली / {queueData?.commodityQty || '50 क्विंटल'}
+                    {currentLang === 'en' ? `Trolley / 50 Quintals` : `ट्रॉली / ${queueData?.commodityQty || '50 क्विंटल'}`}
                   </span>
                 </div>
                 <span className="font-label-sm text-[12px] text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded font-bold">
-                  {queueData?.commodity?.split(' ')[0] || 'सोयाबीन'}
+                  {getCommodityName()}
                 </span>
               </div>
             </div>
@@ -236,26 +276,28 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
               {bookingState === 'loading' ? (
                 <>
                   <span className="material-symbols-outlined text-[24px] animate-spin">sync</span>
-                  <span className="font-bold text-sm">टोकन आरक्षित हो रहा है...</span>
+                  <span className="font-bold text-sm">{t('slotBookLoading', 'Booking slot...')}</span>
                 </>
               ) : bookingState === 'success' ? (
                 <>
                   <span className="material-symbols-outlined text-[24px]">check_circle</span>
-                  <span className="font-bold text-sm">🔒 टोकन #{queueData?.token || 42} आरक्षित हुआ!</span>
+                  <span className="font-bold text-sm">🔒 {t('yourToken', 'Token')} #{queueData?.token || 42} {currentLang === 'en' ? 'Reserved!' : 'आरक्षित हुआ!'}</span>
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[24px] text-secondary-fixed">lock_open</span>
                   <div className="flex flex-col text-left">
-                    <span className="font-label-md text-label-md font-bold leading-tight">🔒 टोकन अभी ब्लॉक करें • Block Token Now</span>
-                    <span className="font-body-sm text-[11px] text-secondary-fixed leading-none">15 मिनट के लिए आरक्षित • Free Slot Reserve</span>
+                    <span className="font-label-md text-label-md font-bold leading-tight">{t('blockTokenNow', '🔒 Block Token Slot Now')}</span>
+                    <span className="font-body-sm text-[11px] text-secondary-fixed leading-none">{t('blockTokenSub', 'Reserved for 15 mins • Free Slot Reserve')}</span>
                   </div>
                 </>
               )}
             </button>
             <div className="flex items-center justify-center gap-1.5 text-center text-on-surface-variant">
               <span className="material-symbols-outlined text-[15px] text-secondary">verified_user</span>
-              <span className="font-body-sm text-[12px]">QR पास व SMS तुरंत प्राप्त होगा • Gate Priority Pass</span>
+              <span className="font-body-sm text-[12px]">
+                {currentLang === 'en' ? 'Instant QR pass & SMS confirmation • Gate Priority Pass' : 'QR पास व SMS तुरंत प्राप्त होगा • Gate Priority Pass'}
+              </span>
             </div>
           </div>
         </div>
@@ -268,10 +310,14 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
         </div>
         <div className="flex flex-col min-w-0">
           <h3 className="font-label-md text-label-md text-on-primary-fixed leading-snug font-bold">
-            तौल कांटे #{queueData?.weighbridgeNo || 3} की ओर बढ़ें
+            {currentLang === 'en'
+              ? `Proceed to Weighbridge Gate #${queueData?.weighbridgeNo || 3}`
+              : `तौल कांटे #${queueData?.weighbridgeNo || 3} की ओर बढ़ें`}
           </h3>
           <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">
-            Move toward Weighbridge {queueData?.weighbridgeNo || 3} lane now
+            {currentLang === 'en'
+              ? `Lane 3 is currently clear for weighment`
+              : `कांटा लेन 3 पर तौल के लिए गाड़ी आगे लाएं`}
           </p>
         </div>
       </div>
@@ -279,9 +325,11 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
       {/* 4-Dot Physical Process Visualizer */}
       <div className="bg-surface-container-lowest rounded-xl p-pad-md shadow-sm flex flex-col border border-slate-100">
         <div className="flex items-center justify-between mb-pad-md">
-          <span className="font-label-md text-label-md text-on-surface font-bold">मंडी प्रक्रिया • Mandi Steps</span>
+          <span className="font-label-md text-label-md text-on-surface font-bold">
+            {t('mandiSteps', 'Mandi Steps Progress')}
+          </span>
           <span className="font-label-sm text-label-sm text-secondary bg-secondary-container/50 px-pad-xs py-0.5 rounded font-bold">
-            कदम {currentIndex + 1} / 4 चालू
+            {currentLang === 'en' ? `Step ${currentIndex + 1} of 4 Active` : `कदम ${currentIndex + 1} / 4 चालू`}
           </span>
         </div>
         
@@ -302,8 +350,9 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
                 {currentIndex > 0 ? 'check' : 'how_to_reg'}
               </span>
             </div>
-            <span className="font-label-sm text-label-sm text-secondary mt-2 text-center leading-none font-bold">पहुंचे</span>
-            <span className="font-body-sm text-[11px] text-on-surface-variant text-center">Arrived</span>
+            <span className="font-label-sm text-label-sm text-secondary mt-2 text-center leading-none font-bold">
+              {t('stepArrived', 'Arrived')}
+            </span>
           </div>
 
           {/* Step 2: Weighing */}
@@ -320,8 +369,9 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
                 </span>
               </div>
             </div>
-            <span className="font-label-sm text-label-sm text-primary mt-2 text-center font-extrabold leading-none">तौल</span>
-            <span className="font-body-sm text-[11px] text-primary text-center font-bold">Weighing</span>
+            <span className="font-label-sm text-label-sm text-primary mt-2 text-center font-extrabold leading-none">
+              {t('stepWeighing', 'Weighing')}
+            </span>
           </div>
 
           {/* Step 3: Grade */}
@@ -333,8 +383,9 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
                 {currentIndex > 2 ? 'check' : 'manage_search'}
               </span>
             </div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">गुणवत्ता</span>
-            <span className="font-body-sm text-[11px] text-on-surface-variant text-center">Grade</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">
+              {t('stepGrade', 'Grade')}
+            </span>
           </div>
 
           {/* Step 4: Pass */}
@@ -344,8 +395,9 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
             }`}>
               <span className="material-symbols-outlined text-[22px]">verified</span>
             </div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">पास</span>
-            <span className="font-body-sm text-[11px] text-on-surface-variant text-center">Pass</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">
+              {t('stepPass', 'Pass')}
+            </span>
           </div>
         </div>
       </div>
@@ -358,30 +410,36 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
               <span className="material-symbols-outlined text-[22px]">local_shipping</span>
             </div>
             <div>
-              <span className="font-label-sm text-label-sm text-on-surface-variant block">ट्रैक्टर विवरण • Vehicle</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant block">
+                {t('vehicleDetails', 'Vehicle Details')}
+              </span>
               <span className="font-label-lg text-label-lg text-on-surface font-bold">
                 {queueData?.vehicleNumber || 'RJ-20-EA-4412'}
               </span>
             </div>
           </div>
           <span className="bg-primary/10 text-primary font-label-sm text-label-sm px-2.5 py-1 rounded-full font-bold">
-            {queueData?.vehicleType || 'सोनालिका DI 745'}
+            {currentLang === 'en' ? 'Sonalika DI 745' : (queueData?.vehicleType || 'सोनालिका DI 745')}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-pad-sm pt-1">
           <div className="flex flex-col bg-surface-container-low rounded-lg p-pad-sm">
-            <span className="font-label-sm text-label-sm text-on-surface-variant">निर्धारित कांटा • Location</span>
-            <span className="font-headline-sm text-headline-sm text-primary mt-0.5 font-bold">
-              कांटा #{queueData?.weighbridgeNo || 3}
+            <span className="font-label-sm text-label-sm text-on-surface-variant">
+              {t('weighbridgeNo', 'Assigned Weighbridge')}
             </span>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">Weighbridge No. {queueData?.weighbridgeNo || 3}</span>
+            <span className="font-headline-sm text-headline-sm text-primary mt-0.5 font-bold">
+              {currentLang === 'en' ? `Lane #${queueData?.weighbridgeNo || 3}` : `कांटा #${queueData?.weighbridgeNo || 3}`}
+            </span>
+            <span className="font-body-sm text-body-sm text-on-surface-variant">Weighbridge Gate {queueData?.weighbridgeNo || 3}</span>
           </div>
           <div className="flex flex-col bg-surface-container-low rounded-lg p-pad-sm">
-            <span className="font-label-sm text-label-sm text-on-surface-variant">फसल • Commodity</span>
-            <span className="font-headline-sm text-headline-sm text-on-surface mt-0.5 font-bold">
-              {queueData?.commodity?.split(' ')[0] || 'सोयाबीन'}
+            <span className="font-label-sm text-label-sm text-on-surface-variant">
+              {t('commodity', 'Commodity')}
             </span>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">{queueData?.commodityQty || '68 बोरी'}</span>
+            <span className="font-headline-sm text-headline-sm text-on-surface mt-0.5 font-bold">
+              {getCommodityName()}
+            </span>
+            <span className="font-body-sm text-body-sm text-on-surface-variant">{getCommodityQuantity()}</span>
           </div>
         </div>
       </div>
@@ -394,8 +452,12 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
         >
           <span className="material-symbols-outlined text-[32px] text-primary-fixed">qr_code_scanner</span>
           <div className="flex flex-col text-left">
-            <span className="font-label-lg text-label-lg leading-tight">सुरक्षा गार्ड को पास दिखाएं</span>
-            <span className="font-body-sm text-[13px] text-primary-fixed leading-tight">Show Entry QR Pass to Guard</span>
+            <span className="font-label-lg text-label-lg leading-tight">
+              {t('showQrPass', 'Show Entry QR Pass to Guard')}
+            </span>
+            <span className="font-body-sm text-[13px] text-primary-fixed leading-tight">
+              {currentLang === 'en' ? 'Tap to open full-screen scanner' : 'सुरक्षा गार्ड को पास दिखाएं'}
+            </span>
           </div>
         </button>
       </div>

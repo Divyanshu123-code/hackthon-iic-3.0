@@ -8,7 +8,7 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(
-        `नमस्ते ${farmerData?.name || 'राम लाल शर्मा जी'}! आपका टोकन क्रमांक #${farmerData?.token || 42} है। आज मंडी में सोयाबीन का सरकारी MSP 4892 रुपये और गेहूं का भाव 2275 रुपये है।`
+        `नमस्ते ${farmerData?.name || 'राम लाल शर्मा जी'}! आपका टोकन क्रमांक #${farmerData?.token || 42} है। आज मंडी में गेहूं का भाव 2275 रुपये है।`
       );
       utter.lang = speechCode || 'hi-IN';
       window.speechSynthesis.speak(utter);
@@ -59,34 +59,34 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <h2 className="font-bold text-base text-[#1C1917] leading-tight">
-                  {farmerData?.name || 'राम लाल शर्मा'}
+                  {currentLang === 'hi' ? (farmerData?.name || 'राम लाल जी') : t('farmerName', 'Ram Lal Sharma')}
                 </h2>
                 <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
                   <span className="material-symbols-outlined text-[12px]">verified</span>
-                  प्रमाणित किसान
+                  {t('verifiedFarmer', 'प्रमाणित किसान')}
                 </span>
               </div>
               <p className="text-xs text-[#57534E] mt-1 flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px] text-[#B45309]">location_on</span>
-                {farmerData?.village || 'गांव कंडाघाट, कोटा'} • गेट पास: #APMC-789
+                {currentLang === 'en' ? 'Village Kandaghat, Kota' : (farmerData?.village || `${t('villagePrefix', 'गांव')} कंडाघाट, कोटा`)} • {t('gatePass', 'गेट पास')}: #APMC-789
               </p>
               <div className="flex items-center gap-2 mt-2 text-[11px] text-[#78716C] font-medium">
-                <span>फसल: <strong className="text-[#1C1917]">{farmerData?.crop || 'सोयाबीन (JS-335)'}</strong></span>
+                <span>{t('cropLabel', 'फसल')}: <strong className="text-[#1C1917]">{currentLang === 'en' ? 'Soybean (JS-335)' : (farmerData?.commodity || 'सोयाबीन (JS-335)')}</strong></span>
                 <span>•</span>
-                <span>वजन: <strong className="text-[#1C1917]">{farmerData?.quintal || 50} क्विंटल</strong></span>
+                <span>{t('weightLabel', 'वजन')}: <strong className="text-[#1C1917]">{currentLang === 'en' ? '50 Quintals (68 Bags)' : (farmerData?.commodityQty || `50 ${t('quintalUnit', 'क्विंटल')}`)}</strong></span>
               </div>
             </div>
           </div>
 
           {/* Token Tag Physical Voucher Style */}
           <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#FAF6EE] border-2 border-dashed border-[#B45309] min-w-[70px] text-center flex-shrink-0">
-            <span className="text-[9px] font-bold tracking-wider text-[#B45309] uppercase">मंडी टोकन</span>
+            <span className="text-[9px] font-bold tracking-wider text-[#B45309] uppercase">{t('mandiToken', 'मंडी टोकन')}</span>
             <span className="font-extrabold text-2xl text-[#1C1917] leading-none my-0.5 font-mono">
               #{farmerData?.token || 42}
             </span>
             <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-[#166534]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#166534] animate-pulse"></span>
-              सक्रिय
+              {t('activeStatus', 'सक्रिय')}
             </span>
           </div>
         </div>
@@ -95,14 +95,14 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
         <div className="mt-3 pt-2.5 border-t border-[#E5DEC9] flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 text-[#57534E]">
             <span className="material-symbols-outlined text-[17px] text-[#166534]">schedule</span>
-            <span className="text-xs">नीलामी समय: <strong>आज पूर्वाह्न 11:30 बजे</strong> (शेड नं. 3)</span>
+            <span className="text-xs">{t('auctionTime', 'नीलामी समय: आज पूर्वाह्न 11:30 बजे (शेड नं. 3)')}</span>
           </div>
           <button
             onClick={speakGreeting}
             className="flex items-center gap-1 text-[11px] font-bold text-[#166534] bg-[#DCFCE7] px-2.5 py-1 rounded-md border border-green-200 active:scale-95 transition-all shadow-xs"
           >
             <span className="material-symbols-outlined text-[14px]">volume_up</span>
-            सुनें
+            {t('listenGreeting', 'सुनें')}
           </button>
         </div>
       </section>
@@ -111,9 +111,9 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
       <div className="flex items-center justify-between px-0.5 pt-1">
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-4 rounded-full bg-[#B45309]"></span>
-          <h3 className="font-bold text-sm text-[#1C1917]">मंडी मुख्य सेवाएं (Mandi Core Services)</h3>
+          <h3 className="font-bold text-sm text-[#1C1917]">{t('coreServices', 'मंडी मुख्य सेवाएं')}</h3>
         </div>
-        <span className="text-[11px] font-semibold text-[#78716C]">कोटा मुख्य यार्ड</span>
+        <span className="text-[11px] font-semibold text-[#78716C]">{t('kotaMainYard', 'कोटा मुख्य यार्ड')}</span>
       </div>
 
       {/* 5 GROUNDED, TACTILE SERVICE TOKENS */}
@@ -127,12 +127,12 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
             <div className="w-12 h-12 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center text-[#B45309] shadow-xs">
               <span className="material-symbols-outlined text-[28px]">calendar_clock</span>
             </div>
-            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">01 / समय</span>
+            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">01 / {t('schedule', 'समय')}</span>
           </div>
           <div>
             <span className="font-bold text-lg text-[#1C1917] leading-tight block">{t('schedule', 'मंडी समय')}</span>
-            <p className="text-[11px] text-[#57534E] font-medium">Daily Auction Hours</p>
-            <span className="inline-block mt-1 text-[11px] font-bold text-[#B45309]">गेट खुला: प्रातः 6 बजे से</span>
+            <p className="text-[11px] text-[#57534E] font-medium">{t('dailyAuctionHours', 'Daily Auction Hours')}</p>
+            <span className="inline-block mt-1 text-[11px] font-bold text-[#B45309]">{t('gateOpensAt', 'गेट खुला: प्रातः 6 बजे से')}</span>
           </div>
         </div>
 
@@ -146,15 +146,15 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
               <span className="material-symbols-outlined text-[28px]">receipt_long</span>
             </div>
             <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-white border border-green-300 text-[#166534]">
-              टोकन #{farmerData?.token || 42}
+              {t('mandiToken', 'टोकन')} #{farmerData?.token || 42}
             </span>
           </div>
           <div>
             <span className="font-bold text-lg text-[#166534] leading-tight block">{t('queue', 'लाइव कतार')}</span>
-            <p className="text-[11px] text-[#57534E] font-medium">Live Token Position</p>
+            <p className="text-[11px] text-[#57534E] font-medium">{t('liveTokenPosition', 'Live Token Position')}</p>
             <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-[#166534]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#166534]"></span>
-              04 ट्रैक्टर आगे • ~25 मिनट
+              {t('tractorsAheadQueue', '04 ट्रैक्टर आगे • ~25 मिनट')}
             </span>
           </div>
         </div>
@@ -168,12 +168,12 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
             <div className="w-12 h-12 rounded-lg bg-[#E0F2FE] border border-[#BAE6FD] flex items-center justify-center text-[#0284C7] shadow-xs">
               <span className="material-symbols-outlined text-[28px]">account_balance_wallet</span>
             </div>
-            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">03 / भुगतान</span>
+            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">03 / {t('payment', 'भुगतान')}</span>
           </div>
           <div>
             <span className="font-bold text-lg text-[#1C1917] leading-tight block">{t('payment', 'भुगतान स्थिति')}</span>
-            <p className="text-[11px] text-[#57534E] font-medium">PFMS / DBT Transfer</p>
-            <span className="inline-block mt-1 text-[11px] font-bold text-[#0284C7]">80% अग्रिम उपलब्ध</span>
+            <p className="text-[11px] text-[#57534E] font-medium">{t('pfmsDbtSub', 'PFMS / DBT Transfer')}</p>
+            <span className="inline-block mt-1 text-[11px] font-bold text-[#0284C7]">{t('advanceAvailableSub', '80% अग्रिम उपलब्ध')}</span>
           </div>
         </div>
 
@@ -186,12 +186,12 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
             <div className="w-12 h-12 rounded-lg bg-[#FFEDD5] border border-[#FED7AA] flex items-center justify-center text-[#C2410C] shadow-xs">
               <span className="material-symbols-outlined text-[28px]">account_balance</span>
             </div>
-            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">04 / सहायता</span>
+            <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">04 / {t('creditPassbook', 'सहायता')}</span>
           </div>
           <div>
-            <span className="font-bold text-lg text-[#1C1917] leading-tight block">क्रेडिट पासबुक</span>
-            <p className="text-[11px] text-[#57534E] font-medium">KCC & Warehouse Aid</p>
-            <span className="inline-block mt-1 text-[11px] font-bold text-[#C2410C]">₹1.50L सीमा स्वीकृत</span>
+            <span className="font-bold text-lg text-[#1C1917] leading-tight block">{t('creditPassbookTitle', 'क्रेडिट पासबुक')}</span>
+            <p className="text-[11px] text-[#57534E] font-medium">{t('kccWarehouseSub', 'KCC & Warehouse Aid')}</p>
+            <span className="inline-block mt-1 text-[11px] font-bold text-[#C2410C]">{t('approvedLimit', '₹1.50L सीमा स्वीकृत')}</span>
           </div>
         </div>
       </section>
@@ -207,10 +207,10 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
           </div>
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-base text-[#1C1917] leading-tight">e-NAM मंडी नीलामी पर्चियां</span>
+              <span className="font-bold text-base text-[#1C1917] leading-tight">{t('enamTradeSlipsTitle', 'e-NAM मंडी नीलामी पर्चियां')}</span>
               <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#166534] text-white uppercase">Live</span>
             </div>
-            <span className="text-xs text-[#57534E]">42 खरीदार सक्रिय • सीधे बोली स्वीकार करें</span>
+            <span className="text-xs text-[#57534E]">{t('enamActiveBuyersSub', '42 खरीदार सक्रिय • सीधे बोली स्वीकार करें')}</span>
           </div>
         </div>
         <div className="w-9 h-9 rounded-full bg-white border border-[#E5DEC9] flex items-center justify-center text-[#B45309] shadow-xs">
@@ -221,4 +221,5 @@ export default function FarmerHome({ farmerData, onNavigate, onOpenAid, onOpenMa
     </div>
   );
 }
+
 

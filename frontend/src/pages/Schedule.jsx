@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { bookSlot } from '../api';
 
 export default function Schedule({ scheduleData, onNavigate }) {
+  const { currentLang, t } = useLanguage();
   const [bookingStatus, setBookingStatus] = useState('idle');
 
   const handleBookSlot = async () => {
@@ -19,8 +21,8 @@ export default function Schedule({ scheduleData, onNavigate }) {
   const isOpen = scheduleData?.open ?? true;
   const timing = scheduleData?.timing || '8:00 AM – 5:00 PM';
   const gateNumber = scheduleData?.gateNumber || 2;
-  const todayCrop = scheduleData?.todayCrop || 'गेहूं (Wheat)';
-  const cropQuality = scheduleData?.cropQuality || 'Sharbati & Lokwan Quality';
+  const todayCrop = currentLang === 'en' ? 'Wheat (Sharbati Grade-1)' : (scheduleData?.todayCrop || 'गेहूं (Wheat)');
+  const cropQuality = currentLang === 'en' ? 'Sharbati & Lokwan Certified' : (scheduleData?.cropQuality || 'Sharbati & Lokwan Quality');
   const msp = scheduleData?.msp || 2275;
 
   return (
@@ -31,17 +33,17 @@ export default function Schedule({ scheduleData, onNavigate }) {
         <div className="flex items-center gap-pad-sm">
           <button
             onClick={() => onNavigate('home')}
-            aria-label="Go Back"
+            aria-label={t('back', 'Go Back')}
             className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform"
           >
             <span className="material-symbols-outlined text-[28px]">arrow_back</span>
           </button>
           <div>
             <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider block leading-none">
-              दैनिक स्थिति • Live Status
+              {t('liveStatus', 'Live Status')}
             </span>
             <h2 className="font-headline-sm text-headline-sm text-on-surface leading-tight">
-              Mandi Schedule / मंडी तारीख
+              {currentLang === 'en' ? 'Mandi Schedule' : 'Mandi Schedule / मंडी तारीख'}
             </h2>
           </div>
         </div>
@@ -66,11 +68,11 @@ export default function Schedule({ scheduleData, onNavigate }) {
                 {isOpen ? 'check_circle' : 'cancel'}
               </span>
               <span className="font-label-sm text-label-sm uppercase tracking-wider font-bold">
-                {isOpen ? 'गेट खुला है • Gate Open' : 'मंडी बंद है • Closed'}
+                {isOpen ? t('gateOpen', 'Gate Open') : t('gateClosed', 'Gate Closed')}
               </span>
             </div>
             <h3 className="font-display-lg-mobile text-display-lg-mobile font-extrabold leading-none tracking-tight">
-              {isOpen ? 'आज खुला है' : 'आज बंद है'}
+              {isOpen ? t('openTodayBanner', 'Mandi is Open Today') : t('closedTodayBanner', 'Mandi is Closed Today')}
             </h3>
             <p className="font-headline-sm text-headline-sm opacity-90 leading-tight mt-1">
               {isOpen ? 'OPEN TODAY' : 'CLOSED TODAY'}
@@ -93,19 +95,25 @@ export default function Schedule({ scheduleData, onNavigate }) {
                 <span className="material-symbols-outlined text-[24px] text-secondary">schedule</span>
               </div>
               <div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant block">समय / Timing</span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant block">
+                  {t('operatingHoursLabel', 'Timing / Hours')}
+                </span>
                 <span className="font-headline-sm text-headline-sm text-on-surface leading-none">{timing}</span>
               </div>
             </div>
             <div className="bg-surface-container-high px-pad-sm py-pad-xs rounded-lg text-center">
-              <span className="font-label-sm text-label-sm text-on-surface-variant block">प्रवेश द्वार</span>
-              <span className="font-label-lg text-label-lg text-primary font-bold">गेट नं. {gateNumber}</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant block">
+                {t('gateLabel', 'Entry Gate')}
+              </span>
+              <span className="font-label-lg text-label-lg text-primary font-bold">
+                {t('gateNoLabel', 'Gate No.')} {gateNumber}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-pad-xs pt-pad-xs text-on-surface-variant">
             <span className="material-symbols-outlined text-[20px] text-secondary">location_on</span>
             <span className="font-body-md text-body-md text-on-surface font-semibold truncate">
-              {scheduleData?.name || 'APMC अनाज मंडी (Kota Mandi)'}
+              {currentLang === 'en' ? 'APMC Grain Mandi (Kota Mandi)' : (scheduleData?.name || 'APMC अनाज मंडी (Kota Mandi)')}
             </span>
           </div>
         </div>
@@ -116,7 +124,9 @@ export default function Schedule({ scheduleData, onNavigate }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-pad-xs">
             <span className="w-3 h-3 rounded-full bg-primary"></span>
-            <span className="font-label-md text-label-md text-on-surface uppercase font-bold">आज की मुख्य आवक • Crop Inflow</span>
+            <span className="font-label-md text-label-md text-on-surface uppercase font-bold">
+              {t('cropInflowLabel', "Today's Crop Inflow")}
+            </span>
           </div>
           <span className="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-pad-xs py-0.5 rounded-full font-bold">
             Grade A Verified
@@ -127,7 +137,9 @@ export default function Schedule({ scheduleData, onNavigate }) {
             🌾
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">स्वीकृत फसल / Accepted</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+              {t('acceptedCropLabel', 'Accepted Commodity')}
+            </span>
             <h4 className="font-headline-md text-headline-md text-on-surface truncate">{todayCrop}</h4>
             <span className="font-body-sm text-body-sm text-on-surface-variant">{cropQuality}</span>
           </div>
@@ -141,7 +153,7 @@ export default function Schedule({ scheduleData, onNavigate }) {
             </div>
             <div>
               <span className="font-label-sm text-label-sm text-on-secondary-container block uppercase leading-tight font-semibold">
-                सरकारी समर्थन मूल्य (MSP)
+                {t('govtMsp', 'Govt. MSP Benchmark')}
               </span>
               <span className="font-headline-md text-headline-md text-on-secondary-container font-black leading-tight">
                 ₹{msp.toLocaleString('en-IN')}
@@ -149,14 +161,18 @@ export default function Schedule({ scheduleData, onNavigate }) {
             </div>
           </div>
           <div className="bg-surface-container-lowest/80 px-pad-sm py-pad-xs rounded-lg">
-            <span className="font-label-sm text-label-sm text-on-surface font-bold">प्रति क्विंटल</span>
+            <span className="font-label-sm text-label-sm text-on-surface font-bold">
+              {t('perQuintalLabel', 'per Quintal')}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Upcoming Days */}
       <div className="flex flex-col gap-pad-xs">
-        <h4 className="font-headline-sm text-headline-sm text-on-surface px-pad-xs">आगामी तारीखें / Upcoming Days</h4>
+        <h4 className="font-headline-sm text-headline-sm text-on-surface px-pad-xs">
+          {t('upcomingDaysTitle', 'Upcoming Mandi Days')}
+        </h4>
         {scheduleData?.upcomingDays?.map((day, idx) => (
           <div key={idx} className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-pad-sm">
@@ -167,9 +183,11 @@ export default function Schedule({ scheduleData, onNavigate }) {
                 <span className="font-label-md text-label-md leading-none font-bold">{day.date}</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-label-lg text-label-lg text-on-surface font-bold">{day.crop}</span>
+                <span className="font-label-lg text-label-lg text-on-surface font-bold">
+                  {currentLang === 'en' ? (day.crop.includes('Mustard') || day.crop.includes('सरसों') ? 'Mustard (Black 42% Oil)' : (day.crop.includes('Cleaning') || day.crop.includes('अवकाश') ? 'Weekly Yard Cleaning' : 'Soybean (Yellow)')) : day.crop}
+                </span>
                 <span className="font-body-sm text-body-sm text-on-surface-variant">
-                  {day.open ? `Gate 1 & Gate 3 • MSP ₹${day.msp || 'N/A'}` : 'साप्ताहिक रखरखाव • Weekly Cleaning'}
+                  {day.open ? `Gate 1 & Gate 3 • MSP ₹${day.msp || 'N/A'}` : (currentLang === 'en' ? 'Weekly Mandi Maintenance' : 'साप्ताहिक रखरखाव • Weekly Cleaning')}
                 </span>
               </div>
             </div>
@@ -179,19 +197,19 @@ export default function Schedule({ scheduleData, onNavigate }) {
               {day.open ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-secondary"></span>
-                  <span className="font-label-sm text-label-sm font-bold uppercase">खुला • OPEN</span>
+                  <span className="font-label-sm text-label-sm font-bold uppercase">OPEN</span>
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[16px]">block</span>
-                  <span className="font-label-sm text-label-sm font-bold uppercase">बंद • CLOSED</span>
+                  <span className="font-label-sm text-label-sm font-bold uppercase">CLOSED</span>
                 </>
               )}
             </div>
           </div>
         )) || (
           <div className="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
-            <span className="text-xs text-on-surface-variant">आगामी तिथियां लोड हो रही हैं...</span>
+            <span className="text-xs text-on-surface-variant">Loading upcoming schedule...</span>
           </div>
         )}
       </div>
@@ -207,22 +225,22 @@ export default function Schedule({ scheduleData, onNavigate }) {
           {bookingStatus === 'loading' ? (
             <>
               <span className="material-symbols-outlined text-[24px] animate-spin">sync</span>
-              <span>स्लॉट बुक हो रहा है...</span>
+              <span>{t('slotBookLoading', 'Booking slot...')}</span>
             </>
           ) : bookingStatus === 'success' ? (
             <>
               <span className="material-symbols-outlined text-[24px]">check_circle</span>
-              <span>स्लॉट सफलतापूर्वक आरक्षित!</span>
+              <span>{t('slotBookSuccess', 'Slot Reserved Successfully!')}</span>
             </>
           ) : (
             <>
               <span className="material-symbols-outlined text-[32px] text-secondary-fixed">confirmation_number</span>
-              <span>स्लॉट बुक करें • Book Today's Slot</span>
+              <span>{t('bookSlotBtn', 'Book Today\'s Slot')}</span>
             </>
           )}
         </button>
         <p className="font-label-sm text-label-sm text-center text-on-surface-variant pt-2">
-          ⚡ टोकन कटने में केवल 30 सेकंड लगेंगे
+          {t('quickTokenNote', '⚡ Token allocation takes only 30 seconds')}
         </p>
       </div>
 

@@ -53,7 +53,7 @@ export default function Header({ activeTab, onNavigate, onSwitchToDesktop }) {
             title="APMC Mandi Staff Control Desk"
           >
             <span className="material-symbols-outlined text-[15px] text-[#B45309]">desk</span>
-            <span>स्टाफ Desk</span>
+            <span>{t('staffDeskBtn', 'Staff Desk')}</span>
           </button>
 
           {/* Desktop Portal Switcher */}
