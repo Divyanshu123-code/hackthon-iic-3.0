@@ -524,6 +524,12 @@ export const TRANSLATIONS = {
     gateQrPassTitle: 'Gate Entry QR Pass',
     validWeighbridge: 'Weighbridge #{no} Valid',
     scanAtWeighbridgeNote: 'Present this QR pass before the scanner when arriving at the weighbridge.',
+    chips: [
+      'When will my crop be weighed?',
+      "What is today's MSP rate?",
+      'Check RJ-20-EA-4412 status',
+      'How to get 80% advance?'
+    ]
   },
   pa: {
     appTitle: 'ਸਹਾਇਕ (Sahayak)',

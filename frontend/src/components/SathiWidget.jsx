@@ -313,7 +313,12 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     }
   };
 
-  const currentChips = t('chips') || [];
+  const rawChips = t('chips');
+  const currentChips = Array.isArray(rawChips)
+    ? rawChips
+    : (currentLang === 'en'
+      ? ['When will my crop be weighed?', "What is today's MSP rate?", 'Check RJ-20-EA-4412 status', 'How to get 80% advance?']
+      : ['मेरी फसल कब बिकेगी?', 'आज गेहूं का भाव क्या है?', 'गाड़ी RJ-20-EA-4412 स्थिति', '80% एडवांस कैसे मिलेगा?']);
 
   return (
     <>
