@@ -1321,9 +1321,80 @@
         sheet.classList.remove('hidden');
       } else {
         sheet.classList.add('hidden');
+        stopVoiceInput();
       }
       if (!sheet.classList.contains('hidden')) {
         document.getElementById('sathiContextBadge').textContent = `${currentScreen.toUpperCase()} CONTEXT`;
+      }
+    }
+
+    let globalVoices = [];
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => { globalVoices = window.speechSynthesis.getVoices() || []; };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const cleanText = text.replace(/[*_#`~]/g, '').replace(/₹\s*([0-9,]+)/g, '$1 रुपये ').trim();
+          const utter = new SpeechSynthesisUtterance(cleanText);
+          utter.lang = 'hi-IN';
+          utter.rate = 0.95;
+          const voices = globalVoices.length ? globalVoices : window.speechSynthesis.getVoices();
+          const hindiVoice = voices.find(v => v.lang.includes('hi') || v.name.toLowerCase().includes('hindi')) || voices.find(v => v.lang.includes('IN')) || voices[0];
+          if (hindiVoice) utter.voice = hindiVoice;
+          window._currUtter = utter;
+          window.speechSynthesis.speak(utter);
+        } catch (e) {}
+      }
+    }
+
+    let activeRecognition = null;
+    function startVoiceInput() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('आपके ब्राउज़र में माइक सपोर्ट नहीं है। कृपया लिखकर पूछें।');
+        return;
+      }
+      stopVoiceInput();
+      try {
+        const rec = new SpeechRecognition();
+        activeRecognition = rec;
+        rec.lang = 'hi-IN';
+        rec.interimResults = true;
+        const input = document.getElementById('sathiInput');
+        
+        rec.onstart = () => {
+          if (input) input.placeholder = 'सुन रहा हूँ... कृपया बोलिए';
+        };
+        rec.onresult = (e) => {
+          let str = '';
+          for (let i = e.resultIndex; i < e.results.length; ++i) {
+            str += e.results[i][0].transcript;
+          }
+          if (input) input.value = str;
+          if (e.results[0].isFinal) {
+            askSathi(str);
+            rec.stop();
+          }
+        };
+        rec.onerror = () => {
+          if (input) input.placeholder = 'अपना सवाल लिखें या बोलें...';
+        };
+        rec.onend = () => {
+          activeRecognition = null;
+        };
+        rec.start();
+      } catch (e) {}
+    }
+
+    function stopVoiceInput() {
+      if (activeRecognition) {
+        try { activeRecognition.stop(); } catch (e) {}
+        activeRecognition = null;
       }
     }
 
@@ -1332,6 +1403,8 @@
       if (customGreeting) {
         document.getElementById('sathiReplyText').textContent = customGreeting;
         speakText(customGreeting);
+      } else {
+        setTimeout(startVoiceInput, 300);
       }
     }
 
@@ -1364,16 +1437,6 @@
       if (!q) return;
       askSathi(q);
       input.value = '';
-    }
-
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'hi-IN';
-        utter.rate = 0.95;
-        window.speechSynthesis.speak(utter);
-      }
     }
 
     function speakQueueStatus() {
