@@ -275,26 +275,31 @@ router.post('/query', async (req, res) => {
   // 1. Google Gemini
   const geminiKey = (provider === 'gemini' && userKey) || serverKeys.gemini;
   if (!replyText && geminiKey) {
-    try {
-      const genAI = new GoogleGenerativeAI(geminiKey);
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
-        systemInstruction: systemPrompt
-      });
+    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+    for (const modelName of modelsToTry) {
+      if (replyText) break;
+      try {
+        const genAI = new GoogleGenerativeAI(geminiKey);
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction: systemPrompt
+        });
 
-      const chat = model.startChat({
-        history: conversation.slice(-6).map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }]
-        }))
-      });
+        const chat = model.startChat({
+          history: conversation.slice(-6).map(m => ({
+            role: m.role === 'user' ? 'user' : 'model',
+            parts: [{ text: m.content }]
+          }))
+        });
 
-      const result = await chat.sendMessage(promptText);
-      const response = await result.response;
-      replyText = response.text().trim();
-      modelUsed = '✨ Google Gemini 1.5 Flash';
-    } catch (err) {
-      console.warn('Gemini API call failed, falling back:', err.message);
+        const result = await chat.sendMessage(promptText);
+        const response = await result.response;
+        replyText = response.text().trim();
+        modelUsed = `✨ Google ${modelName}`;
+        break;
+      } catch (err) {
+        console.warn(`Gemini (${modelName}) failed, trying next:`, err.message);
+      }
     }
   }
 
