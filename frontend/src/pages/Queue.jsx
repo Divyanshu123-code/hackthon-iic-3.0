@@ -9,7 +9,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
   const speakQueueStatus = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const msg = `आपका टोकन नंबर ${queueData?.token || 42} है। आपके आगे ${queueData?.aheadCount || 4} ट्रैक्टर हैं। कांटा नंबर ${queueData?.weighbridgeNo || 3} पर जाएं।`;
+      const msg = `टोकन क्रमांक ${queueData?.token || 42}, वाहन ${queueData?.vehicleNumber || 'RJ-20-EA-4412'}। आपके आगे 4 ट्रैक्टर हैं। अनुमानित प्रतीक्षा समय लगभग 25 मिनट है।`;
       const utter = new SpeechSynthesisUtterance(msg);
       utter.lang = 'hi-IN';
       window.speechSynthesis.speak(utter);
@@ -27,7 +27,7 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
       setTimeout(() => {
         setBookingState('idle');
         if (onOpenQr) onOpenQr();
-      }, 1200);
+      }, 1000);
     } catch (e) {
       setBookingState('error');
       setTimeout(() => setBookingState('idle'), 2000);
@@ -40,74 +40,100 @@ export default function Queue({ queueData, onNavigate, onOpenQr }) {
   const fillWidths = ['0%', '36%', '68%', '100%'];
 
   return (
-    <div className="flex flex-col w-full px-margin-screen gap-pad-md animate-in fade-in duration-200">
+    <div className="flex flex-col w-full px-4 gap-3.5 mt-1 animate-in fade-in duration-200">
       
       {/* Top Nav Strip */}
-      <div className="flex items-center justify-between pt-pad-xs">
+      <div className="flex items-center justify-between pt-1">
         <button
           onClick={() => onNavigate('home')}
           aria-label="Go Back"
-          className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform shadow-sm"
+          className="w-10 h-10 rounded-xl bg-white border border-[#E5DEC9] flex items-center justify-center text-[#1C1917] active:scale-95 transition-all shadow-xs"
         >
-          <span className="material-symbols-outlined text-[28px]">arrow_back</span>
+          <span className="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
-        <div className="flex items-center gap-pad-xs bg-secondary-container/60 px-pad-sm py-1.5 rounded-full">
-          <span className="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
-          <span className="font-label-sm text-label-sm text-on-secondary-container font-bold">लाइव मंडी कतार • Live Queue</span>
+        <div className="flex items-center gap-1.5 bg-[#F0FDF4] border border-[#BBF7D0] px-3 py-1 rounded-full">
+          <span className="w-2 h-2 rounded-full bg-[#166534] animate-ping"></span>
+          <span className="text-xs font-bold text-[#166534]">लाइव मंडी कतार • APMC Live</span>
         </div>
         <button
           onClick={speakQueueStatus}
           aria-label="Listen Announcement"
-          className="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform shadow-sm"
+          className="w-10 h-10 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center text-[#B45309] active:scale-95 transition-all shadow-xs"
         >
-          <span className="material-symbols-outlined text-[28px]">volume_up</span>
+          <span className="material-symbols-outlined text-[22px]">volume_up</span>
         </button>
       </div>
 
-      {/* Giant Live Token Hero Card */}
-      <div className="relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-md flex flex-col items-center text-center p-pad-lg border border-slate-100">
-        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary-fixed/40 blur-2xl pointer-events-none"></div>
-        <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-full bg-secondary-fixed/30 blur-2xl pointer-events-none"></div>
-        
-        <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-pad-xs font-bold">
-          आपका टोकन नंबर • YOUR TOKEN
-        </span>
-
-        {/* Giant Token Circle with High Contrast Glow Accent */}
-        <div className="relative my-pad-xs flex items-center justify-center">
-          <div className="w-48 h-48 rounded-full bg-primary-container/10 flex items-center justify-center shadow-inner">
-            <div className="w-40 h-40 rounded-full bg-primary-container flex flex-col items-center justify-center text-on-primary-container shadow-lg select-none">
-              <span className="font-display-lg-mobile text-[76px] leading-none tracking-tight font-extrabold text-on-primary">
-                {queueData?.token || 42}
+      {/* AUTHENTIC APMC MANDI GATE ENTRY SLIP CARD */}
+      <div className="bg-[#FFFDF9] rounded-xl border border-[#E2D9C5] shadow-sm overflow-hidden flex flex-col">
+        {/* Slip Header */}
+        <div className="px-4 py-2.5 bg-[#F7F2E7] border-b border-[#E2D9C5] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[20px] text-[#166534]">receipt_long</span>
+            <div>
+              <span className="text-[11px] font-bold text-[#166534] uppercase tracking-wider block">
+                कृषि उपज मंडी समिति • कोटा (राज.)
               </span>
-              <span className="font-label-sm text-label-sm tracking-widest text-primary-fixed mt-1 uppercase font-bold">
-                RJ LOT
-              </span>
+              <span className="text-[10px] text-[#78716C]">प्रवेश पर्ची • APMC Gate Entry Slip</span>
             </div>
           </div>
-          {/* Position Indicator Ribbon */}
-          <div className="absolute -bottom-2 bg-secondary text-on-secondary px-pad-md py-1 rounded-full shadow-md flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[18px]">agriculture</span>
-            <span className="font-label-sm text-label-sm font-bold">
-              {queueData?.aheadCount > 0 ? `आगे केवल ${queueData.aheadCount} ट्रैक्टर` : 'आपकी बारी आ गई है!'}
-            </span>
-          </div>
+          <span className="text-[10px] font-mono font-bold text-[#1C1917] bg-white border border-[#E2D9C5] px-2 py-0.5 rounded">
+            BATCH-24A
+          </span>
         </div>
 
-        {/* Live Gate Counter & ETA Grid */}
-        <div className="w-full grid grid-cols-2 gap-pad-xs mt-pad-md pt-pad-xs">
-          <div className="bg-surface-container-low rounded-lg p-pad-sm flex flex-col items-center justify-center text-center">
-            <span className="font-label-sm text-label-sm text-on-surface-variant">गेट पर अभी • At Gate</span>
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="font-headline-md text-headline-md text-secondary font-bold">#{queueData?.atGateNumber || 38}</span>
-              <span className="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
-            </div>
+        {/* Token Numerals & Stamped Layout */}
+        <div className="p-4 flex flex-col items-center text-center relative">
+          {/* Authentic Stamp Mark */}
+          <div className="absolute right-4 top-3 border-2 border-[#166534]/50 text-[#166534] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider rotate-[-6deg] select-none pointer-events-none bg-green-50/70">
+            ✓ सत्यापित / Verified
           </div>
-          <div className="bg-surface-container-low rounded-lg p-pad-sm flex flex-col items-center justify-center text-center">
-            <span className="font-label-sm text-label-sm text-on-surface-variant">अनुमानित समय • Est. Wait</span>
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="font-headline-md text-headline-md text-primary font-bold">~{queueData?.estWaitMins || 25}</span>
-              <span className="font-label-md text-label-md text-on-surface">मिनट</span>
+
+          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
+            आपका टोकन क्रमांक • YOUR TOKEN NO.
+          </span>
+
+          {/* Large Bold Tactile Token Number */}
+          <div className="my-1 flex items-baseline justify-center gap-1">
+            <span className="text-[20px] font-mono font-bold text-[#9CA3AF]">#</span>
+            <span className="text-[64px] font-extrabold leading-none text-[#166534] tracking-tight font-mono">
+              {queueData?.token || 42}
+            </span>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 bg-[#F3ECE0] px-3 py-1 rounded-md border border-[#E2D9C5] text-xs font-mono text-[#374151]">
+            <span className="font-bold">{queueData?.vehicleNumber || 'RJ-20-EA-4412'}</span>
+            <span>•</span>
+            <span className="font-bold text-[#B45309]">सोयाबीन (50 क्विंटल)</span>
+          </div>
+
+          {/* Perforation Cut Line */}
+          <div className="w-full my-3 relative flex items-center justify-center">
+            <div className="w-full border-b border-dashed border-[#CFC5B0]"></div>
+          </div>
+
+          {/* 3-Column Grounded Mandi Electronic Board */}
+          <div className="w-full grid grid-cols-3 gap-2 text-left">
+            <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">कतार • Ahead</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xl font-bold text-[#1C1917]">{queueData?.aheadCount || '04'}</span>
+                <span className="text-[10px] font-medium text-[#57534E]">ट्रैक्टर</span>
+              </div>
+            </div>
+            <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">गेट पर • At Gate</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xl font-bold font-mono text-[#166534]">#{queueData?.atGateNumber || 38}</span>
+                <span className="text-[10px] font-bold text-[#166534]">चालू</span>
+              </div>
+            </div>
+            <div className="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+              <span className="text-[9px] uppercase font-bold text-[#78716C] block">अनुमानित • Wait</span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-xl font-bold text-[#B45309]">~{queueData?.estWaitMins || 25}</span>
+                <span className="text-[10px] font-medium text-[#57534E]">मिनट</span>
+              </div>
             </div>
           </div>
         </div>
