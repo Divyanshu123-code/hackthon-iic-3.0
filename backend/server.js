@@ -88,13 +88,17 @@ app.get('*', (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🌾 Kisan Mandi API Server is running on port ${PORT}`);
-  console.log(`📱 Farmer App (Stitch UI):  http://localhost:${PORT}`);
-  console.log(`🛠️  Staff Control Desk:     http://localhost:${PORT}/staff`);
-  console.log(`⚡ Live SSE Stream:         http://localhost:${PORT}/api/stream`);
-  console.log(`📋 API Health Check:        http://localhost:${PORT}/api/health`);
-  console.log(`=======================================================`);
-});
+// Start Server if run directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🌾 Kisan Mandi API Server is running on port ${PORT}`);
+    console.log(`📱 Farmer App (Stitch UI):  http://localhost:${PORT}`);
+    console.log(`🛠️  Staff Control Desk:     http://localhost:${PORT}/staff`);
+    console.log(`⚡ Live SSE Stream:         http://localhost:${PORT}/api/stream`);
+    console.log(`📋 API Health Check:        http://localhost:${PORT}/api/health`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = app;

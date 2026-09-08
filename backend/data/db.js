@@ -8,19 +8,35 @@ const seedPath = path.join(__dirname, 'seed.json');
 class MandiEventEmitter extends EventEmitter {}
 const mandiEvents = new MandiEventEmitter();
 
-// Initialize db.json if not exists
+let inMemoryDb = null;
+
+// Initialize in-memory DB or file DB
+function initSeed() {
+  try {
+    const seedData = fs.readFileSync(seedPath, 'utf8');
+    return JSON.parse(seedData);
+  } catch (err) {
+    return { centers: [], farmers: [], events: [] };
+  }
+}
+
 if (!fs.existsSync(dbPath)) {
-  const seedData = fs.readFileSync(seedPath, 'utf8');
-  fs.writeFileSync(dbPath, seedData, 'utf8');
+  try {
+    const seedData = fs.readFileSync(seedPath, 'utf8');
+    fs.writeFileSync(dbPath, seedData, 'utf8');
+  } catch (e) {
+    inMemoryDb = initSeed();
+  }
 }
 
 function getDb() {
+  if (inMemoryDb) return inMemoryDb;
   try {
     const raw = fs.readFileSync(dbPath, 'utf8');
     return JSON.parse(raw);
   } catch (err) {
-    console.error('Error reading db.json, restoring seed:', err);
-    return resetDb();
+    inMemoryDb = initSeed();
+    return inMemoryDb;
   }
 }
 
@@ -34,11 +50,15 @@ function saveDb(data, eventInfo = null) {
         message: eventInfo.message || 'State updated',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
       });
-      // Keep last 30 events
       if (data.events.length > 30) data.events = data.events.slice(0, 30);
     }
 
-    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
+    inMemoryDb = data;
+    try {
+      fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
+    } catch (writeErr) {
+      // In serverless (e.g. Vercel), disk is read-only; in-memory copy is used
+    }
     
     // Broadcast live event to all connected SSE clients
     mandiEvents.emit('change', {
@@ -48,15 +68,17 @@ function saveDb(data, eventInfo = null) {
     });
     return true;
   } catch (err) {
-    console.error('Error saving db.json:', err);
+    console.error('Error saving db:', err);
     return false;
   }
 }
 
 function resetDb() {
-  const seedData = fs.readFileSync(seedPath, 'utf8');
-  fs.writeFileSync(dbPath, seedData, 'utf8');
-  const parsed = JSON.parse(seedData);
+  inMemoryDb = initSeed();
+  try {
+    const seedData = fs.readFileSync(seedPath, 'utf8');
+    fs.writeFileSync(dbPath, seedData, 'utf8');
+  } catch (e) {}
   mandiEvents.emit('change', { type: 'RESET', message: 'Database reset to initial demo seed' });
   return parsed;
 }
