@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>Kisan Mandi</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Rozha+One&amp;family=IBM+Plex+Mono:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>
+@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}
+/* Tactile receipt perforated divider */
+.perforated-border {
+  background-image: radial-gradient(circle at center, #FAF6EE 3.5px, transparent 4px);
+  background-size: 16px 16px;
+  background-repeat: repeat-x;
+  background-position: center bottom -8px;
+}
+.perforated-cutout {
+  position: relative;
+}
+.perforated-cutout::before, .perforated-cutout::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #FAF6EE;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+.perforated-cutout::before {
+  left: -8px;
+  box-shadow: inset -1px 0 0 #E2D9C5;
+}
+.perforated-cutout::after {
+  right: -8px;
+  box-shadow: inset 1px 0 0 #E2D9C5;
+}
+</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"parchment-base":"#FAF6EE","parchment-surface":"#FFFDF9","parchment-border":"#E2D9C5","charcoal-ink":"#1F2937","secondary":"#B45309","primary":"#166534","primary-container":"#14532D","on-primary":"#FFFFFF","outline":"#78716C","surface-variant":"#F3ECE0"},"fontFamily":{"mono":["'IBM Plex Mono'","monospace"],"headline":["'Plus Jakarta Sans'","sans-serif"],"body":["'Manrope'","sans-serif"],"stamp":["'Rozha One'","serif"]}}}};</script></head><body class="bg-[#FAF6EE] font-body text-[#1F2937] flex flex-col min-h-screen relative"><header class="fixed top-0 w-full z-50 bg-[#FAF6EE]/95 backdrop-blur-md border-b border-[#E2D9C5] pt-safe"><div class="h-16 px-4 flex items-center justify-between gap-3"><div class="flex items-center gap-2.5 min-w-0"><img alt="Kisan Mandi Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1VhkKraZkiyJQ6IJaXNylSZHLxBfDT7NFB-bVjCiAVONzZp5WssBUetzdgodoCsaq_CsRmJXMk3I_3eda3C9sCC4BQpUd-DapU2bC0MTaFNOywgNClXbPy9Oz2ecS4VJZBFm9yadSZOquUARV5uKfqNPI6Z1_8uNGjxecCbNIlyQq6KFL9Og-yEI7ABI0aYC8MZzbb1aYbrGlXRSLw6Dr0EsUKdMxpJBh2uGF1OCIT0_C_WXbAlasRLrw"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-1.5"><span class="text-[11px] font-bold text-[#166534] uppercase tracking-wider leading-none">कृषि उपज मंडी समिति</span><span class="text-[10px] bg-[#EAE2D2] text-[#4B5563] px-1.5 py-0.2 rounded font-mono font-bold">APMC</span></div><h1 class="text-base font-bold text-[#1F2937] truncate font-headline leading-tight">गेट टोकन व कतार • Gate Token</h1></div></div><div class="flex items-center gap-1 flex-shrink-0"><button aria-label="Notifications" class="w-10 h-10 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-[#1F2937] hover:bg-[#EAE2D2]/60 transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span></button><div class="w-8 h-8 rounded-lg bg-[#166534] text-white flex items-center justify-center font-bold text-xs">RJ</div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-28 bg-[#FAF6EE] min-h-screen"><div class="flex flex-col w-full px-4 gap-3.5 pt-3">
+<!-- Status Bar & Dignified Audio Assist -->
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 bg-[#FFFDF9] border border-[#E2D9C5] px-3 py-1.5 rounded-lg shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-[#166534]"></span>
+<span class="text-xs font-bold text-[#166534] font-headline tracking-wide uppercase">लाइव मंडी कतार • Live Yard Queue</span>
+</div>
+<button aria-label="Listen Announcement" class="h-9 px-3 rounded-lg bg-[#FFFDF9] border border-[#E2D9C5] flex items-center gap-1.5 text-[#1F2937] hover:bg-[#F3ECE0] active:scale-95 transition-all shadow-sm" id="speakerToggle">
+<span class="material-symbols-outlined text-[20px] text-[#166534]" id="speakerIcon">volume_up</span>
+<span class="text-xs font-bold font-headline" id="speakerLabel">सुनें / Audio</span>
+</button>
+</div>
+<!-- Authentic APMC Physical Gate Pass / Token Slip -->
+<div class="bg-[#FFFDF9] rounded-xl border border-[#E2D9C5] shadow-sm overflow-hidden flex flex-col">
+<!-- Official Header Band -->
+<div class="bg-[#F7F2E7] border-b border-[#E2D9C5] px-4 py-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-[#166534]">receipt_long</span>
+<div>
+<span class="text-[11px] font-bold text-[#166534] uppercase tracking-wider block">कृषि उपज मंडी समिति • कोटा (राज.)</span>
+<span class="text-[11px] text-[#6B7280]">प्रवेश पर्ची • APMC Gate Entry Slip</span>
+</div>
+</div>
+<span class="text-[11px] font-mono font-bold text-[#1F2937] bg-white border border-[#E2D9C5] px-2 py-0.5 rounded">
+      BATCH-24A
+    </span>
+</div>
+<!-- Token Numerals & Stamped Visual Layout -->
+<div class="p-4 flex flex-col items-center text-center relative">
+<!-- Authentic Stamp Mark -->
+<div class="absolute right-4 top-3 border-2 border-[#166534]/40 text-[#166534] px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider rotate-[-6deg] select-none pointer-events-none">
+      ✓ सत्यापित / Verified
+    </div>
+<span class="text-[12px] font-bold text-[#6B7280] tracking-wider uppercase font-headline">
+      आपका टोकन क्रमांक • YOUR TOKEN NO.
+    </span>
+<!-- Large Bold Tactile Token Number -->
+<div class="my-1 flex items-baseline justify-center gap-1">
+<span class="text-[18px] font-mono font-bold text-[#9CA3AF]">#</span>
+<span class="text-[72px] font-bold font-headline leading-none text-[#166534] tracking-tight">
+        42
+      </span>
+</div>
+<div class="inline-flex items-center gap-1.5 bg-[#F3ECE0] px-2.5 py-1 rounded border border-[#E2D9C5] text-[12px] font-mono text-[#374151]">
+<span>RJ-20-EA-4412</span>
+<span>•</span>
+<span class="font-bold text-[#B45309]">सोयाबीन (50 क्विंटल)</span>
+</div>
+<!-- Perforation Cut Line -->
+<div class="w-full my-3 perforated-cutout relative flex items-center justify-center">
+<div class="w-full border-b border-dashed border-[#CFC5B0]"></div>
+</div>
+<!-- Grounded Mandi Electronic Board: Queue Status & Gate Info -->
+<div class="w-full grid grid-cols-3 gap-2 text-left">
+<div class="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+<span class="text-[10px] uppercase font-bold text-[#6B7280] block">कतार स्थिति • Ahead</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-xl font-bold font-headline text-[#1F2937]">04</span>
+<span class="text-[11px] font-medium text-[#4B5563]">ट्रैक्टर</span>
+</div>
+</div>
+<div class="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+<span class="text-[10px] uppercase font-bold text-[#6B7280] block">गेट पर अभी • At Gate</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-xl font-bold font-mono text-[#166534]">#38</span>
+<span class="text-[11px] font-bold text-[#166534]">चालू</span>
+</div>
+</div>
+<div class="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5]">
+<span class="text-[10px] uppercase font-bold text-[#6B7280] block">अनुमानित • Est. Wait</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-xl font-bold font-headline text-[#B45309]">~25</span>
+<span class="text-[11px] font-medium text-[#4B5563]">मिनट</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Advance Slot Booking / Block Token Section -->
+<section class="bg-[#FFFDF9] rounded-xl border border-[#E2D9C5] shadow-sm overflow-hidden flex flex-col">
+<div class="px-4 py-3 bg-[#F7F2E7] border-b border-[#E2D9C5] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-[#166534]/10 text-[#166534] border border-[#166534]/20 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[19px]">event_available</span>
+</div>
+<div>
+<h2 class="text-[14px] font-bold text-[#1F2937] font-headline leading-tight">गेट स्लॉट बुकिंग • Advance Gate Slot</h2>
+<p class="text-[11px] text-[#6B7280]">कतार में प्राथमिकता पाएं, नियत समय पर पहुंचे</p>
+</div>
+</div>
+<span class="text-[11px] font-bold text-[#166534] bg-[#E7F3EB] border border-[#166534]/30 px-2 py-0.5 rounded font-mono">
+      खुला है
+    </span>
+</div>
+<div class="p-4 flex flex-col gap-3">
+<!-- Slot Selection Label & Practical Radio Cards -->
+<div class="flex flex-col gap-1.5">
+<label class="text-[12px] font-bold text-[#374151] flex items-center justify-between">
+<span>समय स्लॉट चुनें • Available Window</span>
+<span class="text-[11px] font-normal text-[#6B7280]">आज: 14 अप्रैल</span>
+</label>
+<div class="grid grid-cols-2 gap-2">
+<!-- Selected Slot Card -->
+<div class="border-2 border-[#166534] bg-[#F2F8F4] rounded-lg p-2.5 flex flex-col cursor-pointer transition-all">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-bold text-[#1F2937] font-headline">प्रातः 09 - 11 AM</span>
+<span class="material-symbols-outlined text-[#166534] text-[18px]">radio_button_checked</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-[11px] font-semibold text-[#166534]">8 स्लॉट उपलब्ध</span>
+<span class="text-[10px] bg-white text-[#4B5563] px-1 py-0.5 rounded border border-[#CDE5D5]">Morning</span>
+</div>
+</div>
+<!-- Secondary Slot Card -->
+<div class="border border-[#E2D9C5] bg-[#FAF6EE] rounded-lg p-2.5 flex flex-col cursor-pointer hover:border-[#166534] transition-all">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-[#4B5563] font-headline">दोपहर 01 - 03 PM</span>
+<span class="material-symbols-outlined text-[#9CA3AF] text-[18px]">radio_button_unchecked</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-[11px] font-medium text-[#B45309]">15 स्लॉट उपलब्ध</span>
+<span class="text-[10px] bg-white text-[#4B5563] px-1 py-0.5 rounded border border-[#E2D9C5]">Afternoon</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Vehicle Load Summary -->
+<div class="bg-[#FAF6EE] rounded-lg p-2.5 border border-[#E2D9C5] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-[#166534]">agriculture</span>
+<div class="flex flex-col">
+<span class="text-[12px] font-bold text-[#1F2937]">ट्रैक्टर ट्रॉली (सोयाबीन)</span>
+<span class="text-[11px] text-[#6B7280]">अनुमानित भार: 50 क्विंटल (68 बोरी)</span>
+</div>
+</div>
+<span class="text-[11px] font-mono text-[#374151] bg-[#FFFDF9] border border-[#E2D9C5] px-2 py-0.5 rounded">RJ-20</span>
+</div>
+<!-- Tactile Solid Action Button -->
+<div class="flex flex-col gap-1.5 pt-0.5">
+<button class="w-full h-12 rounded-lg bg-[#166534] hover:bg-[#14532D] active:bg-[#0F3E22] text-white font-bold font-headline shadow-sm flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+<span>टोकन स्लॉट आरक्षित करें • Reserve Gate Slot</span>
+</button>
+<div class="flex items-center justify-center gap-1 text-[#6B7280] text-[11px]">
+<span class="material-symbols-outlined text-[14px] text-[#166534]">check_circle</span>
+<span>15 मिनट होल्ड • प्रवेश द्वार पर SMS व ई-पास प्रस्तुत करें</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Current Mandi Directive Alert -->
+<div class="bg-[#FFFDF9] border-l-4 border-l-[#B45309] border-y border-r border-[#E2D9C5] rounded-xl p-3.5 flex items-center gap-3 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-[#FEF3C7] text-[#B45309] flex items-center justify-center flex-shrink-0 font-bold">
+<span class="material-symbols-outlined text-[24px]">call_missed_outgoing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">तत्काल निर्देश • Action Required</span>
+<h3 class="text-sm font-bold text-[#1F2937] leading-snug">धर्मकांटा लेन #3 की तरफ बढ़ें</h3>
+<p class="text-xs text-[#6B7280] line-clamp-1">Move towards weighbridge gate 3 immediately</p>
+</div>
+</div>
+<!-- Authentic Mandi Physical Process Stepper -->
+<div class="bg-[#FFFDF9] rounded-xl p-4 border border-[#E2D9C5] shadow-sm flex flex-col">
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-[#E2D9C5]">
+<div>
+<span class="text-xs font-bold text-[#1F2937] uppercase font-headline tracking-wide">मंडी चरण • Mandi Process Flow</span>
+<span class="text-[11px] text-[#6B7280] block">चार अनिवार्य भौतिक चरण</span>
+</div>
+<span class="text-xs font-mono font-bold text-[#166534] bg-[#E7F3EB] border border-[#166534]/30 px-2 py-0.5 rounded">
+      चरण 2 / 4 चालू
+    </span>
+</div>
+<!-- Connected Physical Stepper -->
+<div class="relative flex items-start justify-between w-full px-1">
+<!-- Connecting Track -->
+<div class="absolute top-4 left-5 right-5 h-[2px] bg-[#E2D9C5] -z-0"></div>
+<div class="absolute top-4 left-5 w-[38%] h-[2px] bg-[#166534] -z-0"></div>
+<!-- Step 1: Arrived (Completed) -->
+<div class="flex flex-col items-center z-10 w-16">
+<div class="w-8 h-8 rounded-full bg-[#166534] text-white flex items-center justify-center border-2 border-white shadow-sm">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="text-xs font-bold text-[#166534] mt-1.5 text-center leading-tight">1. प्रवेश</span>
+<span class="text-[10px] text-[#6B7280] text-center">Arrived</span>
+</div>
+<!-- Step 2: Weighing (Active) -->
+<div class="flex flex-col items-center z-10 w-16">
+<div class="w-8 h-8 rounded-full bg-[#B45309] text-white flex items-center justify-center border-2 border-[#FEF3C7] shadow-sm">
+<span class="material-symbols-outlined text-[18px]">scale</span>
+</div>
+<span class="text-xs font-bold text-[#B45309] mt-1.5 text-center leading-tight">2. तौल</span>
+<span class="text-[10px] font-bold text-[#B45309] text-center">Weighing</span>
+</div>
+<!-- Step 3: Grading (Pending) -->
+<div class="flex flex-col items-center z-10 w-16 opacity-60">
+<div class="w-8 h-8 rounded-full bg-[#FAF6EE] border border-[#CFC5B0] text-[#78716C] flex items-center justify-center">
+<span class="text-xs font-mono font-bold">3</span>
+</div>
+<span class="text-xs font-medium text-[#4B5563] mt-1.5 text-center leading-tight">गुणवत्ता</span>
+<span class="text-[10px] text-[#78716C] text-center">Grading</span>
+</div>
+<!-- Step 4: Approved (Pending) -->
+<div class="flex flex-col items-center z-10 w-16 opacity-60">
+<div class="w-8 h-8 rounded-full bg-[#FAF6EE] border border-[#CFC5B0] text-[#78716C] flex items-center justify-center">
+<span class="text-xs font-mono font-bold">4</span>
+</div>
+<span class="text-xs font-medium text-[#4B5563] mt-1.5 text-center leading-tight">अंतिम पर्ची</span>
+<span class="text-[10px] text-[#78716C] text-center">Approved</span>
+</div>
+</div>
+</div>
+<!-- Assigned Lane & Commodity Manifest -->
+<div class="bg-[#FFFDF9] rounded-xl border border-[#E2D9C5] shadow-sm p-3.5 flex flex-col gap-2.5">
+<div class="flex items-center justify-between pb-2 border-b border-[#E2D9C5]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-[#166534]">assignment</span>
+<span class="text-xs font-bold text-[#1F2937] uppercase font-headline">गेट व फसल विवरण • Manifest</span>
+</div>
+<span class="text-xs text-[#6B7280] font-mono">ID: MP-KOT-982</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-[#FAF6EE] border border-[#E2D9C5] rounded-lg p-2.5">
+<span class="text-[10px] uppercase font-bold text-[#6B7280] block">निर्धारित धर्मकांटा</span>
+<span class="text-sm font-bold text-[#166534] font-headline mt-0.5 block">कांटा #3 (उत्तरी गेट)</span>
+<span class="text-[11px] text-[#4B5563]">Weighbridge No. 3</span>
+</div>
+<div class="bg-[#FAF6EE] border border-[#E2D9C5] rounded-lg p-2.5">
+<span class="text-[10px] uppercase font-bold text-[#6B7280] block">उपज / फसल</span>
+<span class="text-sm font-bold text-[#1F2937] font-headline mt-0.5 block">सोयाबीन (JS 335)</span>
+<span class="text-[11px] text-[#4B5563]">68 बोरी (~50 क्विंटल)</span>
+</div>
+</div>
+</div>
+<!-- Tactile Guard Pass Trigger Button -->
+<div class="pb-2">
+<button class="w-full h-13 py-3 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white shadow-sm flex items-center justify-center gap-3 px-4 active:scale-[0.99] transition-all" id="showPassBtn">
+<span class="material-symbols-outlined text-[24px] text-[#FAF6EE]">qr_code_scanner</span>
+<div class="flex flex-col text-left">
+<span class="text-sm font-bold leading-tight">गेट सुरक्षा कर्मी को पर्ची दिखाएं</span>
+<span class="text-[11px] text-[#D1D5DB] leading-tight">Show QR Pass &amp; Entry Slip to Guard</span>
+</div>
+</button>
+</div>
+<!-- Authentic QR Pass Modal Overlay (Hidden initially) -->
+<div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4" id="qrModal">
+<div class="bg-[#FAF6EE] w-full max-w-sm rounded-xl p-5 border border-[#E2D9C5] flex flex-col items-center text-center shadow-xl relative">
+<button aria-label="Close Modal" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-[#EAE2D2] flex items-center justify-center text-[#1F2937]" id="closeModalBtn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="flex items-center gap-1.5 text-[11px] font-bold text-[#166534] uppercase tracking-wider">
+<span>APMC कोटा • प्रवेश अनुमति</span>
+</div>
+<span class="text-2xl font-bold text-[#1F2937] font-headline mt-0.5">टोकन #42</span>
+<span class="text-xs text-[#6B7280] font-mono">ट्रैक्टर: RJ-20-EA-4412</span>
+<!-- High-contrast Authentic Mandi QR Pass -->
+<div class="w-52 h-52 my-3 bg-white p-3 rounded-lg border border-[#E2D9C5] shadow-sm flex items-center justify-center">
+<svg class="w-full h-full text-[#1F2937]" fill="currentColor" viewbox="0 0 100 100">
+<rect fill="currentColor" height="28" rx="1" width="28" x="5" y="5"></rect>
+<rect fill="#ffffff" height="20" rx="1" width="20" x="9" y="9"></rect>
+<rect fill="currentColor" height="12" width="12" x="13" y="13"></rect>
+<rect fill="currentColor" height="28" rx="1" width="28" x="67" y="5"></rect>
+<rect fill="#ffffff" height="20" rx="1" width="20" x="71" y="9"></rect>
+<rect fill="currentColor" height="12" width="12" x="75" y="13"></rect>
+<rect fill="currentColor" height="28" rx="1" width="28" x="5" y="67"></rect>
+<rect fill="#ffffff" height="20" rx="1" width="20" x="9" y="71"></rect>
+<rect fill="currentColor" height="12" width="12" x="13" y="75"></rect>
+<rect height="8" width="8" x="38" y="8"></rect>
+<rect height="6" width="10" x="50" y="8"></rect>
+<rect height="14" width="6" x="38" y="20"></rect>
+<rect height="6" width="12" x="48" y="18"></rect>
+<rect height="10" width="8" x="48" y="28"></rect>
+<rect height="8" width="10" x="8" y="38"></rect>
+<rect height="12" width="6" x="8" y="50"></rect>
+<rect height="18" width="8" x="22" y="40"></rect>
+<rect height="10" width="10" x="38" y="42"></rect>
+<rect height="6" width="14" x="52" y="42"></rect>
+<rect height="16" width="8" x="70" y="42"></rect>
+<rect height="8" width="12" x="82" y="42"></rect>
+<rect height="14" width="6" x="38" y="56"></rect>
+<rect height="8" width="14" x="48" y="52"></rect>
+<rect height="12" width="8" x="48" y="64"></rect>
+<rect height="12" width="14" x="60" y="62"></rect>
+<rect height="8" width="16" x="78" y="62"></rect>
+<rect height="8" width="18" x="38" y="74"></rect>
+<rect height="16" width="10" x="60" y="78"></rect>
+<rect height="12" width="8" x="74" y="74"></rect>
+<rect height="20" width="8" x="86" y="74"></rect>
+<rect height="8" width="18" x="38" y="86"></rect>
+</svg>
+</div>
+<div class="bg-[#FFFDF9] w-full rounded border border-[#E2D9C5] p-2 flex items-center justify-between text-xs">
+<span class="text-[#6B7280]">निर्धारित: लेन #3</span>
+<span class="text-[#166534] font-bold">कांटा तौल मान्य</span>
+</div>
+<p class="text-[11px] text-[#6B7280] mt-2">
+      गेट सुरक्षा व कांटा ऑपरेटर को स्कैन करवाएं
+    </p>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const showPassBtn = document.getElementById('showPassBtn');
+    const qrModal = document.getElementById('qrModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const speakerToggle = document.getElementById('speakerToggle');
+    const speakerIcon = document.getElementById('speakerIcon');
+    const speakerLabel = document.getElementById('speakerLabel');
+
+    if (showPassBtn && qrModal && closeModalBtn) {
+      showPassBtn.addEventListener('click', () => {
+        qrModal.classList.remove('hidden');
+        qrModal.classList.add('flex');
+      });
+
+      closeModalBtn.addEventListener('click', () => {
+        qrModal.classList.add('hidden');
+        qrModal.classList.remove('flex');
+      });
+
+      qrModal.addEventListener('click', (e) => {
+        if (e.target === qrModal) {
+          qrModal.classList.add('hidden');
+          qrModal.classList.remove('flex');
+        }
+      });
+    }
+
+    let isSpeaking = false;
+    if (speakerToggle && speakerIcon) {
+      speakerToggle.addEventListener('click', () => {
+        isSpeaking = !isSpeaking;
+        if (isSpeaking) {
+          speakerIcon.textContent = 'record_voice_over';
+          if (speakerLabel) speakerLabel.textContent = 'चल रहा है...';
+          speakerToggle.classList.add('bg-[#166534]', 'text-white', 'border-[#166534]');
+          speakerToggle.classList.remove('bg-[#FFFDF9]', 'text-[#1F2937]');
+
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance("आपका टोकन नंबर 42 है। आगे 4 ट्रैक्टर हैं। गेट पर अभी 38 नंबर है। तौल कांटा नंबर 3 पर जाएं।");
+            speech.lang = 'hi-IN';
+            speech.rate = 0.9;
+            speech.onend = () => {
+              speakerIcon.textContent = 'volume_up';
+              if (speakerLabel) speakerLabel.textContent = 'सुनें / Audio';
+              speakerToggle.classList.remove('bg-[#166534]', 'text-white', 'border-[#166534]');
+              speakerToggle.classList.add('bg-[#FFFDF9]', 'text-[#1F2937]');
+              isSpeaking = false;
+            };
+            window.speechSynthesis.speak(speech);
+          }
+        } else {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+          }
+          speakerIcon.textContent = 'volume_up';
+          if (speakerLabel) speakerLabel.textContent = 'सुनें / Audio';
+          speakerToggle.classList.remove('bg-[#166534]', 'text-white', 'border-[#166534]');
+          speakerToggle.classList.add('bg-[#FFFDF9]', 'text-[#1F2937]');
+        }
+      });
+    }
+  })();
+</script></main><aside class="fixed bottom-24 right-4 z-40 flex items-center gap-2"><button aria-label="Voice Assistant" class="flex items-center gap-1.5 bg-[#166534] hover:bg-[#14532D] text-white shadow-md border border-[#14532D] rounded-full px-3.5 h-11 transition-transform active:scale-95"><span class="material-symbols-outlined text-[20px] text-[#95F8A7]">mic</span><span class="text-xs font-bold tracking-wide font-headline whitespace-nowrap">बोलिए / Speak</span></button></aside><nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#E2D9C5]"><div class="flex justify-around items-center h-16 px-1"><a class="flex flex-col items-center justify-center flex-1 h-full text-[#6B7280] hover:text-[#166534] transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">agriculture</span><span class="text-[11px] font-bold font-headline leading-tight mt-0.5">होम</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-[#6B7280] hover:text-[#166534] transition-colors" data-path="mandi-schedule" href="#"><span class="material-symbols-outlined text-[24px]">calendar_month</span><span class="text-[11px] font-bold font-headline leading-tight mt-0.5">कैलेंडर</span></a><a aria-current="page" class="flex flex-col items-center justify-center flex-1 h-full transition-colors text-[#166534] font-bold" data-path="token-and-queue" href="#"><span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">confirmation_number</span><span class="text-[11px] font-bold font-headline leading-tight mt-0.5">टोकन पर्ची</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-[#6B7280] hover:text-[#166534] transition-colors" data-path="payments" href="#"><span class="material-symbols-outlined text-[24px]">payments</span><span class="text-[11px] font-bold font-headline leading-tight mt-0.5">भुगतान</span></a></div></nav></body></html>

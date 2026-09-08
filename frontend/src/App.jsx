@@ -13,6 +13,7 @@ import Queue from './pages/Queue';
 import Payment from './pages/Payment';
 import FinancialAid from './pages/FinancialAid';
 import Marketplace from './pages/Marketplace';
+import StaffPortal from './pages/StaffPortal';
 
 import { getFarmerHome, getSchedule, getQueue, getPayment, subscribeToStream } from './api';
 
@@ -97,6 +98,12 @@ function AppContent() {
             onNavigate={setActiveTab}
             onOpenAdvance={() => setIsAdvanceOpen(true)}
           />
+        )}
+
+        {activeTab === 'staff' && (
+          <div className="w-full">
+            <StaffPortal onBackToFarmer={() => setActiveTab('home')} />
+          </div>
         )}
       </main>
 

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="bg-[#FAF6EE]" lang="hi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>किसान मंडी • APMC सोलन</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Rozha+One&amp;family=Yantramanav:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@200..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;background-color:#FAF6EE;color:#1C1917;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.stamp-border{border:1.5px dashed #B45309;}.fine-border{border:1px solid #E5DEC9;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        parchment: "#FAF6EE",
+        "parchment-card": "#FFFFFF",
+        "parchment-warm": "#F4EFE2",
+        "ink-strong": "#1C1917",
+        "ink-muted": "#57534E",
+        "ink-faint": "#78716C",
+        "kisan-border": "#E5DEC9",
+        "kisan-green": "#166534",
+        "kisan-green-light": "#DCFCE7",
+        "kisan-amber": "#B45309",
+        "kisan-amber-light": "#FEF3C7",
+        "kisan-terracotta": "#9A3412",
+        "kisan-terracotta-light": "#FFEDD5",
+        "kisan-slate": "#334155"
+      },
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        dev: ['Yantramanav', 'sans-serif']
+      }
+    }
+  }
+};
+</script></head><body class="font-sans antialiased flex flex-col min-h-screen bg-[#FAF6EE] text-ink-strong relative select-none">
+<!-- AUTHENTIC APMC MANDI TOP BAR -->
+<header class="fixed top-0 w-full z-40 bg-[#FAF6EE]/95 backdrop-blur-md border-b border-kisan-border pt-safe">
+<div class="h-14 px-4 flex items-center justify-between">
+<!-- Mandi Branding -->
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-kisan-green text-white flex items-center justify-center font-bold shadow-sm">
+<span class="material-symbols-outlined text-[22px]">agriculture</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-dev font-bold text-base text-ink-strong leading-tight">किसान मंडी</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-kisan-green bg-kisan-green-light px-1.5 py-0.2 rounded border border-green-200">APMC सोलन</span>
+</div>
+<span class="text-[11px] font-medium text-ink-faint tracking-wide">कृषि उपज विपणन समिति हिमाचल</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2">
+<button aria-label="Notifications" class="w-9 h-9 flex items-center justify-center rounded-lg border border-kisan-border bg-parchment-warm text-ink-muted hover:text-ink-strong active:bg-stone-200">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button aria-label="Profile" class="h-9 px-2.5 flex items-center gap-1.5 rounded-lg border border-kisan-border bg-white text-ink-strong shadow-xs">
+<span class="material-symbols-outlined text-[18px] text-kisan-green">badge</span>
+<span class="text-xs font-semibold">राम लाल</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="flex flex-col relative w-full pt-16 pb-28 min-h-screen">
+<div class="flex flex-col w-full px-4 gap-3.5 mt-2">
+<!-- UNDERSTATED TACTILE LANGUAGE SELECTOR (KHADI CHIPS) -->
+<section aria-label="भाषा चुनें / Select Language" class="w-full flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar text-xs">
+<span class="text-[11px] font-semibold text-ink-faint flex items-center gap-1 pl-0.5 pr-1">
+<span class="material-symbols-outlined text-[15px]">translate</span>
+</span>
+<button class="px-3 py-1 rounded-md bg-kisan-green text-white font-medium shadow-xs flex items-center gap-1 border border-kisan-green">
+<span class="font-dev font-bold">हिंदी</span>
+<span class="material-symbols-outlined text-[13px]">check</span>
+</button>
+<button class="px-3 py-1 rounded-md bg-white border border-kisan-border text-ink-muted hover:text-ink-strong font-dev font-medium">
+        मराठी
+      </button>
+<button class="px-3 py-1 rounded-md bg-white border border-kisan-border text-ink-muted hover:text-ink-strong font-dev font-medium">
+        ਪੰਜਾਬੀ
+      </button>
+<button class="px-3 py-1 rounded-md bg-white border border-kisan-border text-ink-muted hover:text-ink-strong font-sans font-medium">
+        English
+      </button>
+<button class="px-3 py-1 rounded-md bg-white border border-kisan-border text-ink-muted hover:text-ink-strong font-dev font-medium">
+        తెలుగు
+      </button>
+</section>
+<!-- FARMER IDENTITY & MANDI PASS CARD -->
+<section class="relative bg-white rounded-xl border border-kisan-border p-4 shadow-sm overflow-hidden">
+<!-- Top Perforated Receipt Line Accent -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-[#B45309]/80"></div>
+<div class="flex items-start justify-between gap-3">
+<!-- Farmer identity and pass details -->
+<div class="flex gap-3">
+<!-- Portrait Badge with physical border -->
+<div class="relative w-12 h-14 bg-parchment-warm rounded border border-[#D9D0BE] flex flex-col items-center justify-center flex-shrink-0 text-kisan-green">
+<span class="material-symbols-outlined text-[28px]">person</span>
+<span class="text-[8px] font-bold tracking-tighter text-ink-faint uppercase mt-0.5">APMC ID</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2 flex-wrap">
+<h2 class="font-dev font-bold text-lg text-ink-strong leading-tight">राम लाल शर्मा</h2>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+                प्रमाणित किसान
+              </span>
+</div>
+<p class="text-xs text-ink-muted mt-1 flex items-center gap-1 font-dev">
+<span class="material-symbols-outlined text-[14px] text-kisan-amber">location_on</span>
+              गांव कंडाघाट, सोलन • गेट पास: #APMC-789
+            </p>
+<div class="flex items-center gap-3 mt-2 text-[11px] text-ink-faint font-medium">
+<span>फसल: <strong class="text-ink-strong font-dev">टमाटर (हिमसोना)</strong></span>
+<span>•</span>
+<span>वजन: <strong class="text-ink-strong">18 क्विंटल</strong></span>
+</div>
+</div>
+</div>
+<!-- Token Tag Physical Voucher Style -->
+<div class="flex flex-col items-center justify-center p-2 rounded-lg bg-[#FAF6EE] border-2 border-dashed border-[#B45309] min-w-[70px] text-center flex-shrink-0">
+<span class="text-[9px] font-bold tracking-wider text-kisan-amber uppercase">मंडी टोकन</span>
+<span class="font-sans font-extrabold text-2xl text-ink-strong leading-none my-0.5">#42</span>
+<span class="inline-flex items-center gap-0.5 text-[9px] font-bold text-kisan-green">
+<span class="w-1.5 h-1.5 rounded-full bg-kisan-green animate-pulse"></span>
+            सक्रिय
+          </span>
+</div>
+</div>
+<!-- Quick Audio Announcement Bar inside pass -->
+<div class="mt-3 pt-2.5 border-t border-kisan-border flex items-center justify-between text-xs">
+<div class="flex items-center gap-2 text-ink-muted">
+<span class="material-symbols-outlined text-[17px] text-kisan-green">schedule</span>
+<span class="font-dev text-xs">नीलामी समय: <strong>आज पूर्वाह्न 11:30 बजे</strong> (शेड नं. 3)</span>
+</div>
+<button class="flex items-center gap-1 text-[11px] font-bold text-kisan-green bg-kisan-green-light px-2 py-1 rounded border border-green-200 active:bg-green-100">
+<span class="material-symbols-outlined text-[14px]">volume_up</span>
+          सुनें
+        </button>
+</div>
+</section>
+<!-- SECTION TITLE: SERVICES -->
+<div class="flex items-center justify-between px-0.5 pt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-4 rounded-full bg-kisan-amber"></span>
+<h3 class="font-dev font-bold text-base text-ink-strong">मंडी मुख्य सेवाएं</h3>
+<span class="text-xs text-ink-faint font-medium font-sans">(5 Services)</span>
+</div>
+<span class="text-xs text-ink-faint">सोलन यार्ड</span>
+</div>
+<!-- ACTION GRID: 5 GROUNDED, TACTILE SERVICE TOKENS -->
+<section aria-label="Mandi Core Services" class="grid grid-cols-2 gap-2.5 w-full">
+<!-- 1. MANDI SCHEDULE (समय) -->
+<a class="group flex flex-col justify-between p-3.5 rounded-xl bg-white border border-kisan-border hover:border-kisan-amber transition shadow-xs active:bg-[#FAF6EE] min-h-[148px]" href="#">
+<div class="flex items-start justify-between">
+<div class="w-12 h-12 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center text-kisan-amber">
+<span class="material-symbols-outlined text-[28px]">calendar_clock</span>
+</div>
+<span class="text-[10px] font-bold text-ink-faint tracking-wider uppercase font-sans">01 / समय</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-dev font-bold text-xl text-ink-strong leading-tight">मंडी समय</span>
+</div>
+<p class="text-xs text-ink-muted font-medium">Daily Auction Hours</p>
+<span class="inline-block mt-1.5 text-[11px] font-bold text-kisan-amber font-dev">गेट खुला: प्रातः 6 बजे से</span>
+</div>
+</a>
+<!-- 2. QUEUE / TOKEN LIVE (कतार) -->
+<a class="group flex flex-col justify-between p-3.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] hover:border-kisan-green transition shadow-xs active:bg-green-100 min-h-[148px] relative" href="#">
+<div class="flex items-start justify-between">
+<div class="w-12 h-12 rounded-lg bg-kisan-green text-white flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[28px]">receipt_long</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-white border border-green-300 text-kisan-green">
+            टोकन #42
+          </span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-dev font-bold text-xl text-kisan-green leading-tight">लाइव कतार</span>
+</div>
+<p class="text-xs text-ink-muted font-medium">Queue Status</p>
+<span class="inline-flex items-center gap-1 mt-1.5 text-[11px] font-bold text-kisan-green font-dev">
+<span class="w-1.5 h-1.5 rounded-full bg-kisan-green"></span>
+            अब चल रहा है: #38
+          </span>
+</div>
+</a>
+<!-- 3. PAYMENTS & PASSBOOK (पैसे / खाते) -->
+<a class="group flex flex-col justify-between p-3.5 rounded-xl bg-white border border-kisan-border hover:border-kisan-green transition shadow-xs active:bg-[#FAF6EE] min-h-[148px]" href="#">
+<div class="flex items-start justify-between">
+<div class="w-12 h-12 rounded-lg bg-[#E0F2FE] border border-[#BAE6FD] flex items-center justify-center text-[#0369A1]">
+<span class="material-symbols-outlined text-[28px]">account_balance</span>
+</div>
+<span class="text-[10px] font-bold text-ink-faint tracking-wider uppercase font-sans">03 / भुगतान</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-dev font-bold text-xl text-ink-strong leading-tight">खाता व पैसे</span>
+</div>
+<p class="text-xs text-ink-muted font-medium">Payouts &amp; e-Passbook</p>
+<span class="inline-block mt-1.5 text-[11px] font-bold text-kisan-green font-dev">₹24,850 जमा शेष</span>
+</div>
+</a>
+<!-- 4. LOAN & INSURANCE HELP (मदद व बीमा) -->
+<a class="group flex flex-col justify-between p-3.5 rounded-xl bg-white border border-kisan-border hover:border-kisan-terracotta transition shadow-xs active:bg-[#FAF6EE] min-h-[148px]" href="#">
+<div class="flex items-start justify-between">
+<div class="w-12 h-12 rounded-lg bg-kisan-terracotta-light border border-[#FED7AA] flex items-center justify-center text-kisan-terracotta">
+<span class="material-symbols-outlined text-[28px]">handshake</span>
+</div>
+<span class="text-[10px] font-bold text-ink-faint tracking-wider uppercase font-sans">04 / सहायता</span>
+</div>
+<div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-dev font-bold text-xl text-ink-strong leading-tight">किसान मदद</span>
+</div>
+<p class="text-xs text-ink-muted font-medium">Loan, KCC &amp; Relief</p>
+<span class="inline-block mt-1.5 text-[11px] font-bold text-kisan-terracotta font-dev">हेल्पलाइन: 1800-180</span>
+</div>
+</a>
+<!-- 5. BUY QUALITY SEEDS (बीज, खाद व उपकरण) - FULL WIDTH CARD -->
+<a class="col-span-2 group flex items-center justify-between p-3.5 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] hover:border-[#D97706] transition shadow-xs active:bg-[#FEF3C7]" href="#">
+<div class="flex items-center gap-3">
+<div class="w-13 h-13 p-2.5 rounded-lg bg-[#F59E0B] text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+<span class="material-symbols-outlined text-[28px]">grass</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-dev font-bold text-lg text-ink-strong leading-snug">प्रमाणित बीज व खाद</span>
+<span class="text-[9px] font-bold tracking-wide uppercase px-1.5 py-0.5 rounded bg-white text-[#92400E] border border-amber-300">सरकारी दर</span>
+</div>
+<p class="text-xs text-ink-muted mt-0.5">Certified Seeds, Urea &amp; Bio-fertilizer Depot</p>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-white border border-[#FDE68A] flex items-center justify-center text-ink-strong group-hover:bg-[#F59E0B] group-hover:text-white transition">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</div>
+</a>
+</section>
+<!-- AUTHENTIC VOICE ASSISTANT CARD (मंडी सहायक) -->
+<section class="rounded-xl bg-[#1C1917] text-[#FAF6EE] p-4 border border-stone-800 shadow-md">
+<div class="flex items-center justify-between pb-3 border-b border-stone-800">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-kisan-amber/20 border border-kisan-amber/40 flex items-center justify-center text-kisan-amber">
+<span class="material-symbols-outlined text-[20px]">record_voice_over</span>
+</div>
+<div>
+<h4 class="font-dev font-bold text-sm text-[#FAF6EE] leading-tight">मंडी सहायक (Voice Sahayak)</h4>
+<span class="text-[11px] text-stone-400 font-sans">Tap to ask in your mother tongue</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-900/60 text-green-300 border border-green-700/60 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+          सक्रिय
+        </span>
+</div>
+<!-- Tactile Voice Input / Spoken Suggestion -->
+<div class="mt-3 flex items-center gap-3">
+<!-- Physical Style Intercom Mic Button -->
+<button aria-label="Start Voice Recording" class="w-12 h-12 rounded-xl bg-kisan-green hover:bg-[#15803D] active:scale-95 text-white flex items-center justify-center flex-shrink-0 shadow-sm border border-green-600" id="voice-action-btn">
+<span class="material-symbols-outlined text-[26px]">mic</span>
+</button>
+<!-- Conversational Speech Bubble -->
+<div class="flex-1 bg-stone-900 rounded-lg p-2.5 border border-stone-800">
+<span class="text-[10px] font-medium text-stone-400 block font-sans">उदा. बोलकर पूछें:</span>
+<p class="text-xs font-dev text-stone-100 font-semibold mt-0.5">"आज सोलन में शिमला मिर्च का उच्चतम भाव क्या है?"</p>
+</div>
+</div>
+<!-- Quick Inquiry Chips -->
+<div class="flex items-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pt-0.5">
+<button class="px-2.5 py-1 rounded bg-stone-800 text-[11px] font-dev text-stone-300 hover:text-white border border-stone-700 active:scale-95 whitespace-nowrap">
+          "मेरा नंबर कब आएगा?"
+        </button>
+<button class="px-2.5 py-1 rounded bg-stone-800 text-[11px] font-dev text-stone-300 hover:text-white border border-stone-700 active:scale-95 whitespace-nowrap">
+          "टमाटर का ताजा भाव"
+        </button>
+<button class="px-2.5 py-1 rounded bg-stone-800 text-[11px] font-dev text-stone-300 hover:text-white border border-stone-700 active:scale-95 whitespace-nowrap">
+          "भुगतान कब मिलेगा?"
+        </button>
+</div>
+</section>
+</div>
+</main>
+<!-- FLOATING FAST-ACTION VOICE MIC (BOTTOM RIGHT) -->
+<aside class="fixed bottom-20 right-4 z-40">
+<button aria-label="Bolie / Speak" class="flex items-center gap-2 bg-kisan-green hover:bg-[#15803D] text-white shadow-md border border-green-700 rounded-full pl-3 pr-4 h-12 active:scale-95">
+<div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+</div>
+<span class="font-dev font-bold text-sm tracking-wide">बोलिए</span>
+</button>
+</aside>
+<!-- GROUNDED AUTHENTIC DUAL-LANGUAGE BOTTOM NAVIGATION -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#FAF6EE] border-t border-kisan-border shadow-xs">
+<div class="flex justify-around items-center h-16 px-2">
+<!-- 1. HOME -->
+<a aria-current="page" class="flex flex-col items-center justify-center flex-1 h-full text-kisan-green" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="font-dev font-bold text-[11px] leading-tight mt-0.5">होम</span>
+</a>
+<!-- 2. MANDI SCHEDULE -->
+<a class="flex flex-col items-center justify-center flex-1 h-full text-ink-muted hover:text-ink-strong" href="#">
+<span class="material-symbols-outlined text-[24px]">calendar_today</span>
+<span class="font-dev font-medium text-[11px] leading-tight mt-0.5">समय</span>
+</a>
+<!-- 3. TOKEN & QUEUE -->
+<a class="flex flex-col items-center justify-center flex-1 h-full text-ink-muted hover:text-ink-strong" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-[24px]">confirmation_number</span>
+<span class="absolute -top-1 -right-2 text-[9px] font-bold bg-kisan-amber text-white rounded-full px-1 py-0 leading-none">42</span>
+</div>
+<span class="font-dev font-medium text-[11px] leading-tight mt-0.5">कतार</span>
+</a>
+<!-- 4. PASSBOOK / PAYMENTS -->
+<a class="flex flex-col items-center justify-center flex-1 h-full text-ink-muted hover:text-ink-strong" href="#">
+<span class="material-symbols-outlined text-[24px]">payments</span>
+<span class="font-dev font-medium text-[11px] leading-tight mt-0.5">खाते</span>
+</a>
+</div>
+</nav>
+</body></html>

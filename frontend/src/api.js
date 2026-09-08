@@ -72,6 +72,60 @@ export async function askSathi({
   return res.json();
 }
 
+export async function getStaffData() {
+  const res = await fetch(`${API_BASE}/staff/data`);
+  if (!res.ok) throw new Error('Failed to fetch staff portal data');
+  return res.json();
+}
+
+export async function updateStaffSchedule(schedulePayload) {
+  const res = await fetch(`${API_BASE}/staff/schedule`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(schedulePayload)
+  });
+  if (!res.ok) throw new Error('Failed to update mandi schedule');
+  return res.json();
+}
+
+export async function advanceFarmerStage(farmerId = 'F1', stage) {
+  const res = await fetch(`${API_BASE}/staff/advance-stage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ farmerId, stage })
+  });
+  if (!res.ok) throw new Error('Failed to advance farmer stage');
+  return res.json();
+}
+
+export async function advanceFarmerPayment(farmerId = 'F1', stage) {
+  const res = await fetch(`${API_BASE}/staff/advance-payment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ farmerId, stage })
+  });
+  if (!res.ok) throw new Error('Failed to advance farmer payment');
+  return res.json();
+}
+
+export async function sendAnnouncement(token, weighbridgeNo, customText) {
+  const res = await fetch(`${API_BASE}/staff/announce`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, weighbridgeNo, customText })
+  });
+  if (!res.ok) throw new Error('Failed to broadcast announcement');
+  return res.json();
+}
+
+export async function resetDemoDb() {
+  const res = await fetch(`${API_BASE}/staff/reset`, {
+    method: 'POST'
+  });
+  if (!res.ok) throw new Error('Failed to reset demo database');
+  return res.json();
+}
+
 export function subscribeToStream(onMessage) {
   if (typeof window !== 'undefined' && !!window.EventSource) {
     const eventSource = new EventSource(`${API_BASE}/stream`);

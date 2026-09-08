@@ -46,16 +46,15 @@ export default function Header({ activeTab, onNavigate }) {
             <span className="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
           </button>
 
-          {/* Staff Desk Link */}
-          <a
-            href="/staff"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-2 py-1 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 rounded-full font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all"
+          {/* Staff Desk Button */}
+          <button
+            onClick={() => onNavigate('staff')}
+            className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-full font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all shadow-xs active:scale-95"
+            title="APMC Mandi Staff Control Desk"
           >
-            <span className="material-symbols-outlined text-[14px]">admin_panel_settings</span>
-            <span className="hidden sm:inline">Staff</span>
-          </a>
+            <span className="material-symbols-outlined text-[15px] text-[#B45309]">desk</span>
+            <span>स्टाफ Desk</span>
+          </button>
 
           {/* User Icon */}
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-xs">
