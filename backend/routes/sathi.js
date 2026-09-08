@@ -15,10 +15,61 @@ const serverKeys = {
   deepseek: process.env.DEEPSEEK_API_KEY || ''
 };
 
+// Normalize vehicle strings for fuzzy matching (e.g. "RJ-20-EA-4412" -> "rj20ea4412")
+function cleanStr(str) {
+  return (str || '').toLowerCase().replace(/[\s\-_]/g, '');
+}
+
+// Check if string contains Devanagari script (Hindi)
+function isHindiText(str) {
+  return /[\u0900-\u097F]/.test(str);
+}
+
 // Build Live Mandi Grounding Context for the LLM
-function buildSystemPrompt(farmer, center, screenContext) {
+function buildSystemPrompt(farmer, center, screenContext, isEnglish) {
   const p = farmer.payment || {};
   const advanceTaken = p.advance && p.advance.taken;
+
+  if (isEnglish) {
+    return `
+You are "Sathi (साथी)", the official, highly intelligent, respectful AI assistant for Indian farmers at APMC Kota Mandi e-Procurement Portal.
+The user asked in English, so REPLY DIRECTLY IN CLEAR, POLITE, PROFESSIONAL ENGLISH.
+
+Provide a complete, detailed, yet easy-to-read answer (2-4 sentences) with specific facts from the live data below.
+
+=== LIVE REAL-TIME MANDI CONTEXT ===
+- Mandi Name: ${center.name} (Center ID: ${center.centerId})
+- Mandi Status: ${center.open ? 'OPEN' : 'CLOSED'} (${center.timing}) | Active Gate: Gate #${center.gateNumber}
+- Today's Procurement Crop: ${center.todayCrop} (${center.cropGrade || 'Grade A Verified'})
+- Govt. MSP Rate: ₹${center.msp.toLocaleString('en-IN')} per Quintal
+- Upcoming: Tomorrow Mustard (Gate 1 & 3 • 8 AM – 4:30 PM), Day after Weekly Cleaning (Closed).
+- Advance Slot Booking: Morning Slot (${center.slots?.[0]?.tokensLeft || 8} tokens left), Afternoon Slot (${center.slots?.[1]?.tokensLeft || 15} tokens left).
+
+=== ACTIVE FARMER PROFILE ===
+- Farmer Name: ${farmer.name} (ID: ${farmer.farmerId})
+- Active Token Number: #${farmer.token}
+- Vehicle Number: ${farmer.vehicleNumber} (${farmer.vehicleType})
+- Loaded Commodity: ${farmer.commodity} (${farmer.commodityQty})
+- Live Queue Stage: ${farmer.stage} (Stage ${farmer.stageIndex || 2} of 4: Gate Checkin → Weighbridge → Quality Grading → Gate Pass)
+- Queue Position: ${farmer.aheadCount} vehicle(s) ahead
+- Estimated Remaining Wait Time: ~${farmer.estWaitMins} minutes
+- Designated Weighbridge: Weighbridge #${farmer.weighbridgeNo}
+- Gate Priority Token currently at scale: #${farmer.atGateNumber}
+
+=== PAYMENT & FINANCIAL STATUS ===
+- Total Approved Procurement Value: ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} (${p.quintal || 50} Qtl @ ₹${center.msp}/Qtl)
+- Lot Number: #${p.lotNumber || 'LOT-2026-8849'}
+- Quality Specs: Moisture: ${p.quality?.moisture || '10.8%'}, Purity: ${p.quality?.purity || '99.4%'}, Shed: ${p.quality?.shed || 'Mandi Shed 4'}
+- 80% Instant Cash Advance Scheme: ${advanceTaken ? 'Advance ₹91,000 already transferred to bank (UTR: ' + (p.advance?.utr || 'SBI982341209') + ')' : '₹91,000 (80%) available instantly with 0% interest via UPI/IMPS within 120 seconds'}
+- Linked Bank: ${p.bank?.name || 'State Bank of India'} (Account •••• ${p.bank?.last4 || '4912'}, IFSC: ${p.bank?.ifsc || 'SBIN000210'})
+- Mandi Tax: ₹0 (Exempted for farmers)
+
+=== INSTRUCTIONS ===
+1. Answer the query fully using the exact data above.
+2. If the user provided a vehicle number (${farmer.vehicleNumber}), state the farmer name (${farmer.name}), token #${farmer.token}, queue stage (${farmer.stage}), weighbridge #${farmer.weighbridgeNo}, estimated wait (~${farmer.estWaitMins} min), and payment status.
+3. Be respectful, helpful, and concise.
+`.trim();
+  }
 
   return `
 You are "साथी (Sathi)", the official, highly intelligent, warm, respectful, and helpful AI assistant for Indian farmers at APMC Mandi (कृषि उपज मंडी - Kota Mandi e-Procurement Portal).
@@ -51,53 +102,101 @@ Keep your answers direct, empathetic, and actionable (2 to 4 sentences max). Use
 === PAYMENT & FINANCIAL STATUS ===
 - Total Approved Procurement Value: ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} (${p.quintal || 50} क्विंटल @ ₹${center.msp}/Qtl)
 - Lot Number: #${p.lotNumber || 'LOT-2026-8849'}
-- Moisture: ${p.quality?.moisture || '10.8%'} (मानक 12% से कम - उत्कृष्ट) | Purity: ${p.quality?.purity || '99.4%'} | Shed: ${p.quality?.shed || 'मंडी शेड 4'}
-- 80% Instant Cash Advance Facility: ${advanceTaken ? 'अग्रिम ₹91,000 पहले ही आपके बैंक खाते में भेजा जा चुका है (UTR: ' + (p.advance?.utr || 'SBI982341209') + ')' : '₹91,000 (80%) तुरंत शून्य-ब्याज पर 120 सेकंड में UPI/IMPS द्वारा आपके खाते में उपलब्ध है'}
+- Moisture: ${p.quality?.moisture || '10.8%'} | Purity: ${p.quality?.purity || '99.4%'} | Shed: ${p.quality?.shed || 'मंडी शेड 4'}
+- 80% Instant Cash Advance Facility: ${advanceTaken ? 'अग्रिम ₹91,000 पहले ही आपके बैंक खाते में भेजा जा चुका है' : '₹91,000 (80%) तुरंत शून्य-ब्याज पर 120 सेकंड में UPI/IMPS द्वारा आपके खाते में उपलब्ध है'}
 - Linked Bank: ${p.bank?.name || 'State Bank of India'} (खाता •••• ${p.bank?.last4 || '4912'}, IFSC: ${p.bank?.ifsc || 'SBIN000210'})
 - Mandi Tax/Fee: ₹0 (सरकारी छूट - किसान से कोई शुल्क नहीं)
 
-=== CURRENT SCREEN CONTEXT ===
-- Farmer is currently viewing screen: "${screenContext}" (options: home / schedule / queue / payment / financial_aid / marketplace)
-
 === CORE INSTRUCTIONS ===
 1. Answer the farmer's question directly using the LIVE facts above.
-2. If asked when their crop will be weighed/sold, mention their token #${farmer.token}, ~${farmer.estWaitMins} minutes wait, and weighbridge #${farmer.weighbridgeNo}.
-3. If asked about money or payments, reassure them with their approved amount (₹${(p.totalApproved || 113750).toLocaleString('en-IN')}) and explain the 80% instant cash advance option.
-4. If asked about rates, quote today's MSP (₹${center.msp}/Qtl) for ${center.todayCrop}.
-5. If the farmer asks to book a slot, confirm that the morning or afternoon slot can be reserved.
-6. Always maintain a cheerful, respectful, farmer-friendly tone with respectful Hindi words ("जी", "किसान भाई").
+2. If asked about vehicle or token, give the full breakdown: Token #${farmer.token}, ~${farmer.estWaitMins} minutes wait, Weighbridge #${farmer.weighbridgeNo}, and approved payment.
+3. Always maintain a cheerful, respectful tone with respectful Hindi words ("जी", "किसान भाई").
 `.trim();
 }
 
-// Fallback High-Quality Sathi Agricultural Response Generator
-function getFallbackReply(q, farmer, center, screenContext) {
+// Fallback High-Quality Sathi Agricultural Response Generator (Hindi & English)
+function getFallbackReply(q, farmer, center, screenContext, isEnglish) {
   let reply = '';
   let category = 'general';
   const p = farmer.payment || {};
+  const lowerQ = q.toLowerCase();
 
-  if (q.includes('टोकन') || q.includes('token') || q.includes('नंबर') || q.includes('कतार') || q.includes('आगे') || q.includes('बारी') || q.includes('queue')) {
+  // 1. Vehicle Number Query / Lookup
+  const cleanQ = cleanStr(q);
+  const cleanVeh = cleanStr(farmer.vehicleNumber);
+  const isVehicleQuery = cleanQ.includes(cleanVeh) || cleanQ.includes('rj20') || cleanQ.includes('mp09') || cleanQ.includes('pb10') || cleanQ.includes('rj14') || lowerQ.includes('vehicle') || lowerQ.includes('गाड़ी') || lowerQ.includes('ट्रैक्टर') || lowerQ.includes('tractor');
+
+  if (isVehicleQuery) {
+    category = 'vehicle_status';
+    if (isEnglish) {
+      reply = `Vehicle ${farmer.vehicleNumber} belongs to ${farmer.name} (Token #${farmer.token}, ${farmer.vehicleType}). Current status is Stage ${farmer.stageIndex || 2} (${farmer.stage}) at Weighbridge #${farmer.weighbridgeNo}. Estimated wait is ~${farmer.estWaitMins} mins with ${farmer.aheadCount} vehicle(s) ahead. Approved payout is ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} with ₹${(p.advance?.amount || 91000).toLocaleString('en-IN')} (80%) instant cash advance available.`;
+    } else {
+      reply = `वाहन ${farmer.vehicleNumber} किसान ${farmer.name} का है (टोकन #${farmer.token}, ${farmer.vehicleType})। आपकी उपज (${farmer.commodityQty}) की तौल कांटा #${farmer.weighbridgeNo} पर निर्धारित है। अनुमानित प्रतीक्षा समय लगभग ${farmer.estWaitMins} मिनट है (आगे ${farmer.aheadCount} वाहन)। कुल स्वीकृत राशि ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} है, जिसमें 80% अग्रिम (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) तुरंत उपलब्ध है।`;
+    }
+    return { reply, category, modelUsed: '🌾 Kisan Sathi AI (Direct Mandi Engine)' };
+  }
+
+  // 2. Token / Queue Status
+  if (lowerQ.includes('टोकन') || lowerQ.includes('token') || lowerQ.includes('नंबर') || lowerQ.includes('कतार') || lowerQ.includes('आगे') || lowerQ.includes('बारी') || lowerQ.includes('queue') || lowerQ.includes('line')) {
     category = 'queue_status';
-    reply = `${farmer.name}, आपका टोकन नंबर #${farmer.token} है। आपके आगे अभी ${farmer.aheadCount} वाहन हैं। कांटा #${farmer.weighbridgeNo} पर आपकी अनुमानित बारी लगभग ${farmer.estWaitMins} मिनट में आएगी।`;
-  } else if (q.includes('कब') || q.includes('when') || q.includes('समय') || q.includes('wait') || q.includes('eta') || q.includes('तौल') || q.includes('बिकेगी')) {
+    if (isEnglish) {
+      reply = `${farmer.name}, your Token Number is #${farmer.token}. There are ${farmer.aheadCount} vehicle(s) ahead of you. Your turn at Weighbridge #${farmer.weighbridgeNo} is estimated in approximately ~${farmer.estWaitMins} minutes.`;
+    } else {
+      reply = `${farmer.name}, आपका टोकन नंबर #${farmer.token} है। आपके आगे अभी ${farmer.aheadCount} वाहन हैं। कांटा #${farmer.weighbridgeNo} पर आपकी अनुमानित बारी लगभग ${farmer.estWaitMins} मिनट में आएगी।`;
+    }
+  }
+  // 3. Timing / Weighing / ETA
+  else if (lowerQ.includes('कब') || lowerQ.includes('when') || lowerQ.includes('समय') || lowerQ.includes('wait') || lowerQ.includes('eta') || lowerQ.includes('तौल') || lowerQ.includes('बिकेगी') || lowerQ.includes('time')) {
     category = 'timing';
-    reply = `आपकी फसल की तौल लगभग ${farmer.estWaitMins} मिनट में कांटा #${farmer.weighbridgeNo} पर शुरू होगी। कृपया अपने ट्रैक्टर (${farmer.vehicleNumber}) के साथ तैयार रहें।`;
-  } else if (q.includes('भाव') || q.includes('msp') || q.includes('रेट') || q.includes('कीमत') || q.includes('price') || q.includes('गेहूं') || q.includes('wheat') || q.includes('सरसों')) {
+    if (isEnglish) {
+      reply = `Your crop (${farmer.commodity}) weighing will begin in approximately ~${farmer.estWaitMins} minutes at Weighbridge #${farmer.weighbridgeNo}. Please stay ready with vehicle ${farmer.vehicleNumber}.`;
+    } else {
+      reply = `आपकी फसल की तौल लगभग ${farmer.estWaitMins} मिनट में कांटा #${farmer.weighbridgeNo} पर शुरू होगी। कृपया अपने वाहन (${farmer.vehicleNumber}) के साथ तैयार रहें।`;
+    }
+  }
+  // 4. Rate / MSP / Price
+  else if (lowerQ.includes('भाव') || lowerQ.includes('msp') || lowerQ.includes('रेट') || lowerQ.includes('कीमत') || lowerQ.includes('price') || lowerQ.includes('rate') || lowerQ.includes('गेहूं') || lowerQ.includes('wheat') || lowerQ.includes('सरसों') || lowerQ.includes('mustard')) {
     category = 'msp';
-    reply = `आज ${center.name} में ${center.todayCrop} का सरकारी समर्थन मूल्य (MSP) ₹${center.msp.toLocaleString('en-IN')} प्रति क्विंटल तय है (${center.cropGrade})। कल सरसों की खरीद होगी।`;
-  } else if (q.includes('भुगतान') || q.includes('payment') || q.includes('पैसे') || q.includes('रुपये') || q.includes('खाता') || q.includes('bank') || q.includes('रुपया')) {
+    if (isEnglish) {
+      reply = `Today at ${center.name}, the Govt. MSP rate for ${center.todayCrop} is ₹${center.msp.toLocaleString('en-IN')}/Quintal (${center.cropGrade}). Tomorrow's procurement will be Mustard (Gate 1 & 3).`;
+    } else {
+      reply = `आज ${center.name} में ${center.todayCrop} का सरकारी समर्थन मूल्य (MSP) ₹${center.msp.toLocaleString('en-IN')} प्रति क्विंटल तय है (${center.cropGrade})। कल सरसों की खरीद होगी।`;
+    }
+  }
+  // 5. Payment / Bank Transfer
+  else if (lowerQ.includes('भुगतान') || lowerQ.includes('payment') || lowerQ.includes('पैसे') || lowerQ.includes('रुपये') || lowerQ.includes('खाता') || lowerQ.includes('bank') || lowerQ.includes('money') || lowerQ.includes('account')) {
     category = 'payment';
-    reply = `आपकी कुल अनुमोदित राशि ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} है। आप बिना किसी इंतज़ार के 80% अग्रिम राशि (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) तुरंत अपने ${p.bank?.name || 'SBI'} बैंक खाते में पा सकते हैं!`;
-  } else if (q.includes('अग्रिम') || q.includes('advance') || q.includes('लोन') || q.includes('तुरंत') || q.includes('80%')) {
+    if (isEnglish) {
+      reply = `Your total approved procurement payment is ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} for ${p.quintal || 50} Qtl. You can get an 80% instant cash advance of ₹${(p.advance?.amount || 91000).toLocaleString('en-IN')} directly transferred to your ${p.bank?.name || 'SBI'} bank account within 120 seconds!`;
+    } else {
+      reply = `आपकी कुल अनुमोदित राशि ₹${(p.totalApproved || 113750).toLocaleString('en-IN')} है। आप बिना किसी इंतज़ार के 80% अग्रिम राशि (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) तुरंत अपने ${p.bank?.name || 'SBI'} बैंक खाते में पा सकते हैं!`;
+    }
+  }
+  // 6. 80% Instant Cash Advance
+  else if (lowerQ.includes('अग्रिम') || lowerQ.includes('advance') || lowerQ.includes('लोन') || lowerQ.includes('तुरंत') || lowerQ.includes('80%') || lowerQ.includes('urgent')) {
     category = 'advance_info';
-    reply = `सरकारी शून्य-ब्याज योजना के तहत आप अपनी स्वीकृत उपज का 80% (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) 120 सेकंड में UPI/IMPS द्वारा सीधे बैंक खाते में ले सकते हैं।`;
-  } else if (q.includes('स्लॉट') || q.includes('slot') || q.includes('बुक') || q.includes('book') || q.includes('पास') || q.includes('pass')) {
+    if (isEnglish) {
+      reply = `Under the zero-interest government scheme, you can claim 80% of your approved crop payment (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) within 120 seconds via UPI/IMPS directly to your linked bank account.`;
+    } else {
+      reply = `सरकारी शून्य-ब्याज योजना के तहत आप अपनी स्वीकृत उपज का 80% (₹${(p.advance?.amount || 91000).toLocaleString('en-IN')}) 120 सेकंड में UPI/IMPS द्वारा सीधे बैंक खाते में ले सकते हैं।`;
+    }
+  }
+  // 7. Slot Booking
+  else if (lowerQ.includes('स्लॉट') || lowerQ.includes('slot') || lowerQ.includes('बुक') || lowerQ.includes('book') || lowerQ.includes('पास') || lowerQ.includes('pass') || lowerQ.includes('reserve')) {
     category = 'slot_booking';
-    reply = `आज ${center.name} में सुबह 09-11 AM (${center.slots?.[0]?.tokensLeft || 8} टोकन) और दोपहर 01-03 PM (${center.slots?.[1]?.tokensLeft || 15} टोकन) के स्लॉट उपलब्ध हैं। आप 'स्लॉट बुक करें' पर क्लिक कर सकते हैं।`;
-  } else if (q.includes('मंडी') || q.includes('समय') || q.includes('गेट') || q.includes('gate') || q.includes('open') || q.includes('खुली')) {
-    category = 'center_info';
-    reply = `${center.name} आज खुली है (${center.timing})। मुख्य प्रवेश गेट #${center.gateNumber} है। आज केवल ${center.todayCrop} की खरीद की जा रही है।`;
-  } else {
-    reply = `नमस्ते ${farmer.name}! मैं आपका 'साथी' AI सहायक हूँ। आप मुझसे अपनी टोकन स्थिति (#${farmer.token}), तौल का समय (~${farmer.estWaitMins} मिनट), आज का MSP भाव (₹${center.msp}), या 80% तुरंत भुगतान के बारे में पूछ सकते हैं।`;
+    if (isEnglish) {
+      reply = `Today at ${center.name}, available slots are: Morning 09-11 AM (${center.slots?.[0]?.tokensLeft || 8} tokens left) and Afternoon 01-03 PM (${center.slots?.[1]?.tokensLeft || 15} tokens left). You can reserve your token now.`;
+    } else {
+      reply = `आज ${center.name} में सुबह 09-11 AM (${center.slots?.[0]?.tokensLeft || 8} टोकन) और दोपहर 01-03 PM (${center.slots?.[1]?.tokensLeft || 15} टोकन) के स्लॉट उपलब्ध हैं। आप टोकन बुक कर सकते हैं।`;
+    }
+  }
+  // 8. General Greeting / Fallback
+  else {
+    if (isEnglish) {
+      reply = `Hello ${farmer.name}! I am your 'Sathi' AI assistant for Kota Mandi. You can ask me about your Token Status (#${farmer.token}), Vehicle #${farmer.vehicleNumber}, Remaining Wait Time (~${farmer.estWaitMins} mins), MSP Rates (₹${center.msp}/Qtl), or Claiming your 80% Instant Cash Advance.`;
+    } else {
+      reply = `नमस्ते ${farmer.name}! मैं आपका 'साथी' AI सहायक हूँ। आप मुझसे अपनी टोकन स्थिति (#${farmer.token}), वाहन #${farmer.vehicleNumber}, तौल का समय (~${farmer.estWaitMins} मिनट), आज का MSP भाव (₹${center.msp}), या 80% तुरंत भुगतान के बारे में पूछ सकते हैं।`;
+    }
   }
 
   return { reply, category, modelUsed: '🌾 Kisan Sathi AI (Direct Mandi Engine)' };
@@ -116,23 +215,36 @@ router.post('/query', async (req, res) => {
   } = req.body;
 
   const db = getDb();
-  let farmer = db.farmers.find(f => f.farmerId === farmerId) || db.farmers[0];
-  const center = db.centers.find(c => c.centerId === (farmer ? farmer.centerId : 'C1')) || db.centers[0];
-
-  farmer = getDynamicQueueMetrics(db, farmer.farmerId) || farmer;
-
   const promptText = (message || '').trim();
   if (!promptText) {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  const systemPrompt = buildSystemPrompt(farmer, center, screenContext);
+  // 1. Smart Entity Resolution: Match Farmer by Vehicle No, Token #, or Farmer ID
+  const cleanPrompt = cleanStr(promptText);
+  let matchedFarmer = db.farmers.find(f => {
+    const cleanVeh = cleanStr(f.vehicleNumber);
+    const cleanTok = String(f.token);
+    const cleanName = cleanStr(f.name);
+    return cleanPrompt.includes(cleanVeh) || cleanPrompt.includes(`token${cleanTok}`) || cleanPrompt.includes(`#${cleanTok}`) || (cleanPrompt.includes(cleanTok) && cleanPrompt.length < 6) || cleanPrompt.includes(cleanName);
+  });
+
+  let farmer = matchedFarmer || db.farmers.find(f => f.farmerId === farmerId) || db.farmers[0];
+  const center = db.centers.find(c => c.centerId === (farmer ? farmer.centerId : 'C1')) || db.centers[0];
+
+  // Refresh dynamic queue metrics
+  farmer = getDynamicQueueMetrics(db, farmer.farmerId) || farmer;
+
+  // Language check: English if no Devanagari characters
+  const isEnglish = !isHindiText(promptText);
+
+  const systemPrompt = buildSystemPrompt(farmer, center, screenContext, isEnglish);
   let replyText = '';
   let modelUsed = '';
   let action = null;
 
-  // Auto-action detection: Slot Booking
-  if (promptText.includes('स्लॉट बुक') || promptText.includes('book slot') || promptText.includes('reserve slot') || promptText.includes('टोकन बुक')) {
+  // Auto-action: Slot Booking
+  if (promptText.includes('स्लॉट बुक') || cleanPrompt.includes('bookslot') || cleanPrompt.includes('reserveslot') || promptText.includes('टोकन बुक')) {
     const slot = center.slots.find(s => s.tokensLeft > 0) || center.slots[0];
     if (slot && slot.tokensLeft > 0) {
       slot.tokensLeft -= 1;
@@ -144,8 +256,8 @@ router.post('/query', async (req, res) => {
     }
   }
 
-  // Auto-action detection: Cash Advance
-  if (promptText.includes('एडवांस भेज दो') || promptText.includes('पैसे ट्रांसफर') || promptText.includes('क्लेम एडवांस')) {
+  // Auto-action: Cash Advance
+  if (promptText.includes('एडवांस भेज दो') || cleanPrompt.includes('claimadvance') || cleanPrompt.includes('sendadvance') || promptText.includes('क्लेम एडवांस')) {
     if (farmer.payment && !farmer.payment.advance?.taken) {
       farmer.payment.advance = farmer.payment.advance || {};
       farmer.payment.advance.taken = true;
@@ -172,7 +284,6 @@ router.post('/query', async (req, res) => {
         systemInstruction: systemPrompt
       });
 
-      // Prepare conversation history for Gemini
       const chat = model.startChat({
         history: conversation.slice(-6).map(m => ({
           role: m.role === 'user' ? 'user' : 'model',
@@ -243,17 +354,22 @@ router.post('/query', async (req, res) => {
     }
   }
 
-  // 4. Fallback to Kisan Sathi Grounded AI Engine
+  // 4. Fallback to Grounded Kisan Sathi Engine (Hindi & English Support)
   if (!replyText) {
-    const fallback = getFallbackReply(promptText.toLowerCase(), farmer, center, screenContext);
+    const fallback = getFallbackReply(promptText, farmer, center, screenContext, isEnglish);
     replyText = fallback.reply;
     modelUsed = fallback.modelUsed;
   }
 
-  const suggestedChips = [
+  const suggestedChips = isEnglish ? [
+    "When will my crop be weighed?",
+    "What is today's MSP rate?",
+    "Check RJ-20-EA-4412 status",
+    "How to get 80% advance?"
+  ] : [
     "मेरी फसल कब बिकेगी?",
     "आज गेहूं का भाव क्या है?",
-    "मेरा टोकन नंबर क्या है?",
+    "गाड़ी RJ-20-EA-4412 स्थिति",
     "80% एडवांस कैसे मिलेगा?"
   ];
 
@@ -266,6 +382,9 @@ router.post('/query', async (req, res) => {
     action,
     farmerId: farmer.farmerId,
     token: farmer.token,
+    vehicleNumber: farmer.vehicleNumber,
+    farmerName: farmer.name,
+    isEnglish,
     screenContext
   });
 });

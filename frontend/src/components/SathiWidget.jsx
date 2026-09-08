@@ -61,45 +61,52 @@ export default function SathiWidget({ activeTab, farmerData, onNavigate }) {
     }, 1200);
   };
 
-  // Robust Text-To-Speech with Hindi Voice Matching
+  // Robust Text-To-Speech with Dynamic Language & Voice Matching (Hindi & English)
   const speakText = useCallback((text) => {
     if (!ttsEnabled || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
     try {
       window.speechSynthesis.cancel();
 
-      // Clean markdown stars/bullets for natural audio speech
+      // Clean formatting for natural speech readout
       const cleanText = text
         .replace(/[*_#`~]/g, '')
-        .replace(/₹\s*([0-9,]+)/g, '$1 रुपये ')
-        .replace(/Qtl/gi, ' क्विंटल ')
-        .replace(/ETA/gi, ' अनुमानित समय ')
-        .replace(/MSP/gi, ' एम एस पी ')
+        .replace(/₹\s*([0-9,]+)/g, '$1 rupees ')
+        .replace(/Qtl/gi, ' Quintal ')
         .trim();
 
+      const isHindi = /[\u0900-\u097F]/.test(cleanText);
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.rate = 0.95;
+      utterance.rate = isHindi ? 0.95 : 1.0;
       utterance.pitch = 1.0;
-      utterance.lang = 'hi-IN';
+      utterance.lang = isHindi ? 'hi-IN' : 'en-IN';
 
-      // Pick best matching Hindi/Indian voice
       const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
-      const hindiVoice = voices.find(
-        (v) =>
-          v.lang.toLowerCase().includes('hi') ||
-          v.name.toLowerCase().includes('hindi') ||
-          v.name.toLowerCase().includes('lekha')
-      ) || voices.find((v) => v.lang.toLowerCase().includes('in')) || voices[0];
+      let selectedVoice = null;
 
-      if (hindiVoice) {
-        utterance.voice = hindiVoice;
+      if (isHindi) {
+        selectedVoice = voices.find(
+          (v) =>
+            v.lang.toLowerCase().includes('hi') ||
+            v.name.toLowerCase().includes('hindi') ||
+            v.name.toLowerCase().includes('lekha')
+        ) || voices.find((v) => v.lang.toLowerCase().includes('in')) || voices[0];
+      } else {
+        selectedVoice = voices.find(
+          (v) =>
+            (v.lang.toLowerCase().includes('en-in') || v.lang.toLowerCase().includes('en-us') || v.lang.toLowerCase().includes('en-gb')) &&
+            !v.name.toLowerCase().includes('hindi')
+        ) || voices.find((v) => v.lang.toLowerCase().includes('en')) || voices[0];
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
       }
 
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
 
-      // Keep reference to prevent GC pausing bug in Chromium
       window._sathiCurrentUtterance = utterance;
       window.speechSynthesis.speak(utterance);
     } catch (e) {
