@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Header({ activeTab, onNavigate }) {
+export default function Header({ activeTab, onNavigate, onSwitchToDesktop }) {
   const { currentLangObj, setIsLangModalOpen, t } = useLanguage();
 
   const titleMap = {
@@ -55,6 +55,18 @@ export default function Header({ activeTab, onNavigate }) {
             <span className="material-symbols-outlined text-[15px] text-[#B45309]">desk</span>
             <span>स्टाफ Desk</span>
           </button>
+
+          {/* Desktop Portal Switcher */}
+          {onSwitchToDesktop && (
+            <button
+              onClick={onSwitchToDesktop}
+              className="px-2 py-1 bg-green-50 hover:bg-green-100 border border-green-300 text-[#166534] rounded-full font-label-sm text-[11px] font-bold flex items-center gap-1 transition-all shadow-xs active:scale-95"
+              title="डेस्कटॉप पोर्टल व्यू (Webpage)"
+            >
+              <span className="material-symbols-outlined text-[15px]">desktop_windows</span>
+              <span className="hidden sm:inline">Desktop</span>
+            </button>
+          )}
 
           {/* User Icon */}
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shadow-xs">

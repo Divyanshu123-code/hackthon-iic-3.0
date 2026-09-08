@@ -1,0 +1,756 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>कृषि उपज मंडी समिति - APMC Digital Procurement Portal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gov: {
+              primary: "#15803d",
+              "primary-dark": "#166534",
+              "primary-light": "#f0fdf4",
+              "primary-border": "#bbf7d0",
+              slate: "#0f172a",
+              muted: "#475569",
+              caption: "#64748b",
+              subtle: "#94a3b8",
+              line: "#e2e8f0",
+              surface: "#ffffff",
+              canvas: "#f8fafc",
+              neutral: "#f1f5f9"
+            }
+          },
+          fontFamily: {
+            sans: ["Manrope", "system-ui", "sans-serif"],
+            heading: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+            mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-gov-canvas font-sans text-gov-slate antialiased selection:bg-emerald-100 selection:text-gov-primary-dark">
+<!-- System Notification Toast -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-200 pointer-events-none bg-gov-slate text-white px-4 py-2.5 rounded shadow-lg flex items-center gap-2.5 text-xs font-medium border border-slate-700" id="statusToast">
+<span class="material-symbols-outlined text-emerald-400 text-[18px]">check_circle</span>
+<span id="statusToastText" class="">डेटा सफलतापूर्वक अपडेट किया गया (Data Synced)</span>
+</div>
+<!-- HEADER -->
+<header class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-gov-line">
+<!-- Super Top Gov Bar -->
+<div class="bg-gov-primary-dark text-white text-[11px] font-medium border-b border-emerald-800">
+<div class="max-w-[1200px] mx-auto px-4 h-7 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1 font-semibold tracking-wide">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+            कृषि एवं किसान कल्याण मंत्रालय | Ministry of Agriculture &amp; Farmers Welfare
+          </span>
+<span class="text-emerald-300 hidden md:inline">|</span>
+<span class="hidden md:inline text-emerald-100">राष्ट्रीय कृषि बाजार (e-NAM) अधिकृत APMC नेटवर्क</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5 text-emerald-100">
+<span class="material-symbols-outlined text-[13px]">call</span>
+<span class="">टोल-फ्री हेल्पलाइन: <strong class="text-white font-mono font-semibold">1800-180-1551</strong></span>
+</div>
+<div class="hidden sm:flex items-center gap-2 pl-3 border-l border-emerald-700/80 text-[11px]">
+<button class="font-bold text-white uppercase hover:underline">हिं</button>
+<span class="text-emerald-400">|</span>
+<button class="text-emerald-200 hover:text-white uppercase">En</button>
+<span class="text-emerald-400">|</span>
+<button class="text-emerald-200 hover:text-white uppercase">ਪੰ</button>
+<span class="text-emerald-400">|</span>
+<button class="text-emerald-200 hover:text-white uppercase">म</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Header Brand / Search / Identity -->
+<div class="max-w-[1200px] mx-auto px-4 h-16 flex items-center justify-between gap-6">
+<div class="flex items-center gap-3 shrink-0">
+<img alt="Government National Emblem / Portal Crest" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VhkKraZkiyJQ6IJaXNylSZHLxBfDT7NFB-bVjCiAVONzZp5WssBUetzdgodoCsaq_CsRmJXMk3I_3eda3C9sCC4BQUd-DapU2bC0MTaFNOywgNClXbPy9Oz2ecS4VJZBFm9yadSZOquUARV5uKfqNPI6Z1_8uNGjxecCbNIlyQq6KFL9Og-yEI7ABI0aYC8MZzbb1aYbrGlXRSLw6Dr0EsUKdMxpJBh2uGF1OCIT0_C_WXbAlasRLrw">
+<div class="flex flex-col border-l border-gov-line pl-3"><h1 class="font-heading font-bold text-base text-gov-slate tracking-tight leading-tight">सहायक ई-उपार्जन पोर्टल (Sahayak Mandi)</h1>
+<span class="text-[11px] font-medium text-gov-muted uppercase tracking-wider">Sahayak Mandi Digital Procurement Platform • Kota Yard</span></div>
+</div>
+<!-- Compact Gov Search Input -->
+<div class="flex-1 max-w-md hidden md:block">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2.5 text-gov-subtle text-[18px]">search</span>
+<input class="w-full pl-8 pr-3 py-1.5 bg-gov-canvas border border-gov-line rounded text-xs text-gov-slate placeholder:text-gov-subtle focus:bg-white focus:border-gov-primary focus:ring-1 focus:ring-gov-primary outline-none transition" placeholder="खोजें: टोकन सं., वाहन सं., किसान ID (उदा. APMC-KOT-789)..." type="text">
+</div>
+</div>
+<!-- User & Yard Indicator -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="hidden lg:flex items-center gap-2 px-2.5 py-1 bg-gov-neutral rounded border border-gov-line text-xs">
+<span class="w-2 h-2 rounded-full bg-gov-primary"></span>
+<span class="text-[11px] font-semibold text-gov-slate uppercase">मंडी प्रांगण: खुला (OPEN)</span>
+</div>
+<div class="flex items-center gap-2.5 border-l border-gov-line pl-3">
+<div class="text-right hidden sm:block">
+<div class="text-xs font-bold text-gov-slate">राम लाल शर्मा</div>
+<div class="text-[10px] font-mono text-gov-muted">ID: APMC-KOT-789</div>
+</div>
+<div class="w-8 h-8 rounded bg-gov-neutral border border-gov-line flex items-center justify-center text-gov-muted">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Official Enterprise Navigation Bar -->
+<div class="border-t border-gov-line bg-white">
+<div class="max-w-[1200px] mx-auto px-4">
+<nav class="flex items-center text-xs font-semibold overflow-x-auto">
+<a class="px-3.5 py-2.5 border-b-2 border-transparent text-gov-muted hover:text-gov-slate hover:border-slate-300 whitespace-nowrap transition-colors" href="#">
+            डैशबोर्ड / Dashboard
+          </a>
+<a class="px-3.5 py-2.5 border-b-2 border-gov-primary text-gov-primary bg-gov-primary-light/50 whitespace-nowrap" href="#">
+            टोकन व कतार / Live Yard Queue &amp; Booking
+          </a>
+<a class="px-3.5 py-2.5 border-b-2 border-transparent text-gov-muted hover:text-gov-slate hover:border-slate-300 whitespace-nowrap transition-colors" href="#">
+            मंडी कैलेंडर व भाव / Mandi Schedule &amp; MSP Rates
+          </a>
+<a class="px-3.5 py-2.5 border-b-2 border-transparent text-gov-muted hover:text-gov-slate hover:border-slate-300 whitespace-nowrap transition-colors" href="#">
+            भुगतान व ई-पासबुक / Payouts &amp; e-Passbook
+          </a>
+<a class="px-3.5 py-2.5 border-b-2 border-transparent text-gov-muted hover:text-gov-slate hover:border-slate-300 whitespace-nowrap transition-colors" href="#">
+            किसान सहायता / Kisan Welfare &amp; Helpdesk
+          </a>
+</nav>
+</div>
+</div>
+</header>
+<!-- MAIN BODY -->
+<main class="pt-[140px] pb-12 min-h-screen">
+<div class="max-w-[1200px] mx-auto px-4 flex flex-col gap-4">
+<!-- Breadcrumbs & Unified Action Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 pb-1">
+<div class="flex items-center gap-1.5 text-xs text-gov-muted">
+<span class="">मुख्य पृष्ठ</span>
+<span class="text-gov-subtle">/</span>
+<span class="">प्रवेश एवं तौल प्रबंधन</span>
+<span class="text-gov-subtle">/</span>
+<span class="text-gov-slate font-semibold">कोटा मुख्य मंडी यार्ड (Yard Queue Hub)</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="text-[11px] font-mono text-gov-muted mr-1">
+            अंतिम सिंक: <strong class="text-gov-slate font-semibold" id="lastUpdatedClock">11:42:18 AM</strong>
+</div>
+<button class="h-8 px-3 bg-white hover:bg-gov-neutral border border-gov-line text-gov-slate rounded text-xs font-semibold flex items-center gap-1.5 transition" onclick="window.print()">
+<span class="material-symbols-outlined text-[15px]">print</span>
+<span class="">दैनिक पास प्रिंट</span>
+</button>
+<button class="h-8 px-3 bg-gov-primary hover:bg-gov-primary-dark text-white rounded text-xs font-semibold flex items-center gap-1.5 transition shadow-sm" id="refreshDataBtn">
+<span class="material-symbols-outlined text-[15px]" id="refreshIcon">sync</span>
+<span class="">रिफ्रेश डेटा</span>
+</button>
+</div>
+</div>
+<!-- FLATTENED ENTERPRISE METRIC STRIP (Data-Table Style Key-Value Row) -->
+<section class="bg-white border border-gov-line rounded divide-y sm:divide-y-0 sm:divide-x divide-gov-line grid grid-cols-2 sm:grid-cols-4">
+<div class="p-3.5">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">कुल दैनिक आवक</div>
+<div class="mt-1 flex items-baseline gap-1.5">
+<span class="text-xl font-bold font-heading text-gov-slate tabular-nums">1,420.50</span>
+<span class="text-xs text-gov-muted font-medium">क्विंटल</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">86 वाहन दर्ज</div>
+</div>
+<div class="p-3.5">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">वर्तमान तौल टोकन</div>
+<div class="mt-1 flex items-baseline gap-2">
+<span class="text-xl font-bold font-heading text-gov-slate tabular-nums">#38</span>
+<span class="text-[11px] font-medium text-gov-muted bg-gov-neutral px-1.5 py-0.5 rounded border border-gov-line">धर्मकांटा लेन 3</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">सकल भार दर्ज प्रगति पर</div>
+</div>
+<div class="p-3.5">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">यार्ड कतार स्थिति</div>
+<div class="mt-1 flex items-baseline gap-1.5">
+<span class="text-xl font-bold font-heading text-gov-slate tabular-nums">14</span>
+<span class="text-xs text-gov-muted font-medium">वाहन प्रतीक्षा में</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">सभी 3 गेट सक्रिय</div>
+</div>
+<div class="p-3.5">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">औसत तौल व क्लीयरेंस समय</div>
+<div class="mt-1 flex items-baseline gap-1.5">
+<span class="text-xl font-bold font-heading text-gov-slate tabular-nums">18</span>
+<span class="text-xs text-gov-muted font-medium">मिनट / वाहन</span>
+</div>
+<div class="text-[11px] text-emerald-700 font-medium mt-0.5">सामान्य प्रवाह गति</div>
+</div>
+</section>
+<!-- 2-COLUMN MAIN WORKSPACE (8 cols / 4 cols) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+<!-- LEFT PRIMARY COLUMN (8 COLS) -->
+<div class="lg:col-span-8 flex flex-col gap-4">
+<!-- SINGLE FOCAL ELEVATED ELEMENT: Official APMC Token Slip -->
+<article class="bg-white border border-slate-300 rounded shadow-sm overflow-hidden">
+<!-- Header bar styled as official voucher -->
+<div class="bg-gov-neutral px-4 py-2.5 border-b border-gov-line flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold uppercase tracking-wider text-gov-slate">
+                  कृषि उपज मंडी समिति, कोटा (राज.) • अधिकृत प्रवेश एवं वजन पर्ची
+                </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] uppercase font-semibold text-gov-muted">दस्तावेज़ क्रमांक:</span>
+<span class="font-mono text-xs font-bold text-gov-slate bg-white px-2 py-0.5 border border-gov-line rounded">
+                  APMC-2024-TK-0042
+                </span>
+</div>
+</div>
+<div class="p-4 sm:p-5 flex flex-col gap-4">
+<!-- Focal Token Hero & Farmer Details -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gov-line">
+<div class="flex items-center gap-4">
+<!-- Focal Large Token Display -->
+<div class="border-2 border-gov-primary bg-gov-primary-light/40 px-5 py-2.5 rounded text-center shrink-0">
+<span class="text-[10px] uppercase font-bold tracking-wider text-gov-primary-dark block leading-none mb-1">
+                      टोकन संख्या
+                    </span>
+<span class="font-heading font-extrabold text-3xl sm:text-4xl text-gov-primary-dark tabular-nums tracking-tight leading-none">
+                      #42
+                    </span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-base sm:text-lg font-bold text-gov-slate font-heading leading-tight">
+                        राम लाल शर्मा
+                      </span>
+<span class="inline-flex items-center gap-1 text-[11px] font-bold text-gov-primary-dark bg-emerald-50 border border-gov-primary-border px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+                        सत्यापित / VERIFIED
+                      </span>
+</div>
+<div class="text-xs text-gov-muted mt-1 font-mono">
+                      किसान ID: APMC-KOT-789 • आधार संलग्न (UIDAI Verified)
+                    </div>
+<div class="text-[11px] text-gov-caption mt-0.5">
+                      गेट प्रवेश समय: आज प्रात: 10:15 AM • सुरक्षा जांच पूर्ण
+                    </div>
+</div>
+</div>
+<!-- Structured Barcode Section -->
+<div class="hidden sm:flex flex-col items-end border-l border-gov-line pl-4">
+<div class="h-9 flex items-stretch gap-[2px] bg-white p-1 border border-gov-line rounded">
+<div class="w-1 bg-slate-900"></div><div class="w-0.5 bg-slate-400"></div><div class="w-1.5 bg-slate-900"></div>
+<div class="w-0.5 bg-slate-200"></div><div class="w-2 bg-slate-900"></div><div class="w-0.5 bg-slate-300"></div>
+<div class="w-1.5 bg-slate-900"></div><div class="w-1 bg-slate-800"></div><div class="w-0.5 bg-slate-200"></div>
+<div class="w-2 bg-slate-900"></div><div class="w-1 bg-slate-900"></div><div class="w-1 bg-slate-700"></div>
+</div>
+<span class="font-mono text-[9px] text-gov-subtle mt-1 uppercase tracking-widest">GATE-AUTH-SECURE</span>
+</div>
+</div>
+<!-- Structured Manifest Data Grid (No decorative icons) -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gov-neutral p-3 rounded border border-gov-line text-xs">
+<div>
+<div class="text-[10px] uppercase font-bold text-gov-caption">वाहन व श्रेणी</div>
+<div class="font-bold text-gov-slate mt-0.5">RJ-20-EA-4412</div>
+<div class="text-[11px] text-gov-muted">ट्रैक्टर ट्रॉली</div>
+</div>
+<div>
+<div class="text-[10px] uppercase font-bold text-gov-caption">जिंस / फसल (Commodity)</div>
+<div class="font-bold text-gov-slate mt-0.5">सोयाबीन (Soybean)</div>
+<div class="text-[11px] text-gov-muted">किस्म: JS 335 (पीला)</div>
+</div>
+<div>
+<div class="text-[10px] uppercase font-bold text-gov-caption">अनुमानित आवक वजन</div>
+<div class="font-bold text-gov-slate mt-0.5">50 क्विंटल (Qtl)</div>
+<div class="text-[11px] text-gov-muted">68 मानक बोरियां</div>
+</div>
+<div>
+<div class="text-[10px] uppercase font-bold text-gov-caption">आवंटित धर्मकांटा</div>
+<div class="font-bold text-gov-slate mt-0.5">कांटा लेन #3 (उत्तरी)</div>
+<div class="text-[11px] text-gov-muted">प्रभारी: धर्मपाल सिंह</div>
+</div>
+</div>
+<!-- Live Queue Metrics Key-Value Box -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-gov-line pt-3">
+<div class="border border-gov-line rounded p-3 bg-white">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">कतार स्थिति (Queue Position)</div>
+<div class="text-xl font-bold font-heading text-gov-slate mt-1">
+                    04 <span class="text-xs font-normal text-gov-muted">वाहन आगे</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5 font-mono">टोकन #39, #40, #41 कतार में</div>
+</div>
+<div class="border border-gov-line rounded p-3 bg-white">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">गेट पर चालू टोकन (At Scale)</div>
+<div class="text-xl font-bold font-heading text-gov-slate mt-1">
+                    #38 <span class="text-xs font-normal text-gov-muted">तौल जारी</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">सकल भार प्रक्रियाधीन</div>
+</div>
+<div class="border border-gov-line rounded p-3 bg-white">
+<div class="text-[11px] font-semibold text-gov-caption uppercase tracking-wider">अनुमानित प्रतीक्षा समय (Est. Wait)</div>
+<div class="text-xl font-bold font-heading text-gov-slate mt-1">
+                    ~25 <span class="text-xs font-normal text-gov-muted">मिनट</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">गति: ~4 वाहन / 30 मिनट</div>
+</div>
+</div>
+<!-- Critical Alert Notification (Strictly controlled Amber for instruction) -->
+<div class="bg-amber-50 border border-amber-300 rounded p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+<div>
+<div class="font-bold text-amber-900 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-amber-700 text-[18px]">warning</span>
+<span class="">धर्मकांटा लेन #3 (उत्तरी गेट) की तरफ प्रस्थान निर्देश</span>
+</div>
+<div class="text-amber-800 mt-0.5">
+                    कृपया वाहन चालक धर्मकांटा के 20 मीटर के दायरे में रहें। अपना मूल टोकन व वजन पास तैयार रखें।
+                  </div>
+</div>
+<button class="shrink-0 bg-white hover:bg-amber-100/60 border border-amber-300 text-amber-950 font-semibold px-3 py-1.5 rounded transition self-start sm:self-auto">
+                  यार्ड मैप देखें
+                </button>
+</div>
+</div>
+</article>
+<!-- 4-STAGE MANDI WORKFLOW TRACKER (Simplified Enterprise Progress Track) -->
+<section class="bg-white border border-gov-line rounded p-4 sm:p-5">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-gov-line">
+<h2 class="font-heading font-bold text-sm text-gov-slate uppercase tracking-wider">
+                मंडी कार्यप्रणाली प्रगति चरण • Mandi Operational Workflow
+              </h2>
+<span class="text-xs font-semibold text-gov-primary bg-gov-primary-light px-2 py-0.5 rounded border border-gov-primary-border">
+                चरण 2/4 सक्रिय (Weighment Active)
+              </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+<!-- Stage 1 Completed -->
+<div class="border border-emerald-300 bg-emerald-50/50 p-3 rounded">
+<div class="flex items-center justify-between text-[11px] mb-1">
+<span class="font-bold text-emerald-800 uppercase tracking-wider">चरण 1</span>
+<span class="font-semibold text-emerald-700 font-mono">10:15 AM</span>
+</div>
+<div class="text-xs font-bold text-gov-slate">प्रवेश व सत्यापन</div>
+<div class="text-[11px] text-gov-muted mt-0.5">गेट #2 सुरक्षा व दस्तावेज जांच पूर्ण</div>
+<div class="mt-2 text-[10px] font-bold text-emerald-700 uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> पूर्ण (Completed)
+                </div>
+</div>
+<!-- Stage 2 Active -->
+<div class="border-2 border-gov-primary bg-white p-3 rounded">
+<div class="flex items-center justify-between text-[11px] mb-1">
+<span class="font-bold text-gov-primary-dark uppercase tracking-wider">चरण 2</span>
+<span class="font-bold text-gov-primary bg-emerald-100 px-1.5 py-0.2 rounded text-[10px]">वर्तमान</span>
+</div>
+<div class="text-xs font-bold text-gov-slate">धर्मकांटा वजन (तौल)</div>
+<div class="text-[11px] text-gov-muted mt-0.5">लेन 3 सकल भार रिकॉर्डिंग प्रक्रिया</div>
+<div class="mt-2 text-[10px] font-bold text-gov-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-gov-primary animate-ping"></span> चालू (In Progress)
+                </div>
+</div>
+<!-- Stage 3 Pending -->
+<div class="border border-gov-line bg-gov-canvas p-3 rounded">
+<div class="flex items-center justify-between text-[11px] mb-1">
+<span class="font-bold text-gov-caption uppercase tracking-wider">चरण 3</span>
+<span class="text-gov-subtle">आगामी</span>
+</div>
+<div class="text-xs font-bold text-gov-slate">गुणवत्ता व ग्रेडिंग</div>
+<div class="text-[11px] text-gov-muted mt-0.5">प्रयोगशाला नमूना व नमी (&lt;11%) जांच</div>
+<div class="mt-2 text-[10px] font-medium text-gov-subtle uppercase">प्रतीक्षारत (Pending)</div>
+</div>
+<!-- Stage 4 Pending -->
+<div class="border border-gov-line bg-gov-canvas p-3 rounded">
+<div class="flex items-center justify-between text-[11px] mb-1">
+<span class="font-bold text-gov-caption uppercase tracking-wider">चरण 4</span>
+<span class="text-gov-subtle">आगामी</span>
+</div>
+<div class="text-xs font-bold text-gov-slate">नीलामी व DBT भुगतान</div>
+<div class="text-[11px] text-gov-muted mt-0.5">e-NAM बोली तथा RTGS बैंक अंतरण</div>
+<div class="mt-2 text-[10px] font-medium text-gov-subtle uppercase">प्रतीक्षारत (Pending)</div>
+</div>
+</div>
+</section>
+<!-- ADVANCE GATE BOOKING SECTION -->
+<section class="bg-white border border-gov-line rounded p-4 sm:p-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-3 mb-4 border-b border-gov-line">
+<div>
+<h2 class="font-heading font-bold text-sm text-gov-slate uppercase tracking-wider">
+                  अग्रिम टोकन व स्लॉट आरक्षण • Pre-Book Mandi Arrival Slot
+                </h2>
+<p class="text-xs text-gov-muted mt-0.5">
+                  मंडी प्रांगण में अनावश्यक जाम से बचने हेतु अपना आगमन समय पूर्व-आरक्षित करें।
+                </p>
+</div>
+<span class="text-[11px] font-bold text-gov-primary uppercase tracking-wider bg-gov-primary-light border border-gov-primary-border px-2 py-0.5 rounded self-start sm:self-auto">
+                100% नि:शुल्क सरकारी सेवा
+              </span>
+</div>
+<form class="flex flex-col gap-4" onsubmit="event.preventDefault(); window.handleBookingSubmit();">
+<!-- Arrival Date Radios -->
+<div>
+<label class="text-xs font-bold text-gov-slate block mb-2">1. आगमन तिथि का चयन करें (Arrival Date):</label>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="bookingDate" type="radio" value="today">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="font-bold text-gov-slate">आज • 14 अप्रैल 2024</div>
+<div class="text-[11px] text-gov-muted">सामान्य आवक (Normal Flow)</div>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="bookingDate" type="radio" value="tomorrow">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="font-bold text-gov-slate">कल • 15 अप्रैल 2024</div>
+<div class="text-[11px] text-gov-muted">उच्च आवक पूर्वानुमान (Peak)</div>
+</div>
+</label>
+<label class="cursor-pointer hidden sm:block">
+<input class="sr-only peer" name="bookingDate" type="radio" value="dayAfter">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="font-bold text-gov-slate">परसों • 16 अप्रैल 2024</div>
+<div class="text-[11px] text-gov-muted">बुकिंग खुली है (Open)</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Time Slot Availability -->
+<div>
+<label class="text-xs font-bold text-gov-slate block mb-2">2. पसंदीदा समय स्लॉट चुनें (Allocated Slot Quota):</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="timeSlot" type="radio" value="morning">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="flex items-center justify-between font-bold text-gov-slate">
+<span class="">प्रात: 09:00 - 11:00</span>
+<span class="text-[10px] font-mono text-emerald-700 bg-emerald-100 px-1 rounded">8 स्लॉट</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">Morning Batch (गेट 1 व 2)</div>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="timeSlot" type="radio" value="afternoon">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="flex items-center justify-between font-bold text-gov-slate">
+<span class="">दोपहर 01:00 - 03:00</span>
+<span class="text-[10px] font-mono text-slate-700 bg-slate-100 px-1 rounded">15 स्लॉट</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">Afternoon Batch (गेट 2)</div>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="timeSlot" type="radio" value="evening">
+<div class="p-2.5 rounded border border-gov-line bg-white peer-checked:border-gov-primary peer-checked:bg-gov-primary-light/60 transition">
+<div class="flex items-center justify-between font-bold text-gov-slate">
+<span class="">सायं 03:30 - 05:30</span>
+<span class="text-[10px] font-mono text-slate-700 bg-slate-100 px-1 rounded">22 स्लॉट</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-0.5">Evening Batch (सभी गेट)</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Registered Beneficiary Key-Value Strip -->
+<div class="bg-gov-neutral p-3 rounded border border-gov-line flex flex-wrap items-center justify-between gap-2 text-xs">
+<div class="text-gov-slate">
+                  लाभार्थी विवरण: <strong class="font-bold">राम लाल शर्मा (APMC-KOT-789)</strong> | वाहन: <strong class="font-bold font-mono">RJ-20-EA-4412</strong> | सोयाबीन (50 Qtl)
+                </div>
+<button class="text-xs text-gov-primary hover:underline font-semibold" type="button">
+                  वाहन विवरण बदलें
+                </button>
+</div>
+<!-- Action Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+<div class="text-[11px] text-gov-muted">
+                  * स्लॉट पुष्टि SMS व ई-टोकन पास पंजीकृत मोबाइल <strong class="text-gov-slate font-mono">+91 98••••2109</strong> पर प्रेषित किया जाएगा।
+                </div>
+<button class="h-10 px-5 bg-gov-primary hover:bg-gov-primary-dark text-white text-xs font-bold uppercase tracking-wider rounded transition shrink-0 shadow-sm" type="submit">
+                  टोकन स्लॉट आरक्षित करें
+                </button>
+</div>
+</form>
+</section>
+</div>
+<!-- RIGHT SIDEBAR (4 COLS) -->
+<div class="lg:col-span-4 flex flex-col gap-4">
+<!-- MANDI TIMINGS & DAILY MSP COMMODITY RATES TABLE -->
+<section class="bg-white border border-gov-line rounded overflow-hidden">
+<!-- Timings Header Banner -->
+<div class="bg-gov-primary-dark text-white p-3 flex items-center justify-between">
+<div>
+<div class="text-xs font-bold tracking-wide">मंडी संचालन स्थिति: खुली है (OPEN)</div>
+<div class="text-[11px] text-emerald-100">कार्य समय: प्रात: 08:00 AM – सायं 05:00 PM</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+</div>
+<div class="p-3.5 flex flex-col gap-3">
+<div class="flex items-center justify-between text-xs pb-2 border-b border-gov-line">
+<h3 class="font-bold text-gov-slate uppercase tracking-wider">दैनिक प्रमुख जिंस भाव (₹/क्विंटल)</h3>
+<span class="text-[10px] text-gov-caption font-mono">e-NAM लाइव औसत</span>
+</div>
+<!-- Data Table for MSP Rates -->
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="border-b border-gov-line text-[10px] font-bold text-gov-caption uppercase">
+<th class="py-1.5 font-bold">जिंस / फसल</th>
+<th class="py-1.5 text-right font-bold">सरकारी MSP</th>
+<th class="py-1.5 text-right font-bold">मंडी भाव</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gov-line">
+<tr>
+<td class="py-2">
+<div class="font-bold text-gov-slate">गेहूं (Wheat Gr-A)</div>
+<div class="text-[10px] text-emerald-700 font-semibold">+₹135 समर्थन मूल्य से ऊपर</div>
+</td>
+<td class="py-2 text-right font-mono text-gov-muted">₹2,275</td>
+<td class="py-2 text-right font-mono font-bold text-gov-slate">₹2,410</td>
+</tr>
+<tr>
+<td class="py-2">
+<div class="font-bold text-gov-slate">सोयाबीन (Soybean JS)</div>
+<div class="text-[10px] text-emerald-700 font-semibold">+₹58 समर्थन मूल्य से ऊपर</div>
+</td>
+<td class="py-2 text-right font-mono text-gov-muted">₹4,892</td>
+<td class="py-2 text-right font-mono font-bold text-gov-slate">₹4,950</td>
+</tr>
+<tr>
+<td class="py-2">
+<div class="font-bold text-gov-slate">सरसों (Mustard 42%)</div>
+<div class="text-[10px] text-emerald-700 font-semibold">+₹70 समर्थन मूल्य से ऊपर</div>
+</td>
+<td class="py-2 text-right font-mono text-gov-muted">₹5,650</td>
+<td class="py-2 text-right font-mono font-bold text-gov-slate">₹5,720</td>
+</tr>
+<tr>
+<td class="py-2">
+<div class="font-bold text-gov-slate">चना (Desi Gram)</div>
+<div class="text-[10px] text-gov-muted font-semibold">-₹30 धीमा रुख</div>
+</td>
+<td class="py-2 text-right font-mono text-gov-muted">₹5,440</td>
+<td class="py-2 text-right font-mono font-bold text-gov-slate">₹5,410</td>
+</tr>
+</tbody>
+</table>
+<a class="mt-1 block text-center py-2 bg-gov-neutral hover:bg-slate-200/70 border border-gov-line rounded text-xs font-bold text-gov-slate transition" href="#">
+                सभी 32 जिंसों की विस्तृत दैनिक दर सूची देखें →
+              </a>
+</div>
+</section>
+<!-- DBT PAYOUT & IMMEDIATE ADVANCE WIDGET -->
+<section class="bg-white border border-gov-line rounded p-3.5 flex flex-col gap-3">
+<div class="flex items-center justify-between pb-2 border-b border-gov-line">
+<h3 class="font-bold text-xs text-gov-slate uppercase tracking-wider">
+                भुगतान व तुरंत अग्रिम (DBT Payouts)
+              </h3>
+<span class="text-[10px] text-gov-muted font-mono">PFMS Verified</span>
+</div>
+<!-- Total Approved Receivable Strip -->
+<div class="bg-gov-neutral p-3 rounded border border-gov-line">
+<div class="text-[10px] font-bold text-gov-caption uppercase tracking-wider">
+                कुल अनुमानित देय राशि (Approved Receivable)
+              </div>
+<div class="mt-1 flex items-baseline gap-2">
+<span class="font-heading font-extrabold text-2xl text-gov-slate font-mono">₹1,13,750</span>
+<span class="text-[11px] text-gov-muted font-medium">(50 Qtl @ ₹2,275 MSP)</span>
+</div>
+<div class="text-[11px] text-gov-muted mt-1 font-mono">
+                बैंक खाता: State Bank of India •••• 4912
+              </div>
+</div>
+<!-- DBT Timeline List -->
+<div class="text-xs flex flex-col gap-1.5 py-1">
+<div class="text-[11px] font-bold text-gov-caption uppercase">सीधा DBT अंतरण प्रक्रिया:</div>
+<div class="flex items-center gap-2 text-emerald-800 font-semibold">
+<span class="material-symbols-outlined text-[15px] text-gov-primary">check_circle</span>
+<span class="">1. गेट प्रवेश व तौल जारी</span>
+</div>
+<div class="flex items-center gap-2 text-gov-muted">
+<span class="w-2 h-2 rounded-full border border-gov-subtle ml-1 mr-1"></span>
+<span class="">2. ई-मंडी बिल व ऑक्शन पर्ची निर्गमन</span>
+</div>
+<div class="flex items-center gap-2 text-gov-muted">
+<span class="w-2 h-2 rounded-full border border-gov-subtle ml-1 mr-1"></span>
+<span class="">3. मंडी कोष Treasury RTGS (24 घंटे में)</span>
+</div>
+</div>
+<!-- Instant Advance Facility -->
+<div class="border border-emerald-300 bg-emerald-50/60 p-3 rounded flex flex-col gap-2">
+<div class="flex items-start justify-between gap-2">
+<div>
+<div class="text-xs font-bold text-gov-primary-dark">जरूरत पर तुरंत अग्रिम (80% Advance)</div>
+<div class="text-[11px] text-gov-slate mt-0.5">
+                    तौल पूर्ण होते ही <strong>₹91,000 (80%)</strong> तत्काल बैंक खाते में। 0% ब्याज (सरकारी योजना)।
+                  </div>
+</div>
+</div>
+<button class="h-9 w-full bg-gov-primary hover:bg-gov-primary-dark text-white rounded text-xs font-bold uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-1.5" id="advanceCashBtn">
+<span class="material-symbols-outlined text-[16px]">payments</span>
+<span class="">तुरंत अग्रिम निकासी (Request Advance)</span>
+</button>
+</div>
+</section>
+<!-- KISAN WELAPMC HELPDESK & VOICE ASSISTANCE -->
+<section class="bg-white border border-gov-line rounded p-3.5 flex flex-col gap-3">
+<div class="flex items-center justify-between pb-2 border-b border-gov-line">
+<h3 class="font-bold text-xs text-gov-slate uppercase tracking-wider">
+                किसान सहायता व वॉइस सेवा
+              </h3>
+<span class="text-[10px] font-bold text-gov-muted uppercase">24x7 Support</span>
+</div>
+<!-- Voice Inquiry Assistance -->
+<div class="border border-gov-line bg-gov-neutral p-3 rounded flex items-center justify-between gap-2">
+<div>
+<div class="text-xs font-bold text-gov-slate">वॉइस में कतार व टोकन स्थिति सुनें</div>
+<div class="text-[11px] text-gov-muted">हिंदी, हाड़ौती या राजस्थानी में उपलब्ध</div>
+</div>
+<button class="h-8 px-3 bg-white hover:bg-slate-100 border border-gov-line text-gov-slate rounded text-xs font-bold flex items-center gap-1 shrink-0 transition" id="audioPromptBtn">
+<span class="material-symbols-outlined text-[15px]">volume_up</span>
+<span class="">सुनें</span>
+</button>
+</div>
+<!-- Helpline Key-Value Box -->
+<div class="p-2.5 border border-gov-line rounded flex items-center justify-between">
+<div>
+<div class="text-[10px] uppercase font-bold text-gov-caption">कोटा मंडी पूछताछ डेस्क</div>
+<div class="font-mono text-xs font-bold text-gov-slate">1800-180-1551 (टोल-फ्री)</div>
+</div>
+<a class="h-7 px-2.5 bg-gov-neutral hover:bg-slate-200 text-gov-slate rounded text-xs font-bold flex items-center gap-1 border border-gov-line" href="tel:18001801551">
+<span class="material-symbols-outlined text-[14px]">call</span>
+<span class="">कॉल</span>
+</a>
+</div>
+<div class="text-[10px] text-gov-caption leading-normal">
+              नोट: वजन में अंतर या तौल गड़बड़ी होने पर तुरंत मंडी सचिव कक्ष (गेट #1) अथवा नियंत्रण कक्ष में शिकायत दर्ज कराएं।
+            </div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- OFFICIAL GOV FOOTER -->
+<footer class="w-full bg-white border-t border-gov-line text-xs text-gov-muted mt-8">
+<div class="max-w-[1200px] mx-auto px-4 py-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 pb-6 border-b border-gov-line">
+<div>
+<div class="font-bold text-gov-slate text-sm font-heading mb-2">सहायक ई-उपार्जन पोर्टल • कृषि उपज मंडी समिति (Sahayak Mandi APMC)</div>
+<p class="text-gov-muted text-[11px] leading-relaxed">
+            राष्ट्रीय कृषि बाजार (e-NAM) अधिकृत कृषि उपज विपणन केंद्र। किसानों की उपज का पारदर्शी इलेक्ट्रॉनिक तौल एवं सुनिश्चित प्रत्यक्ष भुगतान।
+          </p>
+<div class="mt-3 text-[11px] font-semibold text-emerald-800 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span class="">ISO 9001:2015 प्रमाणित ई-मंडी गेटवे</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-gov-slate text-xs uppercase tracking-wider mb-2">मंडी संचालन समय सारणी</h4>
+<ul class="space-y-1 text-[11px] text-gov-muted">
+<li class="">सोमवार - शनिवार: प्रात: 06:00 - सायं 07:00</li>
+<li class="">गेट प्रवेश एवं तौल: प्रात: 05:30 से प्रारंभ</li>
+<li class="">नीलामी सत्र 1: प्रात: 09:30 - दोपहर 01:30</li>
+<li class="">नीलामी सत्र 2: अपराह्न 02:30 - सायं 05:30</li>
+<li class="">रविवार व अवकाश: केवल ऑनलाइन टोकन सेवा</li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-gov-slate text-xs uppercase tracking-wider mb-2">उपयोगी लिंक व सेवाएँ</h4>
+<ul class="space-y-1 text-[11px] text-gov-muted">
+<li class=""><a class="hover:text-gov-primary transition" href="#">दैनिक आवक एवं मंडी भाव रिपोर्ट</a></li>
+<li class=""><a class="hover:text-gov-primary transition" href="#">धर्मकांटा वजन पर्ची सत्यापन</a></li>
+<li class=""><a class="hover:text-gov-primary transition" href="#">लाइसेंस प्राप्त आढ़तिया एवं क्रेता सूची</a></li>
+<li class=""><a class="hover:text-gov-primary transition" href="#">न्यूनतम समर्थन मूल्य (MSP) गजट तालिका</a></li>
+<li class=""><a class="hover:text-gov-primary transition" href="#">विवाद निवारण समिति पंजीकरण</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-gov-slate text-xs uppercase tracking-wider mb-2">आपातकालीन नियंत्रण कक्ष</h4>
+<div class="space-y-1 text-[11px] text-gov-muted">
+<div class="">कंट्रोल रूम: <strong class="text-gov-slate font-mono">011-2338-8911</strong></div>
+<div class="">किसान शिकायत: <strong class="text-gov-slate font-mono">1800-180-1551</strong></div>
+<div class="">ईमेल: <span class="font-mono text-gov-slate">helpdesk@sahayakmandi.gov.in</span></div>
+</div>
+<div class="mt-3 p-2 bg-gov-neutral rounded border border-gov-line text-[10px] text-gov-slate">
+            भुगतान प्रणाली: PFMS एवं RBI e-Kuber प्रत्यक्ष अंतरण से सुरक्षित
+          </div>
+</div>
+</div>
+<div class="pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-gov-caption">
+<div class="">© 2025 कृषि उपज मंडी समिति (APMC). सर्वाधिकार सुरक्षित। भारत सरकार डिजिटल इंडिया पहल।</div>
+<div class="flex items-center gap-4 text-[11px]">
+<a class="hover:text-gov-slate transition" href="#">गोपनीयता नीति</a>
+<span class="text-gov-line">|</span>
+<a class="hover:text-gov-slate transition" href="#">नियम एवं शर्तें</a>
+<span class="text-gov-line">|</span>
+<a class="hover:text-gov-slate transition" href="#">हाइपरलिंकिंग नीति</a>
+<span class="text-gov-line">|</span>
+<a class="hover:text-gov-slate transition" href="#">अस्वीकरण (Disclaimer)</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- CLIENT-SIDE SCRIPTING -->
+<script>
+    (function() {
+      // Toast utility
+      function showToast(message) {
+        const toast = document.getElementById('statusToast');
+        const text = document.getElementById('statusToastText');
+        if (!toast || !text) return;
+        text.innerText = message;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+          toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 3000);
+      }
+
+      // Refresh Button Handler
+      const refreshBtn = document.getElementById('refreshDataBtn');
+      const refreshIcon = document.getElementById('refreshIcon');
+      const clock = document.getElementById('lastUpdatedClock');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          if (refreshIcon) refreshIcon.classList.add('animate-spin');
+          setTimeout(function() {
+            if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+            if (clock) clock.innerText = timeString;
+            showToast('मंडी कतार व भाव लाइव अपडेट हो चुके हैं (' + timeString + ')');
+          }, 400);
+        });
+      }
+
+      // Slot Booking Submission Handler
+      window.handleBookingSubmit = function() {
+        showToast('गेट स्लॉट सफलतापूर्व आरक्षित! टोकन SMS प्रेषित कर दिया गया है।');
+      };
+
+      // Voice Audio Prompt Simulator
+      const audioBtn = document.getElementById('audioPromptBtn');
+      if (audioBtn) {
+        audioBtn.addEventListener('click', function() {
+          showToast('ऑडियो उद्घोषणा: "राम लाल जी, आपरा टोकन नंबर 42 छै, धर्मकांटा लेन 3 में 4 ट्रैक्टर आगे छै।"');
+        });
+      }
+
+      // Instant Advance Payout Simulator
+      const advanceBtn = document.getElementById('advanceCashBtn');
+      if (advanceBtn) {
+        advanceBtn.addEventListener('click', function() {
+          showToast('अग्रिम भुगतान अनुरोध दर्ज! SBI खाते में ₹91,000 की प्रक्रिया जारी है।');
+        });
+      }
+    })();
+  </script>
+
+
+</body></html>
