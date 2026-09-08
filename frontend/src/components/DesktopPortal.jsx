@@ -86,27 +86,31 @@ export default function DesktopPortal({
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 font-semibold tracking-wide">
                 <span className="material-symbols-outlined text-[14px] text-emerald-400">verified</span>
-                कृषि एवं किसान कल्याण मंत्रालय | Ministry of Agriculture & Farmers Welfare
+                {t('ministryBar', 'कृषि एवं किसान कल्याण मंत्रालय | Ministry of Agriculture & Farmers Welfare')}
               </span>
               <span className="text-emerald-500 hidden md:inline">•</span>
-              <span className="hidden md:inline text-emerald-100">राष्ट्रीय कृषि बाजार (e-NAM) अधिकृत APMC नेटवर्क</span>
+              <span className="hidden md:inline text-emerald-100">{t('nationalNetwork', 'राष्ट्रीय कृषि बाजार (e-NAM) अधिकृत APMC नेटवर्क')}</span>
             </div>
             
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1 text-emerald-200">
                 <span className="material-symbols-outlined text-[14px]">call</span>
-                <span>टोल-फ्री: <strong className="text-white font-mono">1800-180-1551</strong></span>
+                <span>{t('tollFree', 'टोल-फ्री')}: <strong className="text-white font-mono">1800-180-1551</strong></span>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 pl-3 border-l border-emerald-700 text-[11px]">
+              
+              {/* Multilingual Switcher in Super Top Bar */}
+              <div className="flex items-center gap-1.5 pl-3 border-l border-emerald-700 text-[11px]">
                 {LANGUAGES.map(lang => (
                   <button
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
-                    className={`px-1.5 py-0.5 rounded transition-colors ${
-                      currentLang === lang.code ? 'bg-emerald-700 font-bold text-white' : 'text-emerald-200 hover:text-white'
+                    className={`px-2 py-0.5 rounded-md font-bold transition-all ${
+                      currentLang === lang.code
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-emerald-200 hover:text-white hover:bg-emerald-800/60'
                     }`}
                   >
-                    {lang.code.toUpperCase()}
+                    <span>{lang.flag} {lang.label}</span>
                   </button>
                 ))}
               </div>
@@ -122,10 +126,10 @@ export default function DesktopPortal({
             </div>
             <div className="flex flex-col border-l border-[#E2E8F0] pl-3">
               <h1 className="font-bold text-base text-[#0F172A] tracking-tight leading-tight">
-                किसान मंडी ई-उपार्जन पोर्टल • APMC कोटा
+                {t('portalTitle', 'किसान मंडी ई-उपार्जन पोर्टल • APMC कोटा')}
               </h1>
               <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">
-                Digital Procurement Platform • Rajasthan Mandi Yard
+                {t('portalSub', 'Digital Procurement Platform • Rajasthan Mandi Yard')}
               </span>
             </div>
           </div>
@@ -138,7 +142,7 @@ export default function DesktopPortal({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="खोजें: टोकन सं., वाहन सं. (RJ-20-EA-4412), या किसान ID..."
+                placeholder={t('searchPlaceholder', 'खोजें: टोकन सं., वाहन सं. (RJ-20-EA-4412), या किसान ID...')}
                 className="w-full pl-9 pr-4 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg text-xs text-[#0F172A] placeholder-[#94A3B8] focus:bg-white focus:border-[#166534] focus:ring-1 focus:ring-[#166534] outline-none transition"
               />
             </div>
@@ -146,20 +150,31 @@ export default function DesktopPortal({
 
           {/* User & Mode Controls */}
           <div className="flex items-center gap-3 shrink-0">
+            {/* Language Selector Dropdown Pill */}
+            <button
+              onClick={() => setIsLangModalOpen(true)}
+              className="px-3 py-1.5 bg-[#FAF6EE] hover:bg-[#F4EFE2] border border-[#E5DEC9] text-[#166534] rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95"
+              title="भाषा चुनें • Select Language"
+            >
+              <span className="text-sm">{currentLangObj.flag}</span>
+              <span>{currentLangObj.label}</span>
+              <span className="material-symbols-outlined text-[16px]">expand_more</span>
+            </button>
+
             {/* View Switcher Button */}
             <button
               onClick={onSwitchToMobile}
-              className="px-3 py-1.5 bg-[#FAF6EE] border border-[#E5DEC9] text-[#166534] rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-[#F4EFE2] transition shadow-xs"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-[#0F172A] rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
               title="मोबाइल ऐप व्यू देखें"
             >
               <span className="material-symbols-outlined text-[16px]">smartphone</span>
-              <span>मोबाइल व्यू (PWA)</span>
+              <span>{t('switchToMobile', 'मोबाइल व्यू (PWA)')}</span>
             </button>
 
             {/* Yard Status Pill */}
             <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg border border-green-200 text-xs">
               <span className="w-2 h-2 rounded-full bg-[#166534] animate-pulse"></span>
-              <span className="font-bold text-[#166534] uppercase">मंडी गेट: खुला है (OPEN)</span>
+              <span className="font-bold text-[#166534] uppercase">{t('gateOpen', 'मंडी गेट: खुला है (OPEN)')}</span>
             </div>
 
             {/* Farmer Identity Badge */}
@@ -180,13 +195,13 @@ export default function DesktopPortal({
           <div className="max-w-7xl mx-auto px-6">
             <nav className="flex items-center text-xs font-semibold overflow-x-auto gap-1">
               {[
-                { id: 'dashboard', label: 'डैशबोर्ड / Overview', icon: 'dashboard' },
-                { id: 'queue', label: 'टोकन व कतार / Live Queue', icon: 'receipt_long' },
-                { id: 'schedule', label: 'मंडी कैलेंडर व MSP / Schedule', icon: 'calendar_month' },
-                { id: 'payment', label: 'भुगतान व PFMS / Payouts', icon: 'account_balance_wallet' },
-                { id: 'marketplace', label: 'e-NAM नीलामी / Trade Slips', icon: 'storefront' },
-                { id: 'financial_aid', label: 'क्रेडिट पासबुक / Passbook', icon: 'account_balance' },
-                { id: 'staff', label: 'स्टाफ कंट्रोल डेस्क / Staff Desk', icon: 'desk' }
+                { id: 'dashboard', label: t('dashboardOverview', 'डैशबोर्ड / Overview'), icon: 'dashboard' },
+                { id: 'queue', label: t('liveYardQueue', 'टोकन व कतार / Live Queue'), icon: 'receipt_long' },
+                { id: 'schedule', label: t('scheduleRates', 'मंडी कैलेंडर व MSP / Schedule'), icon: 'calendar_month' },
+                { id: 'payment', label: t('payoutsPassbook', 'भुगतान व PFMS / Payouts'), icon: 'account_balance_wallet' },
+                { id: 'marketplace', label: t('enamMarket', 'e-NAM नीलामी / Trade Slips'), icon: 'storefront' },
+                { id: 'financial_aid', label: t('creditPassbook', 'क्रेडिट पासबुक / Passbook'), icon: 'account_balance' },
+                { id: 'staff', label: t('staffControlDesk', 'स्टाफ कंट्रोल डेस्क / Staff Desk'), icon: 'desk' }
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -213,7 +228,7 @@ export default function DesktopPortal({
           {/* Top Breadcrumb & Live Controls Strip */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
             <div className="flex items-center gap-2 text-xs text-[#64748B]">
-              <span>मुख्य पृष्ठ</span>
+              <span>{t('home', 'मुख्य पृष्ठ')}</span>
               <span>/</span>
               <span>APMC कोटा यार्ड</span>
               <span>/</span>
@@ -222,21 +237,21 @@ export default function DesktopPortal({
             
             <div className="flex items-center gap-3 shrink-0">
               <div className="text-[11px] font-mono text-[#64748B]">
-                लाइव सिंक: <strong className="text-[#0F172A] font-semibold">{currentTime}</strong>
+                {t('liveMandiData', 'लाइव सिंक')}: <strong className="text-[#0F172A] font-semibold">{currentTime}</strong>
               </div>
               <button
                 onClick={handlePrintPass}
                 className="h-8 px-3.5 bg-white hover:bg-slate-50 border border-[#CBD5E1] text-[#0F172A] rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
               >
                 <span className="material-symbols-outlined text-[16px]">print</span>
-                <span>दैनिक पास प्रिंट</span>
+                <span>{t('printPass', 'दैनिक पास प्रिंट')}</span>
               </button>
               <button
                 onClick={onOpenQr}
                 className="h-8 px-3.5 bg-[#166534] hover:bg-[#14532d] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-sm"
               >
                 <span className="material-symbols-outlined text-[16px]">qr_code_2</span>
-                <span>गेट QR पास</span>
+                <span>{t('getQrPass', 'गेट QR पास')}</span>
               </button>
             </div>
           </div>
@@ -244,7 +259,7 @@ export default function DesktopPortal({
           {/* 5. ENTERPRISE KPI METRICS STRIP */}
           <section className="bg-white border border-[#E2E8F0] rounded-xl shadow-xs grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#E2E8F0]">
             <div className="p-4">
-              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">आज की आवक (Daily Intake)</div>
+              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('dailyIntake', 'आज की कुल आवक')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
                 <span className="text-2xl font-black text-[#0F172A] font-mono">1,420.50</span>
                 <span className="text-xs text-[#64748B] font-semibold">क्विंटल</span>
@@ -253,7 +268,7 @@ export default function DesktopPortal({
             </div>
 
             <div className="p-4">
-              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">आपका टोकन स्थिति</div>
+              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('yourTokenStatus', 'आपका टोकन')}</div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-2xl font-black text-[#166534] font-mono">#{queueData?.token || 42}</span>
                 <span className="text-[11px] font-bold text-[#166534] bg-green-50 px-2 py-0.5 rounded border border-green-200">
@@ -264,7 +279,7 @@ export default function DesktopPortal({
             </div>
 
             <div className="p-4">
-              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">सरकारी समर्थन मूल्य (MSP)</div>
+              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('govtMsp', 'सरकारी समर्थन मूल्य (MSP)')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
                 <span className="text-2xl font-black text-[#B45309] font-mono">₹4,892</span>
                 <span className="text-xs text-[#64748B] font-semibold">/क्विंटल</span>
@@ -273,10 +288,10 @@ export default function DesktopPortal({
             </div>
 
             <div className="p-4">
-              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">स्वीकृत DBT भुगतान</div>
+              <div className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">{t('approvedDbt', 'स्वीकृत DBT भुगतान')}</div>
               <div className="mt-1 flex items-baseline gap-1.5">
                 <span className="text-2xl font-black text-[#166534] font-mono">₹2,44,600</span>
-                <span className="text-xs text-[#166534] font-bold">स्वीकृत</span>
+                <span className="text-xs text-[#166534] font-bold">{t('verified', 'स्वीकृत')}</span>
               </div>
               <div className="text-[11px] text-[#0284C7] mt-0.5 font-semibold">80% अग्रिम: ₹1,95,680 तुरंत उपलब्ध</div>
             </div>
