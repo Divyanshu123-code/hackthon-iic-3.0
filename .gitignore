@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Production build
+dist/
+frontend/dist/
+
+# Environment and local files
+.env
+.env.local
+.DS_Store
+*.log
+npm-debug.log*
+
+# Zip and temporary extracts
+*.zip
+stitch_agri_procurement_demo_prototype/

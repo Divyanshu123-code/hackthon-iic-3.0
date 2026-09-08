@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Kisan Mandi — किसान मंडी</title>
+  
+  <!-- Fonts & Icons from Stitch Prototype -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <style>
+    @layer base {
+      html, body { width: 100%; min-height: 100%; margin: 0; padding: 0; }
+      body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.12); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-variant": "#eae1da",
+            "primary-container": "#b15f00",
+            "outline-variant": "#dbc2b0",
+            "on-secondary-fixed": "#00210a",
+            "on-surface-variant": "#554336",
+            "on-background": "#1f1b17",
+            "surface-container-low": "#fcf2eb",
+            "background": "#fff8f5",
+            "on-tertiary-fixed-variant": "#763300",
+            "secondary-container": "#92f5a4",
+            "on-primary-container": "#fffbff",
+            "on-primary-fixed-variant": "#6e3900",
+            "surface-bright": "#fff8f5",
+            "inverse-on-surface": "#f9efe8",
+            "secondary": "#006d30",
+            "on-tertiary-container": "#fffbff",
+            "secondary-fixed-dim": "#79db8d",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#95f8a7",
+            "surface-container-high": "#f0e6e0",
+            "tertiary-container": "#bb5810",
+            "surface": "#fff8f5",
+            "outline": "#887364",
+            "tertiary-fixed": "#ffdbca",
+            "on-secondary-container": "#007233",
+            "on-tertiary": "#ffffff",
+            "surface-container-highest": "#eae1da",
+            "tertiary": "#984300",
+            "surface-dim": "#e2d8d2",
+            "inverse-surface": "#342f2b",
+            "on-surface": "#1f1b17",
+            "primary-fixed-dim": "#ffb77d",
+            "tertiary-fixed-dim": "#ffb68e",
+            "surface-container": "#f6ece6",
+            "on-secondary": "#ffffff",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed": "#331200",
+            "surface-tint": "#904d00",
+            "error-container": "#ffdad6",
+            "primary": "#8d4b00",
+            "primary-fixed": "#ffdcc3",
+            "error": "#ba1a1a",
+            "inverse-primary": "#ffb77d",
+            "on-error": "#ffffff",
+            "on-primary-fixed": "#2f1500",
+            "on-secondary-fixed-variant": "#005323"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin-screen": "1.25rem",
+            "pad-md": "1rem",
+            "pad-2xl": "3rem",
+            "touch-min": "4rem",
+            "gap-grid": "1rem",
+            "pad-xl": "2rem",
+            "pad-lg": "1.5rem",
+            "pad-sm": "0.75rem",
+            "touch-compact": "3.5rem",
+            "pad-xs": "0.5rem"
+          },
+          fontFamily: {
+            "body-sm": ["Manrope"],
+            "body-md": ["Manrope"],
+            "label-md": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "label-lg": ["Plus Jakarta Sans"],
+            "body-lg": ["Manrope"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"]
+          },
+          fontSize: {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "label-md": ["15px", { "lineHeight": "20px", "fontWeight": "700" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "700" }],
+            "label-lg": ["18px", { "lineHeight": "24px", "fontWeight": "700" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "headline-lg": ["30px", { "lineHeight": "38px", "fontWeight": "700" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+            "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen relative">
+  
+  <!-- STICKY TOP HEADER -->
+  <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe">
+    <div class="h-16 px-pad-md flex items-center justify-between gap-pad-sm">
+      <div class="flex items-center gap-pad-sm min-w-0 cursor-pointer" onclick="navigateTo('home')">
+        <div class="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg shadow-sm flex-shrink-0">
+          🌾
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider leading-none">किसान मंडी</span>
+          <h1 id="headerTitle" class="font-headline-sm text-headline-sm text-on-surface truncate leading-tight">Home</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-pad-xs flex-shrink-0">
+        <a href="/staff" target="_blank" class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 rounded-full font-label-sm text-xs font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+          Staff Desk
+        </a>
+        <button aria-label="Notifications" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface">
+          <span class="material-symbols-outlined text-[24px]">notifications</span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="flex flex-col relative w-full pt-16 pb-28 bg-surface min-h-screen max-w-lg mx-auto">
+    
+    <!-- ============================================================== -->
+    <!-- SCREEN 1: FARMER HOME (farmer_home_5_action_tiles) -->
+    <!-- ============================================================== -->
+    <div id="screen-home" class="screen-view flex flex-col w-full px-pad-md gap-pad-md">
+      
+      <!-- LANGUAGE SELECTOR BAR -->
+      <section aria-label="Select Language" class="w-full overflow-x-auto py-pad-xs no-scrollbar flex items-center gap-pad-xs">
+        <button class="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-primary text-on-primary shadow-sm flex-shrink-0 transition-transform active:scale-95">
+          <span class="font-label-md text-label-md">हिंदी</span>
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        </button>
+        <button class="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
+          <span class="font-label-md text-label-md">मराठी</span>
+        </button>
+        <button class="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
+          <span class="font-label-md text-label-md">ਪੰਜਾਬੀ</span>
+        </button>
+        <button class="flex items-center gap-pad-xs px-pad-md py-pad-xs rounded-full bg-surface-container-high text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-highest active:scale-95">
+          <span class="font-label-md text-label-md">English</span>
+        </button>
+      </section>
+
+      <!-- CHEERFUL WELCOME BANNER -->
+      <section class="relative overflow-hidden rounded-xl bg-surface-container p-pad-md shadow-sm">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-primary-fixed/40 pointer-events-none"></div>
+        <div class="relative z-10 flex items-center justify-between gap-pad-sm">
+          <div class="flex items-center gap-pad-sm min-w-0">
+            <div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center flex-shrink-0 shadow-inner">
+              <span class="material-symbols-outlined text-primary text-[32px]">face_6</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-pad-xs flex-wrap">
+                <span id="homeFarmerName" class="font-headline-sm text-headline-sm text-on-surface truncate">राम लाल जी</span>
+                <span id="homeTokenBadge" class="px-pad-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">टोकन #42</span>
+              </div>
+              <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+                <span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+                <span id="homeDateLocation">आज, 8 सितंबर 2026 • सोलन मंडी</span>
+              </span>
+            </div>
+          </div>
+          <button aria-label="Listen audio greeting" class="w-11 h-11 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shadow-sm active:scale-90 flex-shrink-0" id="listen-welcome-btn" onclick="openVoiceModal('नमस्ते राम लाल जी! आपका टोकन नंबर 42 है। आज सोलन मंडी में गेहूं का भाव 2275 रुपये है।')">
+            <span class="material-symbols-outlined text-[24px]">volume_up</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- MAIN 5 GIANT COLORFUL ICON TILES -->
+      <section aria-label="Mandi Services" class="flex flex-col gap-pad-sm w-full">
+        <!-- ROW 1: SCHEDULE & QUEUE -->
+        <div class="grid grid-cols-2 gap-pad-sm w-full">
+          <!-- 1. SCHEDULE -->
+          <div onclick="navigateTo('mandi-schedule')" class="group relative flex flex-col items-center justify-between p-pad-md rounded-xl bg-surface-container-high shadow-md transition-all active:scale-95 text-center min-h-[160px] cursor-pointer">
+            <div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-pad-xs shadow-inner">
+              <span class="material-symbols-outlined text-[40px]">calendar_clock</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="font-headline-md text-headline-md text-on-surface">समय</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Schedule</span>
+            </div>
+          </div>
+          <!-- 2. QUEUE -->
+          <div onclick="navigateTo('token-and-queue')" class="group relative flex flex-col items-center justify-between p-pad-md rounded-xl bg-secondary-container shadow-md transition-all active:scale-95 text-center min-h-[160px] cursor-pointer">
+            <div class="absolute top-2 right-2 flex items-center gap-1 bg-surface-container-lowest/80 backdrop-blur-sm px-2 py-0.5 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+              <span id="homeTileTokenBadge" class="font-label-sm text-label-sm text-on-secondary-container">#42</span>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-on-secondary mb-pad-xs shadow-inner">
+              <span class="material-symbols-outlined text-[40px]">confirmation_number</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="font-headline-md text-headline-md text-on-secondary-container">कतार</span>
+              <span class="font-label-sm text-label-sm text-on-secondary-container">Queue Live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 2: PAYMENT & MONEY HELP -->
+        <div class="grid grid-cols-2 gap-pad-sm w-full">
+          <!-- 3. PAYMENT -->
+          <div onclick="navigateTo('payments')" class="group relative flex flex-col items-center justify-between p-pad-md rounded-xl bg-surface-container-lowest shadow-md transition-all active:scale-95 text-center min-h-[160px] cursor-pointer">
+            <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center text-tertiary mb-pad-xs shadow-inner">
+              <span class="material-symbols-outlined text-[40px]">payments</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="font-headline-md text-headline-md text-on-surface">पैसे</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Payments</span>
+            </div>
+          </div>
+          <!-- 4. MONEY HELP (LOAN / INSURANCE) -->
+          <div onclick="openFinancialAidModal()" class="group relative flex flex-col items-center justify-between p-pad-md rounded-xl bg-surface-container-high shadow-md transition-all active:scale-95 text-center min-h-[160px] cursor-pointer">
+            <div class="w-16 h-16 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary mb-pad-xs shadow-inner">
+              <span class="material-symbols-outlined text-[40px]">handshake</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="font-headline-md text-headline-md text-on-surface">मदद</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">Loans & Help</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 3: BUY SEEDS (FULL WIDTH MASSIVE TILE) -->
+        <div onclick="openMarketplaceModal()" class="group flex items-center justify-between p-pad-md rounded-xl bg-secondary-fixed shadow-md transition-all active:scale-98 w-full min-h-[110px] cursor-pointer">
+          <div class="flex items-center gap-pad-md">
+            <div class="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-on-secondary shadow-inner flex-shrink-0">
+              <span class="material-symbols-outlined text-[40px]">eco</span>
+            </div>
+            <div class="flex flex-col text-left">
+              <span class="font-headline-md text-headline-md text-on-secondary-fixed leading-tight">बीज और खाद</span>
+              <span class="font-body-md text-body-md text-on-secondary-fixed-variant">Buy Quality Seeds</span>
+            </div>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-surface-container-lowest/60 flex items-center justify-center text-on-secondary-fixed">
+            <span class="material-symbols-outlined text-[28px]">arrow_forward</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 2: SCHEDULE (schedule_open_today_status) -->
+    <!-- ============================================================== -->
+    <div id="screen-mandi-schedule" class="screen-view hidden flex flex-col w-full px-margin-screen gap-pad-md">
+      
+      <!-- Top Context Header Bar -->
+      <div class="flex items-center justify-between pt-pad-xs pb-pad-xs">
+        <div class="flex items-center gap-pad-sm">
+          <button onclick="navigateTo('home')" aria-label="Go Back" class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform" type="button">
+            <span class="material-symbols-outlined text-[28px]">arrow_back</span>
+          </button>
+          <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider block leading-none">दैनिक स्थिति • Live Status</span>
+            <h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Mandi Schedule / मंडी तारीख</h2>
+          </div>
+        </div>
+        <div class="flex items-center gap-pad-xs bg-surface-container-high px-pad-sm py-pad-xs rounded-full">
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
+          <span class="font-label-sm text-label-sm text-secondary font-bold">LIVE</span>
+        </div>
+      </div>
+
+      <!-- Giant Operational Status Card -->
+      <div id="scheduleOpenCard" class="w-full bg-secondary-container rounded-xl p-pad-md flex flex-col gap-pad-md relative overflow-hidden shadow-sm">
+        <div class="flex items-start justify-between relative z-10">
+          <div class="flex flex-col">
+            <div class="inline-flex items-center gap-pad-xs bg-secondary px-pad-sm py-pad-xs rounded-full mb-pad-xs">
+              <span class="material-symbols-outlined text-on-secondary text-[20px]">check_circle</span>
+              <span id="scheduleGateStatusText" class="font-label-sm text-label-sm text-on-secondary uppercase tracking-wider">गेट खुला है • Gate Open</span>
+            </div>
+            <h3 id="scheduleOpenTitle" class="font-display-lg-mobile text-display-lg-mobile text-on-secondary-container font-extrabold leading-none tracking-tight">
+              आज खुला है
+            </h3>
+            <p id="scheduleOpenSubtitle" class="font-headline-sm text-headline-sm text-on-secondary-container opacity-90 leading-tight mt-1">
+              OPEN TODAY
+            </p>
+          </div>
+          <div class="w-16 h-16 rounded-full bg-secondary flex items-center justify-center shadow-md flex-shrink-0">
+            <span class="material-symbols-outlined text-[44px] text-on-secondary">verified</span>
+          </div>
+        </div>
+
+        <!-- Operating Hours & Gate details banner -->
+        <div class="bg-surface-container-lowest/90 backdrop-blur-sm rounded-xl p-pad-sm flex flex-col gap-pad-xs z-10">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-pad-xs">
+              <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px] text-secondary">schedule</span>
+              </div>
+              <div>
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">समय / Timing</span>
+                <span id="scheduleTiming" class="font-headline-sm text-headline-sm text-on-surface leading-none">8:00 AM – 5:00 PM</span>
+              </div>
+            </div>
+            <div class="bg-surface-container-high px-pad-sm py-pad-xs rounded-lg text-center">
+              <span class="font-label-sm text-label-sm text-on-surface-variant block">प्रवेश द्वार</span>
+              <span id="scheduleGateNumber" class="font-label-lg text-label-lg text-primary font-bold">गेट नं. 2</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-pad-xs pt-pad-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[20px] text-secondary">location_on</span>
+            <span id="scheduleMandiName" class="font-body-md text-body-md text-on-surface font-semibold truncate">APMC अनाज मंडी (Kota Mandi)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crop Accepted Today Card -->
+      <div class="w-full bg-surface-container rounded-xl p-pad-md flex flex-col gap-pad-md shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-pad-xs">
+            <span class="w-3 h-3 rounded-full bg-primary"></span>
+            <span class="font-label-md text-label-md text-on-surface uppercase">आज की मुख्य आवक • Crop Inflow</span>
+          </div>
+          <span id="scheduleCropGrade" class="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-pad-xs py-0.5 rounded-full font-bold">Grade A Verified</span>
+        </div>
+        <div class="flex items-center gap-pad-md">
+          <div class="w-20 h-20 rounded-xl bg-primary-fixed flex items-center justify-center text-primary text-3xl shadow-inner">
+            🌾
+          </div>
+          <div class="flex flex-col min-w-0 flex-1">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">स्वीकृत फसल / Accepted</span>
+            <h4 id="scheduleTodayCrop" class="font-headline-md text-headline-md text-on-surface truncate">गेहूं (Wheat)</h4>
+            <span id="scheduleCropQuality" class="font-body-sm text-body-sm text-on-surface-variant">Sharbati & Lokwan Quality</span>
+          </div>
+        </div>
+
+        <!-- Government MSP Highlight Box -->
+        <div class="w-full bg-secondary-container rounded-xl p-pad-sm flex items-center justify-between">
+          <div class="flex items-center gap-pad-xs">
+            <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-on-secondary">
+              <span class="material-symbols-outlined text-[24px]">currency_rupee</span>
+            </div>
+            <div>
+              <span class="font-label-sm text-label-sm text-on-secondary-container block uppercase leading-tight font-semibold">सरकारी समर्थन मूल्य (MSP)</span>
+              <span id="scheduleMspPrice" class="font-headline-md text-headline-md text-on-secondary-container font-black leading-tight">₹2,275</span>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest/80 px-pad-sm py-pad-xs rounded-lg">
+            <span class="font-label-sm text-label-sm text-on-surface font-bold">प्रति क्विंटल</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Schedule Days Pills -->
+      <div class="flex flex-col gap-pad-xs">
+        <div class="flex items-center justify-between px-pad-xs">
+          <h4 class="font-headline-sm text-headline-sm text-on-surface">आगामी तारीखें / Upcoming Days</h4>
+        </div>
+        <!-- Tomorrow Card -->
+        <div class="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-pad-sm">
+            <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex flex-col items-center justify-center text-on-surface">
+              <span class="font-label-sm text-label-sm uppercase leading-none font-bold">कल</span>
+              <span class="font-label-md text-label-md leading-none">Sat</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-label-lg text-label-lg text-on-surface">सरसों / Mustard</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">Gate 1 & Gate 3 • 8:00 AM – 4:30 PM</span>
+            </div>
+          </div>
+          <div class="bg-secondary-fixed text-on-secondary-fixed px-pad-sm py-pad-xs rounded-full flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+            <span class="font-label-sm text-label-sm font-bold uppercase">खुला • OPEN</span>
+          </div>
+        </div>
+        <!-- Sunday Card -->
+        <div class="w-full bg-surface-container-low rounded-xl p-pad-sm flex items-center justify-between opacity-80 shadow-sm">
+          <div class="flex items-center gap-pad-sm">
+            <div class="w-12 h-12 rounded-xl bg-error-container/40 flex flex-col items-center justify-center text-on-surface">
+              <span class="font-label-sm text-label-sm uppercase leading-none font-bold">परसों</span>
+              <span class="font-label-md text-label-md leading-none">Sun</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-label-lg text-label-lg text-on-surface">साप्ताहिक अवकाश</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">Weekly APMC Cleaning</span>
+            </div>
+          </div>
+          <div class="bg-error-container text-on-error-container px-pad-sm py-pad-xs rounded-full flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">block</span>
+            <span class="font-label-sm text-label-sm font-bold uppercase">बंद • CLOSED</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Giant Primary Action Button -->
+      <div class="w-full pt-pad-xs">
+        <button onclick="bookTodaySlot()" class="w-full h-16 bg-secondary hover:bg-secondary/90 active:scale-[0.99] transition-all text-on-secondary rounded-xl font-headline-sm text-headline-sm flex items-center justify-center gap-pad-sm shadow-md" id="book-slot-cta" type="button">
+          <span class="material-symbols-outlined text-[32px] text-secondary-fixed">confirmation_number</span>
+          <span>स्लॉट बुक करें • Book Today's Slot</span>
+        </button>
+        <p class="font-label-sm text-label-sm text-center text-on-surface-variant pt-2">
+          ⚡ टोकन कटने में केवल 30 सेकंड लगेंगे
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 3: QUEUE LIVE (queue_live_token_42_progress) -->
+    <!-- ============================================================== -->
+    <div id="screen-token-and-queue" class="screen-view hidden flex flex-col w-full px-margin-screen gap-pad-md">
+      
+      <!-- Nav Bar & Live Status Indicator -->
+      <div class="flex items-center justify-between pt-pad-xs">
+        <button onclick="navigateTo('home')" aria-label="Go Back" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-transform shadow-sm">
+          <span class="material-symbols-outlined text-[28px]">arrow_back</span>
+        </button>
+        <div class="flex items-center gap-pad-xs bg-secondary-container/60 px-pad-sm py-1.5 rounded-full">
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
+          <span class="font-label-sm text-label-sm text-on-secondary-container">लाइव मंडी कतार • Live Queue</span>
+        </div>
+        <button onclick="speakQueueStatus()" aria-label="Listen Announcement" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform shadow-sm" id="queueSpeakerBtn">
+          <span class="material-symbols-outlined text-[28px]">volume_up</span>
+        </button>
+      </div>
+
+      <!-- Giant Live Token Hero Card -->
+      <div class="relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-md flex flex-col items-center text-center p-pad-lg">
+        <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary-fixed/40 blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-44 h-44 rounded-full bg-secondary-fixed/30 blur-2xl pointer-events-none"></div>
+        
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-pad-xs">
+          आपका टोकन नंबर • YOUR TOKEN
+        </span>
+
+        <!-- Giant Token Circle with High Contrast Glow Accent -->
+        <div class="relative my-pad-xs flex items-center justify-center">
+          <div class="w-48 h-48 rounded-full bg-primary-container/10 flex items-center justify-center shadow-inner">
+            <div class="w-40 h-40 rounded-full bg-primary-container flex flex-col items-center justify-center text-on-primary-container shadow-lg select-none">
+              <span id="queueHeroToken" class="font-display-lg-mobile text-[76px] leading-none tracking-tight font-extrabold text-on-primary">
+                42
+              </span>
+              <span class="font-label-sm text-label-sm tracking-widest text-primary-fixed mt-1 uppercase">
+                RJ LOT
+              </span>
+            </div>
+          </div>
+          <!-- Position Indicator Ribbon -->
+          <div class="absolute -bottom-2 bg-secondary text-on-secondary px-pad-md py-1 rounded-full shadow-md flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">agriculture</span>
+            <span id="queueAheadText" class="font-label-sm text-label-sm font-bold">आगे केवल 4 ट्रैक्टर</span>
+          </div>
+        </div>
+
+        <!-- Live Gate Counter & ETA Grid -->
+        <div class="w-full grid grid-cols-2 gap-pad-xs mt-pad-md pt-pad-xs">
+          <div class="bg-surface-container-low rounded-lg p-pad-sm flex flex-col items-center justify-center text-center">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">गेट पर अभी • At Gate</span>
+            <div class="flex items-center gap-1 mt-0.5">
+              <span id="queueAtGateNumber" class="font-headline-md text-headline-md text-secondary">#38</span>
+              <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+            </div>
+          </div>
+          <div class="bg-surface-container-low rounded-lg p-pad-sm flex flex-col items-center justify-center text-center">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">अनुमानित समय • Est. Wait</span>
+            <div class="flex items-center gap-1 mt-0.5">
+              <span id="queueEstWaitMins" class="font-headline-md text-headline-md text-primary">~25</span>
+              <span class="font-label-md text-label-md text-on-surface">मिनट</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advance Token Booking Section (Stitch UI Prototype) -->
+      <section class="rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 overflow-hidden flex flex-col">
+        <div class="bg-primary-fixed/40 px-pad-md py-pad-sm flex items-center justify-between border-b border-outline-variant/20">
+          <div class="flex items-center gap-pad-xs">
+            <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">book_online</span>
+            </div>
+            <div>
+              <h2 class="font-label-md text-label-md text-on-surface font-bold leading-tight">टोकन ब्लॉक करें • Advance Booking</h2>
+              <p class="font-body-sm text-[12px] text-on-surface-variant leading-none mt-0.5">लाइन से बचें, समय पर मंडी पहुंचे</p>
+            </div>
+          </div>
+          <span class="bg-secondary text-on-secondary text-[11px] font-label-sm font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-surface animate-ping"></span>
+            स्लॉट चालू
+          </span>
+        </div>
+
+        <div class="p-pad-md flex flex-col gap-pad-sm">
+          <!-- Slot Selection Label & Options -->
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 font-bold">
+              <span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+              समय स्लॉट चुनें • Select Time Slot
+            </label>
+            <div class="grid grid-cols-2 gap-pad-xs">
+              <div id="slot-morning-card" onclick="selectBookingSlot('morning')" class="border-2 border-secondary bg-secondary-fixed/30 rounded-lg p-2.5 flex flex-col cursor-pointer transition-all">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm font-bold text-on-surface">सुबह 09 - 11 AM</span>
+                  <span id="slot-morning-icon" class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+                </div>
+                <span id="slot-morning-count" class="font-body-sm text-[12px] text-secondary font-bold mt-1">8 टोकन बाकी</span>
+                <span class="text-[11px] text-on-surface-variant">Morning Slot</span>
+              </div>
+              <div id="slot-afternoon-card" onclick="selectBookingSlot('afternoon')" class="border border-outline-variant/50 bg-surface-container-low rounded-lg p-2.5 flex flex-col cursor-pointer hover:border-primary transition-all">
+                <div class="flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm text-on-surface">दोपहर 01 - 03 PM</span>
+                  <span id="slot-afternoon-icon" class="material-symbols-outlined text-outline-variant text-[18px]">radio_button_unchecked</span>
+                </div>
+                <span id="slot-afternoon-count" class="font-body-sm text-[12px] text-primary font-bold mt-1">15 टोकन बाकी</span>
+                <span class="text-[11px] text-on-surface-variant">Afternoon Slot</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Load Selection -->
+          <div class="flex flex-col gap-1.5">
+            <label class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 font-bold">
+              <span class="material-symbols-outlined text-[16px] text-primary">local_shipping</span>
+              वाहन व उपज भार • Load Size
+            </label>
+            <div class="flex items-center gap-2">
+              <div class="flex-1 bg-surface-container-high rounded-lg px-pad-sm py-2 flex items-center justify-between">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="material-symbols-outlined text-primary text-[20px]">agriculture</span>
+                  <span class="font-label-md text-label-md text-on-surface truncate">ट्रॉली / 50 क्विंटल</span>
+                </div>
+                <span class="font-label-sm text-[12px] text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded font-bold">सोयाबीन</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block Token Button & Confirmation Badge -->
+          <div class="flex flex-col gap-2 pt-1">
+            <button id="blockTokenBtn" onclick="executeBlockToken()" class="w-full h-14 rounded-xl bg-secondary hover:bg-secondary/90 text-on-secondary shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 px-pad-md">
+              <span class="material-symbols-outlined text-[24px] text-secondary-fixed">lock_open</span>
+              <div class="flex flex-col text-left">
+                <span class="font-label-md text-label-md font-bold leading-tight text-on-secondary">🔒 टोकन अभी ब्लॉक करें • Block Token Now</span>
+                <span class="font-body-sm text-[11px] text-secondary-fixed leading-none">15 मिनट के लिए आरक्षित • Free Slot Reserve</span>
+              </div>
+            </button>
+            <div class="flex items-center justify-center gap-1.5 text-center text-on-surface-variant">
+              <span class="material-symbols-outlined text-[15px] text-secondary">verified_user</span>
+              <span class="font-body-sm text-[12px]">QR पास व SMS तुरंत प्राप्त होगा • Gate Priority Pass</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mandatory Mandi Action Alert Banner -->
+      <div id="queueLaneAlert" class="bg-primary-fixed/40 rounded-xl p-pad-md flex items-center gap-pad-sm shadow-sm">
+        <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container flex-shrink-0">
+          <span class="material-symbols-outlined text-[26px]">notifications_active</span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <h3 id="queueAlertTitle" class="font-label-md text-label-md text-on-primary-fixed leading-snug">तौल कांटे #3 की ओर बढ़ें</h3>
+          <p id="queueAlertSubtitle" class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Move toward Weighbridge 3 lane now</p>
+        </div>
+      </div>
+
+      <!-- 4-Dot Physical Process Visualizer -->
+      <div class="bg-surface-container-lowest rounded-xl p-pad-md shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-pad-md">
+          <span class="font-label-md text-label-md text-on-surface font-bold">मंडी प्रक्रिया • Mandi Steps</span>
+          <span id="queueStepCounterBadge" class="font-label-sm text-label-sm text-secondary bg-secondary-container/50 px-pad-xs py-0.5 rounded font-bold">कदम 2 / 4 चालू</span>
+        </div>
+        
+        <!-- Connected Step Indicator -->
+        <div class="relative flex items-start justify-between w-full px-2">
+          <div class="absolute top-6 left-6 right-6 h-1.5 bg-surface-container-highest rounded-full -z-0"></div>
+          <div id="queueProgressFillBar" class="absolute top-6 left-6 w-[36%] h-1.5 bg-secondary rounded-full -z-0 transition-all duration-500"></div>
+
+          <!-- Step 1: Arrived -->
+          <div id="step-arrived" class="flex flex-col items-center z-10 w-16">
+            <div class="step-icon w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md">
+              <span class="material-symbols-outlined text-[26px]">check</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-secondary mt-2 text-center leading-none">पहुंचे</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant text-center">Arrived</span>
+          </div>
+
+          <!-- Step 2: Weighing -->
+          <div id="step-weighing" class="flex flex-col items-center z-10 w-16">
+            <div class="relative flex items-center justify-center">
+              <div class="ping-ring absolute -inset-1 rounded-full bg-primary-fixed-dim animate-ping opacity-75"></div>
+              <div class="step-icon w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-md relative">
+                <span class="material-symbols-outlined text-[24px]">scale</span>
+              </div>
+            </div>
+            <span class="font-label-sm text-label-sm text-primary mt-2 text-center font-extrabold leading-none">तौल</span>
+            <span class="font-body-sm text-[11px] text-primary text-center font-bold">Weighing</span>
+          </div>
+
+          <!-- Step 3: Grade -->
+          <div id="step-grade" class="flex flex-col items-center z-10 w-16 opacity-60">
+            <div class="step-icon w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">manage_search</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">गुणवत्ता</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant text-center">Grade</span>
+          </div>
+
+          <!-- Step 4: Pass -->
+          <div id="step-pass" class="flex flex-col items-center z-10 w-16 opacity-60">
+            <div class="step-icon w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">verified</span>
+            </div>
+            <span class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center leading-none">पास</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant text-center">Pass</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle & Commodity Details Card -->
+      <div class="bg-surface-container-lowest rounded-xl p-pad-md shadow-sm flex flex-col gap-pad-sm">
+        <div class="flex items-center justify-between pb-pad-xs bg-surface-container-low/50 -mx-pad-md -mt-pad-md p-pad-md rounded-t-xl">
+          <div class="flex items-center gap-pad-xs">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[22px]">local_shipping</span>
+            </div>
+            <div>
+              <span class="font-label-sm text-label-sm text-on-surface-variant block">ट्रैक्टर विवरण • Vehicle</span>
+              <span id="queueVehicleNo" class="font-label-lg text-label-lg text-on-surface">RJ-20-EA-4412</span>
+            </div>
+          </div>
+          <span id="queueVehicleType" class="bg-primary/10 text-primary font-label-sm text-label-sm px-2.5 py-1 rounded-full">सोनालिका DI 745</span>
+        </div>
+        <div class="grid grid-cols-2 gap-pad-sm pt-1">
+          <div class="flex flex-col bg-surface-container-low rounded-lg p-pad-sm">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">निर्धारित कांटा • Location</span>
+            <span id="queueWeighbridge" class="font-headline-sm text-headline-sm text-primary mt-0.5">कांटा #3</span>
+            <span class="font-body-sm text-body-sm text-on-surface-variant">Weighbridge No. 3</span>
+          </div>
+          <div class="flex flex-col bg-surface-container-low rounded-lg p-pad-sm">
+            <span class="font-label-sm text-label-sm text-on-surface-variant">फसल • Commodity</span>
+            <span id="queueCommodity" class="font-headline-sm text-headline-sm text-on-surface mt-0.5">सोयाबीन</span>
+            <span id="queueCommodityQty" class="font-body-sm text-body-sm text-on-surface-variant">Yellow Soy (68 बोरी)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show QR Pass Button -->
+      <div class="pt-pad-xs pb-pad-sm">
+        <button onclick="openQrModal()" class="w-full h-16 rounded-xl bg-primary hover:bg-primary-container text-on-primary shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-pad-sm px-pad-md" type="button">
+          <span class="material-symbols-outlined text-[32px] text-primary-fixed">qr_code_scanner</span>
+          <div class="flex flex-col text-left">
+            <span class="font-label-lg text-label-lg text-on-primary leading-tight">सुरक्षा गार्ड को पास दिखाएं</span>
+            <span class="font-body-sm text-[13px] text-primary-fixed leading-tight">Show Entry QR Pass to Guard</span>
+          </div>
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- SCREEN 4: PAYMENTS (payment_live_transfer_advance) -->
+    <!-- ============================================================== -->
+    <div id="screen-payments" class="screen-view hidden flex flex-col w-full px-margin-screen gap-pad-md">
+      
+      <!-- Top Action Navigation Strip -->
+      <div class="flex items-center justify-between pt-pad-xs">
+        <button onclick="navigateTo('home')" aria-label="Go Back" class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface shadow-sm active:scale-95 transition-transform" type="button">
+          <span class="material-symbols-outlined text-[28px]">arrow_back</span>
+        </button>
+        <div class="flex flex-col items-center text-center">
+          <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">पारदर्शी लेखा-जोखा</span>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Payment Status / भुगतान</h2>
+        </div>
+        <button onclick="speakPaymentStatus()" aria-label="Listen to Audio Summary" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary active:scale-95 transition-transform" type="button">
+          <span class="material-symbols-outlined text-[26px]">volume_up</span>
+        </button>
+      </div>
+
+      <!-- Giant Approved Amount Hero Card -->
+      <div class="relative overflow-hidden rounded-xl bg-surface-container-lowest p-pad-lg shadow-md flex flex-col gap-pad-sm">
+        <div class="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-secondary-fixed/30 pointer-events-none blur-2xl"></div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-pad-xs">
+            <span class="material-symbols-outlined text-secondary text-[22px]">verified</span>
+            <span class="font-label-md text-label-md text-on-surface-variant">Total Approved Amount / कुल राशि</span>
+          </div>
+          <span class="bg-secondary-container text-on-secondary-container px-pad-xs py-0.5 rounded-full font-label-sm text-label-sm flex items-center gap-1 font-bold">
+            <span class="material-symbols-outlined text-[14px]">lock</span> सुरक्षित
+          </span>
+        </div>
+        <div class="flex items-baseline gap-1 py-1">
+          <span id="payTotalApproved" class="font-display-lg-mobile text-display-lg-mobile text-primary tracking-tight font-extrabold">₹ 1,13,750</span>
+        </div>
+        <div class="flex items-center gap-pad-sm bg-surface-container-low rounded-lg p-pad-sm">
+          <div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-primary flex-shrink-0 text-xl">
+            🌾
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span id="payCropQuintal" class="font-label-md text-label-md text-on-surface truncate">50 क्विंटल (Quintal) गेहूं Grade-A</span>
+            <span id="payLotNumber" class="font-body-sm text-body-sm text-on-surface-variant">मंडी लॉट सं.: #LOT-2024-8849</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Photo Reference Card -->
+      <div class="rounded-xl bg-surface-container-lowest shadow-sm p-pad-sm flex items-center gap-pad-sm">
+        <div class="w-16 h-16 rounded-lg bg-amber-100 flex items-center justify-center text-2xl flex-shrink-0">
+          🌾
+        </div>
+        <div class="flex flex-col justify-center min-w-0 flex-1">
+          <div class="flex items-center gap-1 text-secondary">
+            <span class="material-symbols-outlined text-[18px]">fact_check</span>
+            <span class="font-label-sm text-label-sm font-bold">गुणवत्ता प्रमाणित (Grade Approved)</span>
+          </div>
+          <p id="payQualitySpecs" class="font-body-sm text-body-sm text-on-surface-variant truncate">नमी: 10.8% • शुद्धता: 99.4% • मंडी शेड 4</p>
+        </div>
+      </div>
+
+      <!-- 4-Step Payment Flow Timeline -->
+      <div class="rounded-xl bg-surface-container-lowest p-pad-md shadow-sm flex flex-col gap-pad-md">
+        <div class="flex items-center justify-between">
+          <h3 class="font-label-lg text-label-lg text-on-surface font-bold">प्रक्रिया स्थिति / Live Status</h3>
+          <span class="font-label-sm text-label-sm text-primary flex items-center gap-1 font-bold">
+            <span class="material-symbols-outlined text-[16px] animate-spin">sync</span> Live Synced
+          </span>
+        </div>
+
+        <div id="paymentTimelineContainer" class="relative flex flex-col gap-pad-md">
+          <!-- Populated dynamically via API -->
+        </div>
+      </div>
+
+      <!-- Instant Advance CTA Box (Showcase Feature) -->
+      <div id="advanceCtaCard" class="rounded-xl bg-surface-container-high p-pad-lg shadow-md flex flex-col gap-pad-md relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-pad-xs">
+            <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary">
+              <span class="material-symbols-outlined text-[22px]">bolt</span>
+            </div>
+            <span class="font-headline-sm text-headline-sm text-on-surface">Need Cash Urgently?</span>
+          </div>
+          <span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-pad-xs py-1 rounded-full font-bold">त्वरित सेवा</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="font-body-lg text-body-lg text-on-surface">
+            Get <strong class="text-primary">80% Money Now (<span id="payAdvanceAmountText">₹91,000</span>)</strong> directly to UPI / Bank
+          </p>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">
+            बिना इंतजार 2 मिनट में अपने खाते में पाएं। शेष 20% सामान्य प्रक्रिया से मिलेगा।
+          </p>
+        </div>
+        <button onclick="openAdvanceModal()" class="w-full h-14 bg-primary text-on-primary rounded-xl flex items-center justify-center gap-pad-sm shadow-md active:scale-98 transition-all hover:bg-primary-container font-bold" id="instantAdvanceBtn" type="button">
+          <span class="material-symbols-outlined text-[28px]">bolt</span>
+          <span class="font-headline-sm text-headline-sm tracking-wide">⚡ तुरंत पैसे लें / Get Money Now</span>
+        </button>
+      </div>
+
+      <!-- Linked Bank Account Indicator -->
+      <div class="rounded-xl bg-surface-container-lowest p-pad-md shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-pad-sm min-w-0">
+          <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+            <span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-pad-xs">
+              <span id="payBankName" class="font-label-md text-label-md text-on-surface truncate">SBI Bank •••• 4912</span>
+              <span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+            </div>
+            <span id="payIfsc" class="font-body-sm text-body-sm text-on-surface-variant">IFSC: SBIN000210 • आधार लिंक</span>
+          </div>
+        </div>
+        <span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg font-bold">सत्यापित</span>
+      </div>
+
+      <!-- Fee Support Footer -->
+      <div class="rounded-xl bg-surface-container-lowest p-pad-md flex flex-col gap-pad-xs shadow-sm">
+        <div class="flex items-center justify-between text-on-surface-variant">
+          <span class="font-body-sm text-body-sm">सरकारी मंडी शुल्क:</span>
+          <span class="font-label-md text-label-md text-on-surface">₹ 0 (किसान छूट)</span>
+        </div>
+        <div class="flex items-center justify-between text-on-surface-variant">
+          <span class="font-body-sm text-body-sm">एडवांस सुविधा शुल्क:</span>
+          <span class="font-label-md text-label-md text-secondary font-bold">0% शून्य ब्याज (सरकारी योजना)</span>
+        </div>
+        <div class="pt-pad-xs flex items-center gap-pad-xs text-on-surface-variant">
+          <span class="material-symbols-outlined text-[18px]">support_agent</span>
+          <span class="font-body-sm text-body-sm">सहायता केंद्र: 1800-180-1551 (टोल फ्री)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- ============================================================== -->
+  <!-- FLOATING VOICE ASSISTANT CTA (Present on all screens) -->
+  <!-- ============================================================== -->
+  <aside class="fixed bottom-24 right-pad-md z-40 flex items-center gap-pad-xs max-w-lg mx-auto">
+    <div class="relative flex items-center justify-center">
+      <div class="absolute inset-0 rounded-full bg-secondary-fixed opacity-75 animate-ping pointer-events-none"></div>
+      <button onclick="toggleVoiceSheet()" aria-label="Voice Assistant" class="relative flex items-center gap-pad-xs bg-secondary hover:bg-secondary/90 text-on-secondary shadow-xl rounded-full px-pad-md h-14 min-w-[56px] transition-transform active:scale-95">
+        <span class="material-symbols-outlined text-[28px] text-secondary-fixed">mic</span>
+        <span class="font-label-md text-label-md tracking-wide text-on-secondary whitespace-nowrap">बोलिए / Speak</span>
+      </button>
+    </div>
+  </aside>
+
+
+  <!-- ============================================================== -->
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <!-- ============================================================== -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)] border-t border-outline-variant/30">
+    <div class="flex justify-around items-center h-20 px-pad-xs max-w-lg mx-auto">
+      <button onclick="navigateTo('home')" id="nav-home" class="nav-item flex flex-col items-center justify-center flex-1 h-full text-secondary font-label-md font-bold transition-colors">
+        <span class="material-symbols-outlined text-[28px]">agriculture</span>
+        <span class="font-label-sm text-label-sm leading-tight mt-0.5">घर</span>
+      </button>
+      <button onclick="navigateTo('mandi-schedule')" id="nav-mandi-schedule" class="nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-[28px]">calendar_month</span>
+        <span class="font-label-sm text-label-sm leading-tight mt-0.5">तारीख</span>
+      </button>
+      <button onclick="navigateTo('token-and-queue')" id="nav-token-and-queue" class="nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-[28px]">confirmation_number</span>
+        <span class="font-label-sm text-label-sm leading-tight mt-0.5">नंबर</span>
+      </button>
+      <button onclick="navigateTo('payments')" id="nav-payments" class="nav-item flex flex-col items-center justify-center flex-1 h-full text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-[28px]">payments</span>
+        <span class="font-label-sm text-label-sm leading-tight mt-0.5">रुपये</span>
+      </button>
+    </div>
+  </nav>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: SATHI VOICE & CHAT ASSISTANT BOTTOM SHEET -->
+  <!-- ============================================================== -->
+  <div id="voiceSheet" class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-end justify-center p-0">
+    <div class="w-full max-w-lg bg-inverse-surface text-inverse-on-surface rounded-t-2xl p-pad-lg flex flex-col gap-pad-md shadow-2xl animate-in slide-in-from-bottom duration-200">
+      <div class="w-12 h-1.5 bg-surface-container-highest/40 rounded-full mx-auto"></div>
+      
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-pad-xs">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-fixed opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-secondary-fixed"></span>
+          </span>
+          <span class="font-label-md text-label-md text-secondary-fixed">साथी AI सहायक • Sathi Assistant</span>
+        </div>
+        <button onclick="toggleVoiceSheet(false)" class="w-8 h-8 rounded-full bg-surface-container-highest/20 flex items-center justify-center text-inverse-on-surface active:scale-90">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- SOUND WAVE VISUALIZER -->
+      <div class="flex items-center justify-center gap-1.5 h-10 py-1">
+        <span class="w-1.5 h-5 bg-secondary-fixed rounded-full animate-bounce"></span>
+        <span class="w-1.5 h-9 bg-primary-fixed rounded-full animate-bounce [animation-delay:0.1s]"></span>
+        <span class="w-1.5 h-4 bg-secondary-fixed rounded-full animate-bounce [animation-delay:0.2s]"></span>
+        <span class="w-1.5 h-10 bg-primary-fixed rounded-full animate-bounce [animation-delay:0.15s]"></span>
+        <span class="w-1.5 h-7 bg-secondary-fixed rounded-full animate-bounce [animation-delay:0.3s]"></span>
+        <span class="w-1.5 h-4 bg-secondary-fixed rounded-full animate-bounce [animation-delay:0.05s]"></span>
+      </div>
+
+      <!-- SPOKEN QUERY & LIVE REPLY DISPLAY -->
+      <div class="bg-surface-container-highest/15 rounded-xl p-pad-md flex flex-col gap-2 border border-white/10">
+        <div class="flex items-center justify-between text-xs text-inverse-on-surface/70">
+          <span>सवाल (Question):</span>
+          <span id="sathiContextBadge" class="text-secondary-fixed uppercase text-[10px] font-bold">HOME CONTEXT</span>
+        </div>
+        <p id="sathiQueryText" class="font-headline-sm text-headline-sm text-inverse-on-surface">"मेरी फसल कब बिकेगी?"</p>
+        <div class="h-px bg-white/10 my-1"></div>
+        <p id="sathiReplyText" class="font-body-md text-sm text-secondary-fixed leading-relaxed">
+          राम लाल जी, आपका टोकन #42 है। आपके आगे केवल 4 ट्रैक्टर हैं। लगभग 25 मिनट में कांटा #3 पर आपकी तौल शुरू होगी।
+        </p>
+      </div>
+
+      <!-- QUICK CHIP SUGGESTIONS -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+        <button onclick="askSathi('मेरी फसल कब बिकेगी?')" class="flex-shrink-0 py-1.5 px-3 rounded-full bg-surface-container-highest/20 hover:bg-surface-container-highest/40 font-label-sm text-xs text-inverse-on-surface text-center active:scale-95 border border-white/10">
+          "कब बिकेगी?"
+        </button>
+        <button onclick="askSathi('मेरा टोकन नंबर और कतार स्थिति क्या है?')" class="flex-shrink-0 py-1.5 px-3 rounded-full bg-surface-container-highest/20 hover:bg-surface-container-highest/40 font-label-sm text-xs text-inverse-on-surface text-center active:scale-95 border border-white/10">
+          "टोकन स्थिति"
+        </button>
+        <button onclick="askSathi('आज गेहूं का क्या भाव है?')" class="flex-shrink-0 py-1.5 px-3 rounded-full bg-surface-container-highest/20 hover:bg-surface-container-highest/40 font-label-sm text-xs text-inverse-on-surface text-center active:scale-95 border border-white/10">
+          "गेंहू का भाव"
+        </button>
+        <button onclick="askSathi('पैसे कब आएंगे और क्या एडवांस मिलेगा?')" class="flex-shrink-0 py-1.5 px-3 rounded-full bg-surface-container-highest/20 hover:bg-surface-container-highest/40 font-label-sm text-xs text-inverse-on-surface text-center active:scale-95 border border-white/10">
+          "भुगतान स्थिति"
+        </button>
+      </div>
+
+      <!-- CUSTOM QUERY INPUT -->
+      <form id="sathiForm" onsubmit="handleSathiSubmit(event)" class="flex items-center gap-2">
+        <input type="text" id="sathiInput" placeholder="अपना सवाल लिखें या बोलें..." class="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-fixed">
+        <button type="submit" class="h-11 px-4 rounded-xl bg-secondary hover:bg-secondary/90 text-on-secondary font-label-sm text-xs font-bold flex items-center gap-1 active:scale-95">
+          <span class="material-symbols-outlined text-[18px]">send</span>
+          पूछें
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: 80% INSTANT CASH ADVANCE MODAL -->
+  <!-- ============================================================== -->
+  <div id="advanceModal" class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-end justify-center p-0">
+    <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-pad-lg flex flex-col gap-pad-md shadow-2xl animate-in slide-in-from-bottom duration-200">
+      <div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto"></div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-pad-xs">
+          <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-[24px]">payments</span>
+          </div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface">तत्काल भुगतान पुष्टि</h3>
+        </div>
+        <button onclick="closeAdvanceModal()" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface" type="button">
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+
+      <div class="bg-surface-container-low rounded-xl p-pad-md flex flex-col gap-pad-xs">
+        <span class="font-label-sm text-label-sm text-on-surface-variant">स्थानांतरण राशि (Instant 80% Payout)</span>
+        <span class="font-display-lg-mobile text-display-lg-mobile text-secondary font-black">₹ 91,000</span>
+        <span class="font-body-sm text-body-sm text-on-surface">सीधे खाते में: SBI Bank (•••• 4912)</span>
+      </div>
+
+      <div class="flex items-center gap-pad-xs text-on-surface-variant">
+        <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+        <span class="font-body-sm text-body-sm">UPI / IMPS द्वारा 120 सेकंड में क्रेडिट</span>
+      </div>
+
+      <button id="confirmAdvanceBtn" onclick="executeAdvancePayout()" class="w-full h-14 bg-secondary hover:bg-secondary/90 text-on-secondary rounded-xl flex items-center justify-center gap-pad-sm shadow-md font-headline-sm text-headline-sm active:scale-98 transition-all" type="button">
+        <span class="material-symbols-outlined text-[28px]">lock_open</span>
+        <span>खाते में भेजें (Confirm Transfer)</span>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: QR ENTRY PASS MODAL -->
+  <!-- ============================================================== -->
+  <div id="qrModal" class="hidden fixed inset-0 z-50 bg-inverse-surface/80 backdrop-blur-sm items-center justify-center p-margin-screen">
+    <div class="bg-surface-container-lowest w-full max-w-sm rounded-xl p-pad-lg flex flex-col items-center text-center shadow-2xl relative">
+      <button onclick="closeQrModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface" type="button">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <span class="font-label-md text-label-md text-secondary uppercase tracking-widest mt-1 font-bold">प्रवेश द्वार गेट पास</span>
+      <span class="font-display-lg-mobile text-display-lg-mobile text-on-surface mt-1 font-extrabold">टोकन #42</span>
+      
+      <!-- High Contrast Simulated Mandi QR Code Box -->
+      <div class="w-56 h-56 my-pad-md bg-surface-container-lowest p-pad-sm rounded-xl shadow-inner flex items-center justify-center border-2 border-slate-200">
+        <svg class="w-full h-full text-on-surface" fill="currentColor" viewBox="0 0 100 100">
+          <rect fill="currentColor" height="28" rx="2" width="28" x="5" y="5"></rect>
+          <rect fill="#ffffff" height="20" rx="1" width="20" x="9" y="9"></rect>
+          <rect fill="currentColor" height="12" width="12" x="13" y="13"></rect>
+          <rect fill="currentColor" height="28" rx="2" width="28" x="67" y="5"></rect>
+          <rect fill="#ffffff" height="20" rx="1" width="20" x="71" y="9"></rect>
+          <rect fill="currentColor" height="12" width="12" x="75" y="13"></rect>
+          <rect fill="currentColor" height="28" rx="2" width="28" x="5" y="67"></rect>
+          <rect fill="#ffffff" height="20" rx="1" width="20" x="9" y="71"></rect>
+          <rect fill="currentColor" height="12" width="12" x="13" y="75"></rect>
+          <rect height="8" width="8" x="38" y="8"></rect>
+          <rect height="6" width="10" x="50" y="8"></rect>
+          <rect height="14" width="6" x="38" y="20"></rect>
+          <rect height="6" width="12" x="48" y="18"></rect>
+          <rect height="10" width="8" x="48" y="28"></rect>
+          <rect height="8" width="10" x="8" y="38"></rect>
+          <rect height="12" width="6" x="8" y="50"></rect>
+          <rect height="18" width="8" x="22" y="40"></rect>
+          <rect height="10" width="10" x="38" y="42"></rect>
+          <rect height="6" width="14" x="52" y="42"></rect>
+          <rect height="16" width="8" x="70" y="42"></rect>
+          <rect height="8" width="12" x="82" y="42"></rect>
+          <rect height="14" width="6" x="38" y="56"></rect>
+          <rect height="8" width="14" x="48" y="52"></rect>
+          <rect height="12" width="8" x="48" y="64"></rect>
+          <rect height="12" width="14" x="60" y="62"></rect>
+          <rect height="8" width="16" x="78" y="62"></rect>
+          <rect height="8" width="18" x="38" y="74"></rect>
+          <rect height="16" width="10" x="60" y="78"></rect>
+          <rect height="12" width="8" x="74" y="74"></rect>
+          <rect height="20" width="8" x="86" y="74"></rect>
+          <rect height="8" width="18" x="38" y="86"></rect>
+        </svg>
+      </div>
+
+      <div class="bg-surface-container-low w-full rounded-lg p-pad-sm flex items-center justify-between">
+        <span class="font-label-sm text-label-sm text-on-surface-variant font-bold">RJ-20-EA-4412</span>
+        <span class="font-label-sm text-label-sm text-secondary font-bold">कांटा #3 मान्य</span>
+      </div>
+      <p class="font-body-sm text-[12px] text-on-surface-variant mt-pad-sm">
+        कांटे पर पहुंचने पर इस कोड को स्कैनर के सामने रखें।
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: FINANCIAL AID (MOCK) -->
+  <!-- ============================================================== -->
+  <div id="financialAidModal" class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-end justify-center p-0">
+    <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-pad-lg flex flex-col gap-pad-md shadow-2xl animate-in slide-in-from-bottom duration-200">
+      <div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto"></div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-amber-700 text-[28px]">handshake</span>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface">वित्तीय सहायता • Financial Aid</h3>
+        </div>
+        <button onclick="closeFinancialAidModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col gap-1">
+        <span class="font-bold text-amber-900 text-sm">किसान क्रेडिट कार्ड (KCC) ऋण सुविधा</span>
+        <p class="text-xs text-amber-800">आपकी स्वीकृत फसल पर्ची के आधार पर आप ₹1,00,000 तक का अल्पकालिक ऋण 4% ब्याज पर प्राप्त कर सकते हैं।</p>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col gap-1">
+        <span class="font-bold text-emerald-900 text-sm">प्रधानमंत्री फसल बीमा योजना (PMFBY)</span>
+        <p class="text-xs text-emerald-800">रबी सत्र के लिए बीमा दावा पंजीयन खुला है। अंतिम तिथि: 30 सितंबर 2026।</p>
+      </div>
+      <button onclick="closeFinancialAidModal()" class="w-full py-3 bg-amber-700 text-white font-bold rounded-xl text-sm">
+        समझ गया / Got it
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: MARKETPLACE (MOCK) -->
+  <!-- ============================================================== -->
+  <div id="marketplaceModal" class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-end justify-center p-0">
+    <div class="w-full max-w-lg bg-surface-container-lowest rounded-t-2xl p-pad-lg flex flex-col gap-pad-md shadow-2xl animate-in slide-in-from-bottom duration-200">
+      <div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto"></div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-emerald-700 text-[28px]">eco</span>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface">प्रमाणित बीज व खाद मंडी</h3>
+        </div>
+        <button onclick="closeMarketplaceModal()" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="p-3 bg-surface-container-low rounded-xl border flex items-center justify-between">
+          <div>
+            <span class="font-bold text-sm block">IFFCO नैनो यूरिया (Liquid)</span>
+            <span class="text-xs text-slate-500">500ml बोतल • सरकारी सब्सिडी प्राप्त</span>
+          </div>
+          <span class="font-bold text-emerald-700 text-sm">₹225</span>
+        </div>
+        <div class="p-3 bg-surface-container-low rounded-xl border flex items-center justify-between">
+          <div>
+            <span class="font-bold text-sm block">सरसों प्रमाणित बीज (Pusa Bold)</span>
+            <span class="text-xs text-slate-500">10 Kg बैग • 99% अंकुरण गारंटी</span>
+          </div>
+          <span class="font-bold text-emerald-700 text-sm">₹850</span>
+        </div>
+      </div>
+      <button onclick="closeMarketplaceModal()" class="w-full py-3 bg-emerald-700 text-white font-bold rounded-xl text-sm">
+        बंद करें / Close
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: SPA NAVIGATION, API SYNC, AND SATHI ASSISTANT -->
+  <!-- ============================================================== -->
+  <script>
+    const API_BASE = '/api';
+    let currentScreen = 'home';
+    let cachedData = { farmer: null, schedule: null, queue: null, payment: null };
+
+    // --- NAVIGATION CONTROLLER ---
+    function navigateTo(screenId) {
+      currentScreen = screenId;
+
+      // Hide all screens
+      document.querySelectorAll('.screen-view').forEach(el => el.classList.add('hidden'));
+
+      // Show target screen
+      const target = document.getElementById(`screen-${screenId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Update Nav Bar active styles
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('text-secondary', 'font-bold');
+        btn.classList.add('text-on-surface-variant');
+      });
+      const activeNav = document.getElementById(`nav-${screenId}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-on-surface-variant');
+        activeNav.classList.add('text-secondary', 'font-bold');
+      }
+
+      // Update Top Header Title
+      const titleMap = {
+        'home': 'Home',
+        'mandi-schedule': 'Mandi Schedule',
+        'token-and-queue': 'Token And Queue',
+        'payments': 'Payments'
+      };
+      document.getElementById('headerTitle').textContent = titleMap[screenId] || 'Kisan Mandi';
+
+      // Fetch live data for the screen
+      refreshCurrentScreenData();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- DATA REFRESH LOGIC ---
+    async function refreshCurrentScreenData() {
+      try {
+        if (currentScreen === 'home') {
+          const res = await fetch(`${API_BASE}/farmer/F1/home`);
+          const data = await res.json();
+          cachedData.farmer = data;
+          document.getElementById('homeFarmerName').textContent = data.name;
+          document.getElementById('homeTokenBadge').textContent = `टोकन #${data.token}`;
+          document.getElementById('homeTileTokenBadge').textContent = `#${data.token}`;
+          document.getElementById('homeDateLocation').textContent = `आज, ${data.date} • ${data.mandi}`;
+        }
+        else if (currentScreen === 'mandi-schedule') {
+          const res = await fetch(`${API_BASE}/schedule/C1`);
+          const data = await res.json();
+          cachedData.schedule = data;
+
+          const openCard = document.getElementById('scheduleOpenCard');
+          const gateText = document.getElementById('scheduleGateStatusText');
+          const openTitle = document.getElementById('scheduleOpenTitle');
+          const openSubtitle = document.getElementById('scheduleOpenSubtitle');
+
+          if (data.open) {
+            openCard.className = 'w-full bg-secondary-container rounded-xl p-pad-md flex flex-col gap-pad-md relative overflow-hidden shadow-sm';
+            gateText.textContent = data.gateOpen ? 'गेट खुला है • Gate Open' : 'गेट अस्थायी बंद • Gate Closed';
+            openTitle.textContent = 'आज खुला है';
+            openSubtitle.textContent = 'OPEN TODAY';
+          } else {
+            openCard.className = 'w-full bg-error-container rounded-xl p-pad-md flex flex-col gap-pad-md relative overflow-hidden shadow-sm';
+            gateText.textContent = 'मंडी बंद है • Closed';
+            openTitle.textContent = 'आज बंद है';
+            openSubtitle.textContent = 'CLOSED TODAY';
+          }
+
+          document.getElementById('scheduleTiming').textContent = data.timing;
+          document.getElementById('scheduleGateNumber').textContent = `गेट नं. ${data.gateNumber}`;
+          document.getElementById('scheduleMandiName').textContent = data.name;
+          document.getElementById('scheduleTodayCrop').textContent = data.todayCrop;
+          document.getElementById('scheduleCropQuality').textContent = data.cropQuality || 'Sharbati & Lokwan Quality';
+          document.getElementById('scheduleCropGrade').textContent = data.cropGrade || 'Grade A Verified';
+          document.getElementById('scheduleMspPrice').textContent = `₹${data.msp.toLocaleString('en-IN')}`;
+        }
+        else if (currentScreen === 'token-and-queue') {
+          const res = await fetch(`${API_BASE}/queue/F1`);
+          const data = await res.json();
+          cachedData.queue = data;
+
+          document.getElementById('queueHeroToken').textContent = data.token;
+          document.getElementById('queueAheadText').textContent = data.aheadCount > 0 ? `आगे केवल ${data.aheadCount} ट्रैक्टर` : `आपका नंबर आ गया है!`;
+          document.getElementById('queueAtGateNumber').textContent = `#${data.atGateNumber}`;
+          document.getElementById('queueEstWaitMins').textContent = `~${data.estWaitMins}`;
+          document.getElementById('queueVehicleNo').textContent = data.vehicleNumber;
+          document.getElementById('queueVehicleType').textContent = data.vehicleType;
+          document.getElementById('queueWeighbridge').textContent = `कांटा #${data.weighbridgeNo}`;
+          document.getElementById('queueCommodity').textContent = data.commodity;
+          document.getElementById('queueCommodityQty').textContent = data.commodityQty;
+
+          // Update Stepper
+          renderQueueStepper(data.stage, data.stages);
+        }
+        else if (currentScreen === 'payments') {
+          const res = await fetch(`${API_BASE}/payment/F1`);
+          const data = await res.json();
+          cachedData.payment = data;
+
+          document.getElementById('payTotalApproved').textContent = `₹ ${data.totalApproved.toLocaleString('en-IN')}`;
+          document.getElementById('payCropQuintal').textContent = `${data.quintal} क्विंटल (Quintal) ${data.crop}`;
+          document.getElementById('payLotNumber').textContent = `मंडी लॉट सं.: #${data.lotNumber}`;
+          document.getElementById('payQualitySpecs').textContent = `नमी: ${data.quality.moisture} • शुद्धता: ${data.quality.purity} • ${data.quality.shed}`;
+          document.getElementById('payBankName').textContent = `${data.bank.name} •••• ${data.bank.last4}`;
+          document.getElementById('payIfsc').textContent = `IFSC: ${data.bank.ifsc} • आधार लिंक`;
+          document.getElementById('payAdvanceAmountText').textContent = `₹${data.advance.amount.toLocaleString('en-IN')}`;
+
+          // If advance was taken, modify advance CTA card
+          const advanceCard = document.getElementById('advanceCtaCard');
+          if (data.advance.taken) {
+            advanceCard.className = 'rounded-xl bg-emerald-50 border border-emerald-300 p-pad-lg shadow-md flex flex-col gap-pad-sm';
+            advanceCard.innerHTML = `
+              <div class="flex items-center gap-2 text-emerald-800 font-bold">
+                <span class="material-symbols-outlined text-[26px] text-emerald-600">check_circle</span>
+                <span>80% अग्रिम प्राप्त (Advance Credited)</span>
+              </div>
+              <p class="text-xs text-emerald-700">₹${data.advance.amount.toLocaleString('en-IN')} आपके ${data.bank.name} खाते में जमा हो चुके हैं।</p>
+            `;
+          }
+
+          // Render Timeline
+          renderPaymentTimeline(data.timeline);
+        }
+      } catch (err) {
+        console.error('Data refresh error:', err);
+      }
+    }
+
+    // --- RENDER QUEUE STEPPER ---
+    function renderQueueStepper(currentStage, stages) {
+      const stepNames = ['arrived', 'weighing', 'grade', 'pass'];
+      const currentIndex = stepNames.indexOf(currentStage);
+
+      // Width bar %
+      const widths = ['0%', '36%', '68%', '100%'];
+      const fillBar = document.getElementById('queueProgressFillBar');
+      if (fillBar) fillBar.style.width = widths[currentIndex] || '0%';
+
+      document.getElementById('queueStepCounterBadge').textContent = `कदम ${currentIndex + 1} / 4 चालू`;
+
+      stepNames.forEach((name, idx) => {
+        const stepEl = document.getElementById(`step-${name}`);
+        if (!stepEl) return;
+
+        const iconContainer = stepEl.querySelector('.step-icon');
+        const pingRing = stepEl.querySelector('.ping-ring');
+
+        if (idx < currentIndex) {
+          // Completed
+          stepEl.className = 'flex flex-col items-center z-10 w-16';
+          if (iconContainer) iconContainer.className = 'step-icon w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md';
+          if (pingRing) pingRing.remove();
+        } else if (idx === currentIndex) {
+          // Active
+          stepEl.className = 'flex flex-col items-center z-10 w-16';
+          if (iconContainer) iconContainer.className = 'step-icon w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-md relative';
+        } else {
+          // Pending
+          stepEl.className = 'flex flex-col items-center z-10 w-16 opacity-60';
+          if (iconContainer) iconContainer.className = 'step-icon w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center';
+        }
+      });
+    }
+
+    // --- RENDER PAYMENT TIMELINE ---
+    function renderPaymentTimeline(timeline) {
+      const container = document.getElementById('paymentTimelineContainer');
+      if (!container || !timeline) return;
+
+      container.innerHTML = timeline.map((item, idx) => {
+        const isDone = item.status === 'done';
+        const isInProgress = item.status === 'in_progress';
+        const isLast = idx === timeline.length - 1;
+
+        let iconBg = isDone ? 'bg-secondary text-on-secondary' : (isInProgress ? 'bg-tertiary text-on-tertiary shadow-md' : 'bg-surface-variant text-on-surface-variant');
+        let iconName = isDone ? 'check' : (isInProgress ? 'bolt' : (item.name === 'credited' ? 'account_balance' : 'hourglass_top'));
+        let lineBg = isDone ? 'bg-secondary' : 'bg-surface-variant';
+        let statusBadge = isInProgress ? '<span class="px-2 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-xs rounded-full font-bold animate-pulse">प्रक्रिया जारी</span>' : '';
+
+        return `
+          <div class="flex items-start gap-pad-md relative">
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="w-10 h-10 rounded-full ${iconBg} flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-[20px] ${isInProgress ? 'animate-pulse' : ''}">${iconName}</span>
+              </div>
+              ${!isLast ? `<div class="w-1 h-9 ${lineBg} mt-1"></div>` : ''}
+            </div>
+            <div class="flex flex-col min-w-0 pt-1 flex-1">
+              <div class="flex items-center justify-between">
+                <span class="font-label-md text-label-md ${isInProgress ? 'text-tertiary font-bold' : 'text-on-surface'}">${item.label}</span>
+                ${statusBadge}
+              </div>
+              <span class="font-body-sm text-body-sm ${isDone ? 'text-secondary font-medium' : 'text-on-surface-variant'}">${item.detail}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- SATHI AI ASSISTANT ---
+    function toggleVoiceSheet(show = null) {
+      const sheet = document.getElementById('voiceSheet');
+      if (show === null) {
+        sheet.classList.toggle('hidden');
+      } else if (show) {
+        sheet.classList.remove('hidden');
+      } else {
+        sheet.classList.add('hidden');
+      }
+      if (!sheet.classList.contains('hidden')) {
+        document.getElementById('sathiContextBadge').textContent = `${currentScreen.toUpperCase()} CONTEXT`;
+      }
+    }
+
+    function openVoiceModal(customGreeting = null) {
+      toggleVoiceSheet(true);
+      if (customGreeting) {
+        document.getElementById('sathiReplyText').textContent = customGreeting;
+        speakText(customGreeting);
+      }
+    }
+
+    async function askSathi(question) {
+      document.getElementById('sathiQueryText').textContent = `"${question}"`;
+      document.getElementById('sathiReplyText').textContent = "साथी उत्तर तैयार कर रहा है...";
+
+      try {
+        const res = await fetch(`${API_BASE}/sathi/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: question,
+            screenContext: currentScreen,
+            farmerId: 'F1'
+          })
+        });
+        const data = await res.json();
+        document.getElementById('sathiReplyText').textContent = data.reply;
+        speakText(data.reply);
+      } catch (err) {
+        document.getElementById('sathiReplyText').textContent = "क्षमा करें, नेटवर्क समस्या है। कृपया पुनः प्रयास करें।";
+      }
+    }
+
+    function handleSathiSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('sathiInput');
+      const q = input.value.trim();
+      if (!q) return;
+      askSathi(q);
+      input.value = '';
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'hi-IN';
+        utter.rate = 0.95;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function speakQueueStatus() {
+      const q = cachedData.queue;
+      const msg = q ? `आपका टोकन नंबर ${q.token} है। आपके आगे ${q.aheadCount} ट्रैक्टर हैं। कांटा नंबर ${q.weighbridgeNo} पर जाएं।` : "टोकन 42 कतार में है।";
+      speakText(msg);
+    }
+
+    function speakPaymentStatus() {
+      const p = cachedData.payment;
+      const msg = p ? `आपकी कुल राशि 1 लाख 13 हजार 750 रुपये स्वीकृत है। आप 80 प्रतिशत अग्रिम ले सकते हैं।` : "भुगतान स्थिति सुरक्षित है।";
+      speakText(msg);
+    }
+
+    // --- ACTIONS ---
+    let selectedSlotId = 'morning';
+
+    function selectBookingSlot(slotId) {
+      selectedSlotId = slotId;
+      const morningCard = document.getElementById('slot-morning-card');
+      const afternoonCard = document.getElementById('slot-afternoon-card');
+      const morningIcon = document.getElementById('slot-morning-icon');
+      const afternoonIcon = document.getElementById('slot-afternoon-icon');
+
+      if (slotId === 'morning') {
+        if (morningCard) morningCard.className = 'border-2 border-secondary bg-secondary-fixed/30 rounded-lg p-2.5 flex flex-col cursor-pointer transition-all';
+        if (afternoonCard) afternoonCard.className = 'border border-outline-variant/50 bg-surface-container-low rounded-lg p-2.5 flex flex-col cursor-pointer hover:border-primary transition-all';
+        if (morningIcon) { morningIcon.textContent = 'check_circle'; morningIcon.className = 'material-symbols-outlined text-secondary text-[18px]'; }
+        if (afternoonIcon) { afternoonIcon.textContent = 'radio_button_unchecked'; afternoonIcon.className = 'material-symbols-outlined text-outline-variant text-[18px]'; }
+      } else {
+        if (morningCard) morningCard.className = 'border border-outline-variant/50 bg-surface-container-low rounded-lg p-2.5 flex flex-col cursor-pointer hover:border-primary transition-all';
+        if (afternoonCard) afternoonCard.className = 'border-2 border-secondary bg-secondary-fixed/30 rounded-lg p-2.5 flex flex-col cursor-pointer transition-all';
+        if (morningIcon) { morningIcon.textContent = 'radio_button_unchecked'; morningIcon.className = 'material-symbols-outlined text-outline-variant text-[18px]'; }
+        if (afternoonIcon) { afternoonIcon.textContent = 'check_circle'; afternoonIcon.className = 'material-symbols-outlined text-secondary text-[18px]'; }
+      }
+    }
+
+    async function executeBlockToken() {
+      const btn = document.getElementById('blockTokenBtn');
+      btn.innerHTML = '<span class="material-symbols-outlined text-[24px] animate-spin text-white">sync</span> <span class="font-bold text-sm">टोकन आरक्षित हो रहा है...</span>';
+      
+      try {
+        const res = await fetch(`${API_BASE}/schedule/C1/book-slot`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ farmerId: 'F1', slotId: selectedSlotId })
+        });
+        const json = await res.json();
+        
+        btn.innerHTML = '<span class="material-symbols-outlined text-[24px] text-white">check_circle</span> <span class="font-bold text-sm">🔒 टोकन #42 आरक्षित हुआ!</span>';
+        btn.classList.remove('bg-secondary');
+        btn.classList.add('bg-primary');
+
+        if (selectedSlotId === 'morning' && json.tokensLeft !== undefined) {
+          const mCount = document.getElementById('slot-morning-count');
+          if (mCount) mCount.textContent = `${json.tokensLeft} टोकन बाकी`;
+        }
+
+        setTimeout(() => {
+          openQrModal();
+          btn.innerHTML = '<span class="material-symbols-outlined text-[24px] text-secondary-fixed">lock_open</span> <div class="flex flex-col text-left"><span class="font-label-md text-label-md font-bold leading-tight text-on-secondary">🔒 टोकन अभी ब्लॉक करें • Block Token Now</span><span class="font-body-sm text-[11px] text-secondary-fixed leading-none">15 मिनट के लिए आरक्षित • Free Slot Reserve</span></div>';
+          btn.classList.remove('bg-primary');
+          btn.classList.add('bg-secondary');
+        }, 1200);
+      } catch (err) {
+        btn.innerHTML = 'त्रुटि हुई। पुनः प्रयास करें।';
+      }
+    }
+
+    async function bookTodaySlot() {
+      const btn = document.getElementById('book-slot-cta');
+      btn.innerHTML = '<span class="material-symbols-outlined text-[24px] animate-spin">sync</span> स्लॉट बुक हो रहा है...';
+      try {
+        const res = await fetch(`${API_BASE}/schedule/C1/book-slot`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ farmerId: 'F1', slotId: 'morning' })
+        });
+        const json = await res.json();
+        btn.innerHTML = '<span class="material-symbols-outlined text-[24px]">check_circle</span> स्लॉट सफलतापूर्वक आरक्षित!';
+        btn.classList.remove('bg-secondary');
+        btn.classList.add('bg-primary');
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[32px] text-secondary-fixed">confirmation_number</span> <span>स्लॉट बुक करें • Book Today\'s Slot</span>';
+          btn.classList.remove('bg-primary');
+          btn.classList.add('bg-secondary');
+        }, 2000);
+      } catch (err) {
+        btn.innerHTML = 'त्रुटि हुई। पुनः प्रयास करें।';
+      }
+    }
+
+    function openAdvanceModal() {
+      document.getElementById('advanceModal').classList.remove('hidden');
+    }
+    function closeAdvanceModal() {
+      document.getElementById('advanceModal').classList.add('hidden');
+    }
+
+    async function executeAdvancePayout() {
+      const btn = document.getElementById('confirmAdvanceBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[24px] animate-spin">sync</span> प्रसंस्करण जारी है...';
+
+      try {
+        const res = await fetch(`${API_BASE}/payment/F1/advance`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ farmerId: 'F1' })
+        });
+        const data = await res.json();
+
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[24px]">check_circle</span> ₹91,000 भेजा गया!';
+          btn.classList.remove('bg-secondary');
+          btn.classList.add('bg-primary');
+          setTimeout(() => {
+            closeAdvanceModal();
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[28px]">lock_open</span> <span>खाते में भेजें (Confirm Transfer)</span>';
+            btn.classList.remove('bg-primary');
+            btn.classList.add('bg-secondary');
+            refreshCurrentScreenData();
+          }, 1400);
+        }, 1000);
+      } catch (err) {
+        btn.innerHTML = 'त्रुटि हुई';
+      }
+    }
+
+    function openQrModal() {
+      const m = document.getElementById('qrModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeQrModal() {
+      const m = document.getElementById('qrModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function openFinancialAidModal() {
+      document.getElementById('financialAidModal').classList.remove('hidden');
+    }
+    function closeFinancialAidModal() {
+      document.getElementById('financialAidModal').classList.add('hidden');
+    }
+
+    function openMarketplaceModal() {
+      document.getElementById('marketplaceModal').classList.remove('hidden');
+    }
+    function closeMarketplaceModal() {
+      document.getElementById('marketplaceModal').classList.add('hidden');
+    }
+
+    // --- INITIALIZE ---
+    window.addEventListener('DOMContentLoaded', () => {
+      navigateTo('home');
+
+      // Real-Time Server-Sent Events (SSE) stream for zero-latency live synchronization
+      if (!!window.EventSource) {
+        const eventSource = new EventSource('/api/stream');
+        eventSource.onmessage = (event) => {
+          try {
+            const parsed = JSON.parse(event.data);
+            if (parsed.type !== 'CONNECTED') {
+              refreshCurrentScreenData();
+            }
+          } catch (e) {
+            refreshCurrentScreenData();
+          }
+        };
+        eventSource.onerror = () => {
+          // Fallback interval if SSE disconnected
+        };
+      }
+
+      // Backup polling every 6s
+      setInterval(() => {
+        refreshCurrentScreenData();
+      }, 6000);
+    });
+  </script>
+</body>
+</html>

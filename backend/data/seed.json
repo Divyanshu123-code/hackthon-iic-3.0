@@ -1,0 +1,198 @@
+{
+  "centers": [
+    {
+      "centerId": "C1",
+      "name": "APMC अनाज मंडी (Kota Mandi)",
+      "open": true,
+      "gateOpen": true,
+      "gateNumber": 2,
+      "timing": "8:00 AM – 5:00 PM",
+      "todayCrop": "गेहूं (Wheat)",
+      "cropQuality": "Sharbati & Lokwan Quality",
+      "cropGrade": "Grade A Verified",
+      "msp": 2275,
+      "totalProcuredTodayQtl": 185,
+      "totalApprovedAmount": 420875,
+      "totalAdvanceDisbursed": 91000,
+      "upcomingDays": [
+        { "day": "Sat", "label": "कल", "crop": "सरसों / Mustard", "gate": "Gate 1 & Gate 3", "timing": "8:00 AM – 4:30 PM", "status": "open" },
+        { "day": "Sun", "label": "परसों", "crop": "साप्ताहिक अवकाश / Weekly Cleaning", "gate": null, "timing": null, "status": "closed" },
+        { "day": "Mon", "label": "सोमवार", "crop": "सोयाबीन / Yellow Soy", "gate": "Gate 2", "timing": "8:00 AM – 5:00 PM", "status": "open" }
+      ],
+      "slots": [
+        { "id": "morning", "label": "सुबह 09 – 11 AM", "tokensLeft": 8 },
+        { "id": "afternoon", "label": "दोपहर 01 – 03 PM", "tokensLeft": 15 }
+      ]
+    }
+  ],
+  "farmers": [
+    {
+      "farmerId": "F1",
+      "name": "राम लाल जी",
+      "phone": "+91 98290 12345",
+      "token": 42,
+      "date": "2026-09-08",
+      "mandi": "APMC अनाज मंडी (Kota Mandi)",
+      "vehicleNumber": "RJ-20-EA-4412",
+      "vehicleType": "सोनालिका DI 745",
+      "commodity": "सोयाबीन (Yellow Soy)",
+      "commodityQty": "68 बोरी (50 Qtl)",
+      "centerId": "C1",
+      "stage": "weighing",
+      "stageIndex": 2,
+      "aheadCount": 4,
+      "estWaitMins": 25,
+      "atGateNumber": 38,
+      "weighbridgeNo": 3,
+      "stages": [
+        { "name": "arrived", "label": "पहुंचे / Arrived", "status": "done", "timestamp": "10:15 AM" },
+        { "name": "weighing", "label": "तौल / Weighing", "status": "in_progress", "timestamp": "10:45 AM" },
+        { "name": "grade", "label": "गुणवत्ता / Grade", "status": "pending", "timestamp": null },
+        { "name": "pass", "label": "पास / Pass", "status": "pending", "timestamp": null }
+      ],
+      "payment": {
+        "totalApproved": 113750,
+        "quintal": 50,
+        "crop": "गेहूं Grade-A",
+        "lotNumber": "LOT-2026-8849",
+        "quality": { "moisture": "10.8%", "purity": "99.4%", "shed": "मंडी शेड 4" },
+        "timeline": [
+          { "name": "weighed", "label": "Weighed & Certified", "status": "done", "detail": "50.00 Qtl (धर्मकांटा पर्ची #4102)", "timestamp": "11:30 AM" },
+          { "name": "bill", "label": "Bill Generated", "status": "done", "detail": "ई-मंडी बिल #EM-99210 • ₹2,275/Qtl", "timestamp": "11:30 AM" },
+          { "name": "transfer", "label": "Bank Transfer", "status": "in_progress", "detail": "मंडी ट्रेजरी द्वारा RTGS/NEFT प्रेषित", "timestamp": null },
+          { "name": "credited", "label": "Credited to Account", "status": "pending", "detail": "अनुमानित समय: 24-48 घंटे", "timestamp": null }
+        ],
+        "advance": { "available": true, "taken": false, "percent": 80, "amount": 91000, "feePercent": 0, "creditedAt": null, "referenceNo": null },
+        "bank": { "name": "SBI Bank", "last4": "4912", "ifsc": "SBIN000210" },
+        "mandiTax": 0
+      }
+    },
+    {
+      "farmerId": "F2",
+      "name": "सुरेश पटेल",
+      "phone": "+91 94140 55667",
+      "token": 43,
+      "date": "2026-09-08",
+      "mandi": "APMC अनाज मंडी (Kota Mandi)",
+      "vehicleNumber": "MP-09-AB-1102",
+      "vehicleType": "महिंद्रा 575 DI",
+      "commodity": "गेहूं (Wheat Grade-A)",
+      "commodityQty": "55 बोरी (40 Qtl)",
+      "centerId": "C1",
+      "stage": "arrived",
+      "stageIndex": 1,
+      "aheadCount": 5,
+      "estWaitMins": 30,
+      "atGateNumber": 38,
+      "weighbridgeNo": 2,
+      "stages": [
+        { "name": "arrived", "label": "पहुंचे / Arrived", "status": "done", "timestamp": "10:30 AM" },
+        { "name": "weighing", "label": "तौल / Weighing", "status": "pending", "timestamp": null },
+        { "name": "grade", "label": "गुणवत्ता / Grade", "status": "pending", "timestamp": null },
+        { "name": "pass", "label": "पास / Pass", "status": "pending", "timestamp": null }
+      ],
+      "payment": {
+        "totalApproved": 91000,
+        "quintal": 40,
+        "crop": "गेहूं Grade-A",
+        "lotNumber": "LOT-2026-8850",
+        "quality": { "moisture": "11.2%", "purity": "98.9%", "shed": "मंडी शेड 2" },
+        "timeline": [
+          { "name": "weighed", "label": "Weighed & Certified", "status": "pending", "detail": "तौल की प्रतीक्षा", "timestamp": null },
+          { "name": "bill", "label": "Bill Generated", "status": "pending", "detail": "बिल लंबित", "timestamp": null },
+          { "name": "transfer", "label": "Bank Transfer", "status": "pending", "detail": "बैंक प्रेषण लंबित", "timestamp": null },
+          { "name": "credited", "label": "Credited to Account", "status": "pending", "detail": "लंबित", "timestamp": null }
+        ],
+        "advance": { "available": true, "taken": false, "percent": 80, "amount": 72800, "feePercent": 0, "creditedAt": null, "referenceNo": null },
+        "bank": { "name": "Bank of Baroda", "last4": "8821", "ifsc": "BARB0KOTAX" },
+        "mandiTax": 0
+      }
+    },
+    {
+      "farmerId": "F3",
+      "name": "हरप्रीत सिंह",
+      "phone": "+91 98110 77889",
+      "token": 44,
+      "date": "2026-09-08",
+      "mandi": "APMC अनाज मंडी (Kota Mandi)",
+      "vehicleNumber": "PB-10-CX-9988",
+      "vehicleType": "John Deere 5050D",
+      "commodity": "सरसों (Mustard)",
+      "commodityQty": "45 बोरी (35 Qtl)",
+      "centerId": "C1",
+      "stage": "arrived",
+      "stageIndex": 1,
+      "aheadCount": 6,
+      "estWaitMins": 36,
+      "atGateNumber": 38,
+      "weighbridgeNo": 1,
+      "stages": [
+        { "name": "arrived", "label": "पहुंचे / Arrived", "status": "done", "timestamp": "10:40 AM" },
+        { "name": "weighing", "label": "तौल / Weighing", "status": "pending", "timestamp": null },
+        { "name": "grade", "label": "गुणवत्ता / Grade", "status": "pending", "timestamp": null },
+        { "name": "pass", "label": "पास / Pass", "status": "pending", "timestamp": null }
+      ],
+      "payment": {
+        "totalApproved": 192500,
+        "quintal": 35,
+        "crop": "सरसों (Mustard)",
+        "lotNumber": "LOT-2026-8851",
+        "quality": { "moisture": "8.5%", "purity": "99.0%", "shed": "मंडी शेड 1" },
+        "timeline": [
+          { "name": "weighed", "label": "Weighed & Certified", "status": "pending", "detail": "तौल की प्रतीक्षा", "timestamp": null },
+          { "name": "bill", "label": "Bill Generated", "status": "pending", "detail": "बिल लंबित", "timestamp": null },
+          { "name": "transfer", "label": "Bank Transfer", "status": "pending", "detail": "बैंक प्रेषण लंबित", "timestamp": null },
+          { "name": "credited", "label": "Credited to Account", "status": "pending", "detail": "लंबित", "timestamp": null }
+        ],
+        "advance": { "available": true, "taken": false, "percent": 80, "amount": 154000, "feePercent": 0, "creditedAt": null, "referenceNo": null },
+        "bank": { "name": "Punjab National Bank", "last4": "3340", "ifsc": "PUNB0123400" },
+        "mandiTax": 0
+      }
+    },
+    {
+      "farmerId": "F4",
+      "name": "विक्रम मीणा",
+      "phone": "+91 97850 44332",
+      "token": 45,
+      "date": "2026-09-08",
+      "mandi": "APMC अनाज मंडी (Kota Mandi)",
+      "vehicleNumber": "RJ-14-ZT-3321",
+      "vehicleType": "Swaraj 744 FE",
+      "commodity": "सोयाबीन (Yellow Soy)",
+      "commodityQty": "75 बोरी (55 Qtl)",
+      "centerId": "C1",
+      "stage": "arrived",
+      "stageIndex": 1,
+      "aheadCount": 7,
+      "estWaitMins": 42,
+      "atGateNumber": 38,
+      "weighbridgeNo": 3,
+      "stages": [
+        { "name": "arrived", "label": "पहुंचे / Arrived", "status": "done", "timestamp": "10:50 AM" },
+        { "name": "weighing", "label": "तौल / Weighing", "status": "pending", "timestamp": null },
+        { "name": "grade", "label": "गुणवत्ता / Grade", "status": "pending", "timestamp": null },
+        { "name": "pass", "label": "पास / Pass", "status": "pending", "timestamp": null }
+      ],
+      "payment": {
+        "totalApproved": 125125,
+        "quintal": 55,
+        "crop": "गेहूं Grade-A",
+        "lotNumber": "LOT-2026-8852",
+        "quality": { "moisture": "10.5%", "purity": "99.2%", "shed": "मंडी शेड 3" },
+        "timeline": [
+          { "name": "weighed", "label": "Weighed & Certified", "status": "pending", "detail": "तौल की प्रतीक्षा", "timestamp": null },
+          { "name": "bill", "label": "Bill Generated", "status": "pending", "detail": "बिल लंबित", "timestamp": null },
+          { "name": "transfer", "label": "Bank Transfer", "status": "pending", "detail": "बैंक प्रेषण लंबित", "timestamp": null },
+          { "name": "credited", "label": "Credited to Account", "status": "pending", "detail": "लंबित", "timestamp": null }
+        ],
+        "advance": { "available": true, "taken": false, "percent": 80, "amount": 100100, "feePercent": 0, "creditedAt": null, "referenceNo": null },
+        "bank": { "name": "HDFC Bank", "last4": "6619", "ifsc": "HDFC000122" },
+        "mandiTax": 0
+      }
+    }
+  ],
+  "events": [
+    { "id": "ev-1", "type": "STAGE_UPDATE", "message": "राम लाल जी (Token #42) तौल कांटा #3 पर पहुंचे", "timestamp": "10:45 AM" },
+    { "id": "ev-2", "type": "GATE_OPEN", "message": "APMC कोटा मंडी मुख्य गेट नं. 2 प्रवेश हेतु खुला", "timestamp": "08:00 AM" }
+  ]
+}
