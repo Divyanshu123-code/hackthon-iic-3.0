@@ -16,3 +16,7 @@ npm-debug.log*
 # Zip and temporary extracts
 *.zip
 stitch_agri_procurement_demo_prototype/
+
+# Local MCP secrets
+mcp_config.json
+.agents/
